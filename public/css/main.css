@@ -1,0 +1,13 @@
+/********************************************** Lay-out **********************************************/
+
+.input-no-valido {
+	border: 1px solid red;
+}
+
+.input-valido {
+	border: 1px solid green;
+}
+
+.error-input {
+	color: red;
+}

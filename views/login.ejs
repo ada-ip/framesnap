@@ -1,0 +1,97 @@
+<!-- Section: Design Block -->
+<!DOCTYPE html>
+<html lang="es">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Red Social - Login</title>
+		<link href="/css/normalize.css" rel="stylesheet" type="text/css" crossorigin="anonymous" />
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+			integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp"
+			crossorigin="anonymous" />
+		<link href="/css/main.css" rel="stylesheet" type="text/css" crossorigin="anonymous" />
+		<link href="/css/login-signup.css" rel="stylesheet" type="text/css" crossorigin="anonymous" />
+	</head>
+	<body>
+		<main class="background-radial-gradient overflow-hidden main-login">
+			<div class="container px-4 py-5 px-md-5 text-center text-lg-start my-5">
+				<div class="row gx-lg-5 align-items-center mb-5">
+					<div class="col-lg-6 mb-5 mb-lg-0" style="z-index: 10">
+						<h1 class="my-5 display-5 fw-bold ls-tight" style="color: hsl(218, 81%, 95%)">
+							The best offer <br />
+							<span style="color: hsl(218, 81%, 75%)">for your business</span>
+						</h1>
+						<p class="mb-4 opacity-70" style="color: hsl(218, 81%, 85%)">
+							Lorem ipsum dolor, sit amet consectetur adipisicing elit. Temporibus, expedita iusto veniam atque,
+							magni tempora mollitia dolorum consequatur nulla, neque debitis eos reprehenderit quasi ab ipsum nisi
+							dolorem modi. Quos?
+						</p>
+					</div>
+
+					<div class="col-lg-6 mb-5 mb-lg-0 position-relative">
+						<div id="radius-shape-1" class="position-absolute rounded-circle shadow-5-strong"></div>
+						<div id="radius-shape-2" class="position-absolute shadow-5-strong"></div>
+
+						<div class="card bg-glass">
+							<div class="card-body px-4 py-5 px-md-5">
+								<form action="/login" method="post">
+									<!-- Email input -->
+									<div class="form-outline mb-4">
+										<label class="form-label" for="correo">Email</label>
+										<input
+											type="email"
+											id="correo"
+											name="correo"
+											class="form-control <% if(locals.error && error === 'usuario') { %> input-no-valido <% } else if (locals.error){ %> input-valido <% } %>"
+											value="<% if(locals.datos && datos[0]) { %><%= datos[0]%><% } %>" />
+										<% if(locals.error && error === "usuario") { %>
+										<p class="error-input"><%= mensaje %></p>
+										<% } %>
+									</div>
+
+									<!-- Password input -->
+									<div class="form-outline mb-4">
+										<label class="form-label" for="passw">Contraseña</label>
+										<input
+											type="password"
+											id="passw"
+											name="passw"
+											class="form-control <% if(locals.error && error === 'contrasenya') { %> input-no-valido <% } else if(locals.error) { %> input-valido <%} %>"
+											value="<% if(locals.datos && datos[1]){%><%= datos[1] %><%}%>" />
+										<% if(locals.error && error === "contrasenya") { %>
+										<p class="error-input"><%= mensaje %></p>
+										<% } %>
+									</div>
+
+									<input
+										type="submit"
+										class="btn btn-primary btn-block mb-4"
+										id="login-btn"
+										name="login"
+										value="Login"
+										disabled />
+
+									<div class="d-flex align-items-center justify-content-center pb-4">
+										<p class="mb-0 me-2">¿No tienes una cuenta?</p>
+										<input
+											type="submit"
+											class="btn btn-outline-danger"
+											name="registrate"
+											value="Regístrate" />
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+		<script
+			src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js"
+			integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N"
+			crossorigin="anonymous"></script>
+		<script src="/javascript/login.js" type="module" crossorigin="anonymous"></script>
+	</body>
+</html>
