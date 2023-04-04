@@ -18,39 +18,17 @@ const FiltroSchema = new mongoose.Schema(
 	}
 );
 
-const OrdenSchema = new mongoose.Schema(
-	{
-		favs: Number,
-		fecha: Number
-	},
-	{
-		_id: false
-	}
-);
-
-OrdenSchema.virtual("oFavsOFecha")
-	.get(function () {
-		return this.favs || this.fecha;
-	})
-	.set(function () {});
-
-OrdenSchema.path("favs").validate(function () {
-	return this.oFavsOFecha !== null;
-}, "Hay que incluir un campo por el que ordenar");
-
-OrdenSchema.path("fecha").validate(function () {
-	return this.oFavsOFecha !== null;
-}, "Hay que incluir un campo por el que ordenar");
-
 const ConfigSchema = new mongoose.Schema(
 	{
 		filtro: {
 			type: FiltroSchema
 		},
-		orden: {
-			type: OrdenSchema,
-			required: true
-		}
+		orden: [
+			{
+				type: String,
+				required: true
+			}
+		]
 	},
 	{
 		_id: false
