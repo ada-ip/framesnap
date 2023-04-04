@@ -42,7 +42,7 @@ app.use("/", routerAuth);
 app.use("/api/v1/usuarios", routerUsuarios);
 
 app.use(error404);
-app.use(controlErrores);
+// app.use(controlErrores);
 
 const start = async () => {
 	try {

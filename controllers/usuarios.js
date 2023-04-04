@@ -7,7 +7,7 @@ const registrarUsuario = async (req, res, next) => {
 		contrasenya: req.body.passw1,
 		tls: [
 			{
-				nombre: "TL",
+				nombre: "Timeline",
 				config: {
 					orden: {
 						fecha: -1

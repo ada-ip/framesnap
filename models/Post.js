@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const PostSchema = new mongoose.Schema({
 	imagen: {
 		type: String,
-		default: "hola.jpg"
+		required: true
 	},
 	contenido: {
 		type: String,

@@ -1,5 +1,35 @@
 /********************************************** Lay-out **********************************************/
 
+/******************************* Navbar *******************************/
+
+nav {
+	background-color: white;
+}
+
+/******************************* Index *******************************/
+
+.main {
+	margin-top: 3rem;
+	margin-inline: auto;
+	width: min(90%, 1200px);
+}
+
+.foto-perfil-nav {
+	padding: 0.2rem;
+	background-color: rgb(200, 200, 200);
+}
+
+.cont-timeline {
+	margin-inline: auto;
+	width: 600px;
+}
+
+.post-img {
+	object-fit: cover;
+}
+
+/******************************* Formularios *******************************/
+
 .input-no-valido {
 	border: 1px solid red;
 }
