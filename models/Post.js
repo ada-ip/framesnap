@@ -5,7 +5,7 @@ const PostSchema = new mongoose.Schema({
 		type: String,
 		required: true
 	},
-	contenido: {
+	texto: {
 		type: String,
 		required: true,
 		trim: true,
