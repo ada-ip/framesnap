@@ -19,21 +19,25 @@ inputNombre.addEventListener("change", (e) => {
 	comprobarValidez(e.target, nombreValido, mensajeError);
 });
 
-inputNombre.addEventListener("change", async (e) => {
+inputNombre.addEventListener("change", (e) => {
 	if (e.target.classList.contains("input-valido")) {
 		const url = "/api/v1/usuarios/validez/" + e.target.value.trim().toLowerCase();
-		try {
-			const response = await fetch(url);
 
-			if (response.ok) {
-				const usuario = await response.json();
+		fetch(url)
+			.then((response) => {
+				if (!response.ok) {
+					throw new Error(`Error status: ${response.status}`);
+				}
+				return response.json();
+			})
+			.then((usuario) => {
 				if (usuario.nombre) {
 					e.target.classList.remove("input-valido");
 					e.target.classList.add("input-no-valido");
 					crearMensajeError(e.target, "El nombre ya está cogido");
 				}
-			}
-		} catch (error) {}
+			})
+			.catch((error) => {});
 	}
 });
 
@@ -42,21 +46,25 @@ inputCorreo.addEventListener("change", (e) => {
 	comprobarValidez(e.target, correoValido, mensajeError);
 });
 
-inputCorreo.addEventListener("change", async (e) => {
+inputCorreo.addEventListener("change", (e) => {
 	if (e.target.classList.contains("input-valido")) {
 		const url = "/api/v1/usuarios/validez/" + e.target.value.trim().toLowerCase();
-		try {
-			const response = await fetch(url);
 
-			if (response.ok) {
-				const usuario = await response.json();
+		fetch(url)
+			.then((response) => {
+				if (!response.ok) {
+					throw new Error(`Error status: ${response.status}`);
+				}
+				return response.json();
+			})
+			.then((usuario) => {
 				if (usuario.correo) {
 					e.target.classList.remove("input-valido");
 					e.target.classList.add("input-no-valido");
 					crearMensajeError(e.target, "El correo ya está registrado");
 				}
-			}
-		} catch (error) {}
+			})
+			.catch((error) => {});
 	}
 });
 

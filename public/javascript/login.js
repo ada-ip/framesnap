@@ -9,6 +9,28 @@ inputCorreo.addEventListener("change", (e) => {
 	comprobarValidez(e.target, correoValido, mensajeError);
 });
 
+inputCorreo.addEventListener("change", (e) => {
+	if (e.target.classList.contains("input-valido")) {
+		const url = "/api/v1/usuarios/validez/" + e.target.value.trim().toLowerCase();
+
+		fetch(url)
+			.then((response) => {
+				if (!response.ok) {
+					throw new Error(`Error status: ${response.status}`);
+				}
+				return response.json();
+			})
+			.then((usuario) => {
+				if (!usuario) {
+					e.target.classList.remove("input-valido");
+					e.target.classList.add("input-no-valido");
+					crearMensajeError(e.target, "El correo no está registrado");
+				}
+			})
+			.catch((error) => {});
+	}
+});
+
 inputPassw.addEventListener("change", (e) => {
 	let mensajeError = "Tienes que escribir la contraseña";
 	comprobarValidez(e.target, () => e.target.value.trim() != "", mensajeError);
