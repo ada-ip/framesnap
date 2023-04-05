@@ -202,31 +202,31 @@
 
 				<div class="col-md-8">
 					<div class="album py-5 bg-body-tertiary cont-timeline">
+
 						<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#subirPostModal">+</button>
+
 						<div class="modal fade" id="subirPostModal" tabindex="-1" aria-labelledby="subirPostModal" aria-hidden="true">
 							<div class="modal-dialog">
-								<div class="modal-content">
+								<form action="/api/v1/posts" class="modal-content">
 									<div class="modal-header">
-										<h1 class="modal-title fs-5" id="subirPostModalLabel">New message</h1>
+										<h1 class="modal-title fs-5" id="subirPostModalLabel">Subir post</h1>
 										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 									</div>
 									<div class="modal-body">
-										<form>
-											<div class="mb-3">
-											<label for="recipient-name" class="col-form-label">Recipient:</label>
-											<input type="text" class="form-control" id="recipient-name">
-											</div>
-											<div class="mb-3">
-											<label for="message-text" class="col-form-label">Message:</label>
-											<textarea class="form-control" id="message-text"></textarea>
-											</div>
-										</form>
+										<div class="mb-3">
+											<label for="imagen-a-subir" class="col-form-label">Elige una imagen:</label>
+											<input type="file" id="imagen-a-subir" name="imagen-a-subir" class="form-control" accept=".jpg, .jpeg"/>
+										</div>
+										
+										<div class="mb-3">
+											<label for="texto" class="col-form-label">Escribe el pie de foto:</label>
+											<textarea class="form-control" id="texto" name="texto" rows="4"></textarea>
+										</div>
 									</div>
 									<div class="modal-footer">
-										<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-										<button type="button" class="btn btn-primary">Send message</button>
+										<input type="submit" class="btn btn-primary" data-bs-dismiss="modal" id="subir-img" name="subir-img" value="Subir">
 									</div>
-								</div>
+								</form>
 							</div>
 						</div>
 
@@ -281,7 +281,11 @@
 												<div>
 													<p><%= post.favs.length %> favs</p>
 													<img
-														src="<% if(post.favs.findIndex(id => id === usuario._id) === -1) { %>/images/app/no-fav.png<% } else { %>/images/app/fav.png<% } %>" 
+														src="<% if(post.favs.findIndex(id => id === usuario._id) === -1) { 
+															%>/images/app/no-fav.png<% 
+														} else { 
+															%>/images/app/fav.png<% 
+														} %>" 
 														alt="haz click para des/favoritear el post"
 														width="30"
 														height="30" />
@@ -309,5 +313,6 @@
 			src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js"
 			integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N"
 			crossorigin="anonymous"></script>
+		<script src="/javascript/index.js" type="module" crossorigin="anonymous"></script>
 	</body>
 </html>

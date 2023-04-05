@@ -4,9 +4,11 @@ const session = require("express-session");
 const conDB = require("./config/db");
 const MongoStore = require("connect-mongo");
 const path = require("path");
+
 const routerIndex = require("./routes/index");
 const routerAuth = require("./routes/auth");
 const routerUsuarios = require("./routes/usuarios");
+
 const error404 = require("./middleware/404");
 const controlErrores = require("./middleware/control-errores");
 
@@ -41,7 +43,7 @@ app.use("/", routerIndex);
 app.use("/", routerAuth);
 app.use("/api/v1/usuarios", routerUsuarios);
 
-app.use(error404);
+// app.use(error404);
 // app.use(controlErrores);
 
 const start = async () => {

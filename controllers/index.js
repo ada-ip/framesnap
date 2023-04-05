@@ -1,6 +1,5 @@
 const User = require("../models/User");
 const Post = require("../models/Post");
-const mongoose = require("mongoose");
 
 const devolverIndex = async (req, res, next) => {
 	if (!req.session.idUsuario) {
@@ -25,7 +24,7 @@ const devolverIndex = async (req, res, next) => {
 			}
 
 			let orden = "";
-			if (usuario.tls[0].config.orden > 0) {
+			if (usuario.tls[0].config.orden.length > 0) {
 				for (let campo of usuario.tls[0].config.orden) {
 					orden += campo + " ";
 				}

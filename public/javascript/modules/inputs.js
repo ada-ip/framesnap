@@ -1,9 +1,8 @@
-function comprobarValidez(input, validador, error, boton) {
+function comprobarValidez(input, validador, error) {
 	let valor = input.value.trim();
 	if (!validador(valor)) {
 		input.classList.remove("input-valido");
 		input.classList.add("input-no-valido");
-		deshabilitarBoton(boton);
 		crearMensajeError(input, error);
 	} else {
 		input.classList.remove("input-no-valido");
@@ -15,18 +14,15 @@ function comprobarValidez(input, validador, error, boton) {
 function comprobarContrasenyas(input1, input2, boton) {
 	let pass2 = input2.value.trim();
 	let pass1 = input1.value.trim();
-	if (pass2 != "" && pass1 != "") {
-		if (pass2 === pass1) {
-			input2.classList.remove("input-no-valido");
-			input2.classList.add("input-valido");
-			borrarMensajeError(input2);
-		} else {
-			input2.classList.remove("input-valido");
-			input2.classList.add("input-no-valido");
-			deshabilitarBoton(boton);
-			let mensajeError = "Las contraseñas no son iguales";
-			crearMensajeError(input2, mensajeError);
-		}
+	if (pass2 === pass1) {
+		input2.classList.remove("input-no-valido");
+		input2.classList.add("input-valido");
+		borrarMensajeError(input2);
+	} else {
+		input2.classList.remove("input-valido");
+		input2.classList.add("input-no-valido");
+		let mensajeError = "Las contraseñas no son iguales";
+		crearMensajeError(input2, mensajeError);
 	}
 }
 
@@ -45,22 +41,15 @@ function contrasenyaValida(pass) {
 	return regex.test(pass);
 }
 
-function habilitarBoton(boton) {
-	boton.disabled = false;
-}
-
-function deshabilitarBoton(boton) {
-	boton.disabled = true;
-}
-
 function comprobarInputs(inputs, boton) {
 	if (inputs.every((input) => input.classList.contains("input-valido"))) {
-		habilitarBoton(boton);
+		return true;
 	}
 }
 
 function crearMensajeError(input, mensaje) {
-	if (!input.nextElementSibling) {
+	if (!input.nextElementSibling || input.nextElementSibling.textContent !== mensaje) {
+		borrarMensajeError(input);
 		const p = document.createElement("p");
 		p.classList.add("error-input");
 		p.textContent = mensaje;
@@ -80,8 +69,6 @@ export {
 	nombreValido,
 	correoValido,
 	contrasenyaValida,
-	habilitarBoton,
-	deshabilitarBoton,
 	comprobarInputs,
 	crearMensajeError,
 	borrarMensajeError
