@@ -54,26 +54,26 @@ const UserSchema = new mongoose.Schema({
 });
 
 UserSchema.pre("save", async function (next) {
-	// Check if the password has been modified
 	if (!this.isModified("contrasenya")) {
 		return next();
 	}
 
 	try {
-		// Generate a salt
 		const salt = await bcrypt.genSalt(10);
 
-		// Hash the password with the salt
 		this.contrasenya = await bcrypt.hash(this.contrasenya, salt);
 
-		// Move to the next middleware
 		next();
 	} catch (err) {
 		next(err);
 	}
 });
 
-// Method to compare input password with the hashed password
+UserSchema.pre("save", function (next) {
+	this.tls[0].config.filtro.autor = [this._id];
+	next();
+});
+
 UserSchema.methods.compararPassw = async function (inputPassw) {
 	return await bcrypt.compare(inputPassw, this.contrasenya);
 };

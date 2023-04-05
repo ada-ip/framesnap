@@ -1,5 +1,6 @@
-function comprobarValidez(input, validador, error) {
-	let valor = input.value.trim();
+function comprobarValidez(input, validador, error, imagen = false) {
+	let valor = !imagen ? input.value.trim() : input.files[0];
+
 	if (!validador(valor)) {
 		input.classList.remove("input-valido");
 		input.classList.add("input-no-valido");
@@ -41,6 +42,18 @@ function contrasenyaValida(pass) {
 	return regex.test(pass);
 }
 
+function imagenValida(imagen) {
+	if (!imagen) {
+		return false;
+	}
+	const formatosValidos = ["image/jpeg", "image/jpg"];
+	if (!formatosValidos.includes(imagen.type)) {
+		return false;
+	} else {
+		return true;
+	}
+}
+
 function comprobarInputs(inputs, boton) {
 	if (inputs.every((input) => input.classList.contains("input-valido"))) {
 		return true;
@@ -71,5 +84,6 @@ export {
 	contrasenyaValida,
 	comprobarInputs,
 	crearMensajeError,
-	borrarMensajeError
+	borrarMensajeError,
+	imagenValida
 };

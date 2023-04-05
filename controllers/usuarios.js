@@ -9,9 +9,12 @@ const registrarUsuario = async (req, res, next) => {
 			{
 				nombre: "Timeline",
 				config: {
-					orden: {
-						fecha: -1
-					}
+					filtro: {
+						autor: [],
+						tags: [],
+						fecha: {}
+					},
+					orden: ["-fecha"]
 				}
 			}
 		]

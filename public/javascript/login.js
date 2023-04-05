@@ -38,7 +38,6 @@ inputPassw.addEventListener("change", (e) => {
 
 form.addEventListener("submit", (e) => {
 	e.preventDefault();
-	console.log(e.action);
 
 	if (comprobarInputs([inputCorreo, inputPassw])) {
 		e.target.submit();
