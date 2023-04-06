@@ -8,6 +8,7 @@ const path = require("path");
 const routerIndex = require("./routes/index");
 const routerAuth = require("./routes/auth");
 const routerUsuarios = require("./routes/usuarios");
+const routerPosts = require("./routes/posts");
 
 const error404 = require("./middleware/404");
 const controlErrores = require("./middleware/control-errores");
@@ -42,6 +43,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/", routerIndex);
 app.use("/", routerAuth);
 app.use("/api/v1/usuarios", routerUsuarios);
+app.use("/api/v1/posts", routerPosts);
 
 // app.use(error404);
 // app.use(controlErrores);

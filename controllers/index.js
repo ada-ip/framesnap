@@ -1,5 +1,7 @@
 const User = require("../models/User");
 const Post = require("../models/Post");
+const { s3 } = require("../config/aws");
+const anyadirSignedUrls = require("../utils/aws");
 
 const devolverIndex = async (req, res, next) => {
 	if (!req.session.idUsuario) {
@@ -37,7 +39,9 @@ const devolverIndex = async (req, res, next) => {
 				})
 				.sort(orden);
 
-			res.render("index", { usuario: usuario, posts: posts });
+			const signedUrlsPosts = anyadirSignedUrls(posts, req);
+
+			res.render("index", { usuario: usuario, posts: signedUrlsPosts });
 		} catch (error) {
 			next(error);
 		}

@@ -207,15 +207,15 @@
 
 						<div class="modal fade" id="subirPostModal" tabindex="-1" aria-labelledby="subirPostModal" aria-hidden="true">
 							<div class="modal-dialog">
-								<form action="/api/v1/posts" class="modal-content" id="form-subir-foto">
+								<form action="/api/v1/posts" method="post" enctype="multipart/form-data" class="modal-content" id="form-subir-foto">
 									<div class="modal-header">
 										<h1 class="modal-title fs-5" id="subirPostModalLabel">Subir post</h1>
 										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 									</div>
 									<div class="modal-body">
 										<div class="mb-3">
-											<label for="imagen-a-subir" class="col-form-label">Elige una imagen:</label>
-											<input type="file" id="imagen-a-subir" name="imagen-a-subir" class="form-control" accept=".jpg, .jpeg"/>
+											<label for="imagenASubir" class="col-form-label">Elige una imagen:</label>
+											<input type="file" id="imagenASubir" name="imagenASubir" class="form-control" accept=".jpg, .jpeg"/>
 										</div>
 										
 										<div class="mb-3">
@@ -258,11 +258,11 @@
 													<p><% const fecha = new Date()
 														const fechaPost = new Date(post.fecha)
 														if (fecha - fechaPost < 1000 * 60) {%>
-															Hace <%= Math.round((fecha - fechaPost) / 1000) %> segundos
+															Hace <%= Math.round((fecha - fechaPost) / 1000) %> segundo<% if(Math.round((fecha - fechaPost) / 1000) !== 1) { %>s<% } %>
 														<% } else if(fecha - fechaPost < 1000 * 60 * 60) { %>
-															Hace <%= Math.floor((fecha - fechaPost) / (1000 * 60))%> minutos
+															Hace <%= Math.floor((fecha - fechaPost) / (1000 * 60))%> minuto<% if(Math.floor((fecha - fechaPost) / (1000 * 60)) !== 2) { %>s<% } %>
 														<% } else if(fecha - fechaPost < 1000 * 60 * 60 * 24) { %>
-															Hace <%= Math.floor((fecha - fechaPost) / (1000 * 60 * 60))%> horas
+															Hace <%= Math.floor((fecha - fechaPost) / (1000 * 60 * 60))%> hora<% if(Math.floor((fecha - fechaPost) / (1000 * 60 * 60)) !== 2) { %>s<% } %>
 														<% } else if(fecha - fechaPost < 1000 * 60 * 60 * 24 * 2) { %>
 															Hace 1 día
 														<% } else { %>
@@ -272,7 +272,7 @@
 												</div>
 											</div>
 											<img
-												src="<%= post.imagen %>"
+												src="<%= post.signedUrl %>"
 												alt=""
 												width="100%"
 												class="bd-placeholder-img card-img-top post-img"
@@ -293,9 +293,6 @@
 
 												<p class="card-text">
 													<%= post.texto %>
-													<% for(let tag of post.tags) { %>
-														<%= " #" + tag %>
-													<% } %>
 												</p>
 												<div>Añadir comentarios</div>
 											</div>

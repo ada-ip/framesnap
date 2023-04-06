@@ -1,6 +1,6 @@
 import { imagenValida, comprobarValidez, comprobarInputs } from "./modules/inputs.js";
 
-const inputImagen = document.getElementById("imagen-a-subir");
+const inputImagen = document.getElementById("imagenASubir");
 const inputTexto = document.getElementById("texto");
 const form = document.getElementById("form-subir-foto");
 const btn = document.getElementById("btn-subir-img");
