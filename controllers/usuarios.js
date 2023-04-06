@@ -1,4 +1,6 @@
 const User = require("../models/User");
+const Post = require("../models/Post");
+const anyadirSignedUrls = require("../utils/aws");
 
 const registrarUsuario = async (req, res, next) => {
 	const usuario = {
@@ -44,7 +46,35 @@ const comprobarUsuarioExiste = async (req, res, next) => {
 	}
 };
 
+const devolverPerfilUsuario = async (req, res, next) => {
+	const { usuario } = req.params;
+	try {
+		const postsUsuario = await Post.find({})
+			.populate({
+				path: "autor",
+				match: { nombre: usuario },
+				select: "_id nombre fotoPerfil seguidos seguidores"
+			})
+			.select("_id imagen texto autor favs comentarios fecha");
+
+		const signedUrlsPosts = anyadirSignedUrls(postsUsuario, req);
+
+		const timelines = await User.aggregate()
+			.unwind("$tls")
+			.match({ "tls.config.filtro.autor": usuario })
+			.group({
+				_id: "$tls.config.filtro.autor",
+				count: { $sum: 1 }
+			});
+
+		res.render("perfil", { postsUsuario: signedUrlsPosts, tlsUsuario: timelines, usuarioLogeado: req.session.idUsuario });
+	} catch (error) {
+		next(error);
+	}
+};
+
 module.exports = {
 	registrarUsuario,
-	comprobarUsuarioExiste
+	comprobarUsuarioExiste,
+	devolverPerfilUsuario
 };

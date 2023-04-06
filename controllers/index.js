@@ -1,6 +1,5 @@
 const User = require("../models/User");
 const Post = require("../models/Post");
-const { s3 } = require("../config/aws");
 const anyadirSignedUrls = require("../utils/aws");
 
 const devolverIndex = async (req, res, next) => {

@@ -27,7 +27,7 @@ const UserSchema = new mongoose.Schema({
 	},
 	fotoPerfil: {
 		type: String,
-		default: "/images/perfiles/anonymous.jpg"
+		default: "/images/perfil/anonymous.jpg"
 	},
 	seguidos: [
 		{

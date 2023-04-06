@@ -1,9 +1,10 @@
 const express = require("express");
 const router = express.Router();
 
-const { registrarUsuario, comprobarUsuarioExiste } = require("../controllers/usuarios");
+const { registrarUsuario, comprobarUsuarioExiste, devolverPerfilUsuario } = require("../controllers/usuarios");
 
-router.route("/").post(registrarUsuario);
-router.route("/validez/:usuario").get(comprobarUsuarioExiste);
+router.route("/:usuario").get(devolverPerfilUsuario);
+router.route("/api/v1/usuarios").post(registrarUsuario);
+router.route("/api/v1/usuarios/validez/:usuario").get(comprobarUsuarioExiste);
 
 module.exports = router;

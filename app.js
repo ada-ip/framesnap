@@ -42,7 +42,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/", routerIndex);
 app.use("/", routerAuth);
-app.use("/api/v1/usuarios", routerUsuarios);
+app.use("/", routerUsuarios);
 app.use("/api/v1/posts", routerPosts);
 
 // app.use(error404);
