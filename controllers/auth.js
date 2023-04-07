@@ -2,7 +2,11 @@ const User = require("../models/User");
 
 const devolverLogin = (req, res, next) => {
 	try {
-		res.render("login");
+		if (!req.session.idUsuario) {
+			res.render("login");
+		} else {
+			res.redirect("/");
+		}
 	} catch (error) {
 		next(error);
 	}
@@ -10,7 +14,11 @@ const devolverLogin = (req, res, next) => {
 
 const devolverSignup = (req, res, next) => {
 	try {
-		res.render("signup");
+		if (!req.session.idUsuario) {
+			res.render("signup");
+		} else {
+			res.redirect("/");
+		}
 	} catch (error) {
 		next(error);
 	}

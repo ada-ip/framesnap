@@ -73,8 +73,25 @@ const devolverPerfilUsuario = async (req, res, next) => {
 	}
 };
 
+const desconectarUsuario = (req, res, next) => {
+	const { usuario } = req.params;
+	try {
+		if (req.session.idUsuario === usuario) {
+			req.session.destroy((err) => {
+				if (err) {
+					throw new Error("No se pudo destruir la sesión");
+				}
+				res.redirect("/login");
+			});
+		}
+	} catch (error) {
+		next(error);
+	}
+};
+
 module.exports = {
 	registrarUsuario,
 	comprobarUsuarioExiste,
-	devolverPerfilUsuario
+	devolverPerfilUsuario,
+	desconectarUsuario
 };
