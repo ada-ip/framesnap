@@ -36,7 +36,7 @@
 
 						<div class="card bg-glass">
 							<div class="card-body px-4 py-5 px-md-5">
-								<form action="/login" method="post" id="form-login">
+								<form action="/iniciar-sesion" method="post" id="form-login">
 									<!-- Email input -->
 									<div class="form-outline mb-4">
 										<label class="form-label" for="correo">Email</label>
@@ -69,13 +69,13 @@
 										type="submit"
 										class="btn btn-primary btn-block mb-4"
 										id="login-btn"
-										name="login"
-										value="Login" />
+										name="iniciarSesion"
+										value="Iniciar Sesión" />
 								</form>
-								<form action="/signup" method="GET" class="d-flex align-items-center justify-content-center pb-4">
+								<div class="d-flex align-items-center justify-content-center pb-4">
 									<p class="mb-0 me-2">¿No tienes una cuenta?</p>
-									<input type="submit" class="btn btn-outline-danger" value="Regístrate" />
-								</form>
+									<a href="/registrarse" class="btn btn-outline-danger">Regístrate</a>
+								</div>
 							</div>
 						</div>
 					</div>

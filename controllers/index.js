@@ -4,7 +4,7 @@ const anyadirSignedUrls = require("../utils/aws");
 
 const devolverIndex = async (req, res, next) => {
 	if (!req.session.idUsuario) {
-		res.redirect("/login");
+		res.redirect("/iniciar-sesion");
 	} else {
 		try {
 			const usuario = await User.findById(req.session.idUsuario).select("_id nombre fotoPerfil seguidos tls");

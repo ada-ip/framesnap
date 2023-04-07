@@ -2,7 +2,7 @@ const Post = require("../models/Post");
 
 const crearPost = async (req, res, next) => {
 	if (!req.session.idUsuario) {
-		res.redirect("/login");
+		res.redirect("/iniciar-sesion");
 	} else {
 		const post = {
 			imagen: req.file.location,

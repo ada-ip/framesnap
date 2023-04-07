@@ -24,7 +24,7 @@ const registrarUsuario = async (req, res, next) => {
 	try {
 		const nuevoUsuario = new User(usuario);
 		await nuevoUsuario.save();
-		res.redirect("/login");
+		res.redirect("/iniciar-sesion");
 	} catch (error) {
 		next(error);
 	}
@@ -81,7 +81,7 @@ const desconectarUsuario = (req, res, next) => {
 				if (err) {
 					throw new Error("No se pudo destruir la sesión");
 				}
-				res.redirect("/login");
+				res.redirect("/iniciar-sesion");
 			});
 		}
 	} catch (error) {

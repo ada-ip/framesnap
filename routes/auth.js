@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
 
-const { devolverLogin, devolverSignup, hacerLogin } = require("../controllers/auth");
+const { devolverIniciarSesion, devolverRegistrarse, conectarse } = require("../controllers/auth");
 
-router.route("/login").get(devolverLogin).post(hacerLogin);
-router.route("/signup").get(devolverSignup);
+router.route("/iniciar-sesion").get(devolverIniciarSesion).post(conectarse);
+router.route("/registrarse").get(devolverRegistrarse);
 
 module.exports = router;

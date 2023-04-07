@@ -1,9 +1,9 @@
 const User = require("../models/User");
 
-const devolverLogin = (req, res, next) => {
+const devolverIniciarSesion = (req, res, next) => {
 	try {
 		if (!req.session.idUsuario) {
-			res.render("login");
+			res.render("iniciarSesion");
 		} else {
 			res.redirect("/");
 		}
@@ -12,10 +12,10 @@ const devolverLogin = (req, res, next) => {
 	}
 };
 
-const devolverSignup = (req, res, next) => {
+const devolverRegistrarse = (req, res, next) => {
 	try {
 		if (!req.session.idUsuario) {
-			res.render("signup");
+			res.render("registrarse");
 		} else {
 			res.redirect("/");
 		}
@@ -24,19 +24,23 @@ const devolverSignup = (req, res, next) => {
 	}
 };
 
-const hacerLogin = async (req, res, next) => {
+const conectarse = async (req, res, next) => {
 	const { correo, passw } = req.body;
 	try {
 		const usuario = await User.findOne({ correo });
 
 		if (!usuario) {
-			return res.render("login", { error: "usuario", mensaje: "El correo no está registrado", datos: [correo, passw] });
+			return res.render("iniciarSesion", {
+				error: "usuario",
+				mensaje: "El correo no está registrado",
+				datos: [correo, passw]
+			});
 		}
 
 		const passwValida = await usuario.compararPassw(passw);
 
 		if (!passwValida) {
-			return res.render("login", {
+			return res.render("IniciarSesion", {
 				error: "contrasenya",
 				mensaje: "La contraseña es incorrecta",
 				datos: [correo, passw]
@@ -53,7 +57,7 @@ const hacerLogin = async (req, res, next) => {
 };
 
 module.exports = {
-	devolverLogin,
-	devolverSignup,
-	hacerLogin
+	devolverIniciarSesion,
+	devolverRegistrarse,
+	conectarse
 };
