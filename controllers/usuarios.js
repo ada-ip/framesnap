@@ -48,26 +48,41 @@ const comprobarUsuarioExiste = async (req, res, next) => {
 
 const devolverPerfilUsuario = async (req, res, next) => {
 	const { usuario } = req.params;
+
 	try {
+		const datosUsuario = await User.findOne({ nombre: usuario }).select("_id nombre fotoPerfil seguidos seguidores");
+
 		const postsUsuario = await Post.find({})
 			.populate({
 				path: "autor",
-				match: { nombre: usuario },
-				select: "_id nombre fotoPerfil seguidos seguidores"
+				match: { nombre: usuario }
 			})
-			.select("_id imagen texto autor favs comentarios fecha");
+			.select("_id imagen texto favs comentarios fecha")
+			.sort("-fecha");
 
 		const signedUrlsPosts = anyadirSignedUrls(postsUsuario, req);
 
 		const timelines = await User.aggregate()
 			.unwind("$tls")
-			.match({ "tls.config.filtro.autor": usuario })
+			.unwind("$tls.config.filtro.autor")
+			.lookup({
+				from: "users",
+				localField: "tls.config.filtro.autor",
+				foreignField: "_id",
+				as: "tls.config.filtro.datosAutor"
+			})
+			.match({ "tls.config.filtro.datosAutor.nombre": usuario })
 			.group({
-				_id: "$tls.config.filtro.autor",
+				_id: "$tls.config.filtro.datosAutor.nombre",
 				count: { $sum: 1 }
 			});
 
-		res.render("perfil", { postsUsuario: signedUrlsPosts, tlsUsuario: timelines, usuarioLogeado: req.session.idUsuario });
+		res.render("perfil", {
+			usuario: datosUsuario,
+			postsUsuario: signedUrlsPosts,
+			tlsUsuario: timelines,
+			usuarioLogeado: req.session.idUsuario
+		});
 	} catch (error) {
 		next(error);
 	}
@@ -89,9 +104,56 @@ const desconectarUsuario = (req, res, next) => {
 	}
 };
 
+const obtenerNombresUsuarios = async (req, res, next) => {
+	const { usuario } = req.params;
+	try {
+		const usuarios = [];
+
+		const usuarioEncontrado = await User.findOne({ nombre: usuario }).select("-_id nombre");
+		if (usuarioEncontrado !== null) {
+			usuarios.push(usuarioEncontrado);
+		}
+
+		const regex = new RegExp(`^${usuario}`, "i");
+
+		if (req.session.idUsuario) {
+			const usuariosSeguidos = await User.aggregate()
+				.match({ _id: req.session.idUsuario })
+				.unwind("$seguidos")
+				.lookup({
+					from: "users",
+					localField: "seguidos",
+					foreignField: "_id",
+					as: "usuariosSeguidos"
+				})
+				.match({ "usuariosSeguidos.nombre": regex })
+				.project({
+					_id: 0,
+					"usuariosSeguidos.nombre": 1
+				})
+				.limit(10);
+			usuarios.push(...usuariosSeguidos);
+		}
+
+		const otrosUsuarios = await User.aggregate()
+			.match({ nombre: regex })
+			.unwind({ path: "$seguidores", preserveNullAndEmptyArrays: true })
+			.group({ _id: "$nombre", count: { $sum: 1 } })
+			.sort({ count: -1 })
+			.project({ _id: 0, nombre: "$_id" })
+			.limit(10);
+		usuarios.push(...otrosUsuarios);
+
+		res.status(200).json(usuarios);
+	} catch (error) {
+		next(error);
+	}
+};
+
 module.exports = {
 	registrarUsuario,
 	comprobarUsuarioExiste,
 	devolverPerfilUsuario,
-	desconectarUsuario
+	desconectarUsuario,
+	obtenerNombresUsuarios
 };

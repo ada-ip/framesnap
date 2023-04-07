@@ -6,6 +6,10 @@ nav {
 	background-color: white;
 }
 
+.mostrar {
+	display: inline-block;
+}
+
 /******************************* Index *******************************/
 
 .main {

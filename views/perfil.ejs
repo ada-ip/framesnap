@@ -137,8 +137,20 @@
 
 						<ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
 							<li>
-								<form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
-									<input type="search" class="form-control" placeholder="Search..." aria-label="Search" />
+								<form
+									action="/usuarios"
+									method="GET"
+									class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3"
+									role="search"
+									autocomplete="off">
+									<input
+										id="buscar"
+										type="search"
+										class="form-control"
+										placeholder="Buscar..."
+										aria-label="Buscar"
+										name="q" />
+									<ul id="autocompletar" class="dropdown-menu text-small"></ul>
 								</form>
 							</li>
 							<li>
@@ -155,14 +167,16 @@
 									data-bs-toggle="dropdown"
 									aria-expanded="false">
 									<img
-										src="<%= postsUsuario[0].autor.fotoPerfil %>"
-										alt="foto de perfil de <%= postsUsuario[0].autor.nombre %>"
+										src="<%= usuario.fotoPerfil %>"
+										alt="foto de perfil de <%= usuario.nombre %>"
 										width="40"
 										height="40"
 										class="rounded-circle foto-perfil-nav" />
 								</a>
 								<ul class="dropdown-menu text-small">
-									<li><a class="dropdown-item" href="/<%= postsUsuario[0].autor.nombre %>">Perfil</a></li>
+									<li>
+										<a class="dropdown-item" href="/usuarios/<%= usuario.nombre %>">Perfil</a>
+									</li>
 									<li><a class="dropdown-item" href="#">Settings</a></li>
 									<li><a class="dropdown-item" href="#">Profile</a></li>
 									<li><hr class="dropdown-divider" /></li>
@@ -186,23 +200,25 @@
 			<div class="container my-5">
 				<div class="p-5 text-center bg-body-tertiary rounded-3">
 					<img
-						src="<%= postsUsuario[0].autor.fotoPerfil %>"
-						alt="foto de perfil de <%= postsUsuario[0].autor.nombre %>"
+						src="<%= usuario.fotoPerfil %>"
+						alt="foto de perfil de <%= usuario.nombre %>"
 						width="80"
 						height="80"
 						class="rounded-circle foto-perfil-nav" />
 					<div>
-						<div><%= postsUsuario[0].autor.nombre %></div>
-						<% if(usuarioLogeado && usuarioLogeado != postsUsuario[0].autor._id) { %>
+						<div><%= usuario.nombre %></div>
+						<% if(usuarioLogeado && usuarioLogeado != usuario._id) { %>
 						<button type="button">
-							<% if(postsUsuario[0].autor.seguidores.includes(usuarioLogeado)) { %>Dejar de seguir<% } else {
-							%>Seguir<% } %>
+							<% if(usuario.seguidores.includes(usuarioLogeado)) { %>Dejar de seguir<% } else { %>Seguir<% } %>
 						</button>
 						<% } %>
-						<div><%= postsUsuario[0].autor.seguidores.length %> seguidores</div>
-						<div><%= postsUsuario[0].autor.seguidos.length %> seguidos</div>
+						<div><%= usuario.seguidores.length %> seguidores</div>
+						<div><%= usuario.seguidos.length %> seguidos</div>
 						<div><%= postsUsuario.length %> post<% if(postsUsuario.length > 1) { %>s<% } %></div>
-						<div>En <%= tlsUsuario.length %> timelines</div>
+						<div>
+							En <% if(tlsUsuario.length == 0) { %>0<% } else { %><%= tlsUsuario[0].count %><% } %> timeline<%
+							if(tlsUsuario[0].count !== 1) { %>s<% } %>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -215,13 +231,13 @@
 							<div class="card shadow-sm">
 								<div class="card-title">
 									<img
-										src="<%= post.autor.fotoPerfil %>"
-										alt="foto de perfil de <%= post.autor.nombre %>"
+										src="<%= usuario.fotoPerfil %>"
+										alt="foto de perfil de <%= usuario.nombre %>"
 										width="40"
 										height="40"
 										class="rounded-circle foto-perfil-nav" />
 									<div>
-										<p><%= post.autor.nombre %></p>
+										<p><%= usuario.nombre %></p>
 										<p>
 											<% const fecha = new Date(); const fechaPost = new Date(post.fecha); if (fecha -
 											fechaPost < 1000 * 60) { %> Hace <%= Math.round((fecha - fechaPost) / 1000) %>

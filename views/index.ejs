@@ -137,8 +137,20 @@
 
 						<ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
 							<li>
-								<form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
-									<input type="search" class="form-control" placeholder="Search..." aria-label="Search" />
+								<form
+									action="/usuarios"
+									method="GET"
+									class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3"
+									role="search"
+									autocomplete="off">
+									<input
+										id="buscar"
+										type="search"
+										class="form-control"
+										placeholder="Buscar..."
+										aria-label="Buscar"
+										name="q" />
+									<ul id="autocompletar" class="dropdown-menu text-small"></ul>
 								</form>
 							</li>
 							<li>
@@ -162,7 +174,7 @@
 										class="rounded-circle foto-perfil-nav" />
 								</a>
 								<ul class="dropdown-menu text-small">
-									<li><a class="dropdown-item" href="/<%= usuario.nombre %>">Perfil</a></li>
+									<li><a class="dropdown-item" href="/usuarios/<%= usuario.nombre %>">Perfil</a></li>
 									<li><a class="dropdown-item" href="#">Settings</a></li>
 									<li><a class="dropdown-item" href="#">Profile</a></li>
 									<li><hr class="dropdown-divider" /></li>
@@ -293,9 +305,9 @@
 													%> segundo<% if(Math.round((fecha - fechaPost) / 1000) !== 1) { %>s<% } %> <%
 													} else if(fecha - fechaPost < 1000 * 60 * 60) { %> Hace <%= Math.floor((fecha
 													- fechaPost) / (1000 * 60))%> minuto<% if(Math.floor((fecha - fechaPost) /
-													(1000 * 60)) !== 2) { %>s<% } %> <% } else if(fecha - fechaPost < 1000 * 60 *
+													(1000 * 60)) !== 1) { %>s<% } %> <% } else if(fecha - fechaPost < 1000 * 60 *
 													60 * 24) { %> Hace <%= Math.floor((fecha - fechaPost) / (1000 * 60 * 60))%>
-													hora<% if(Math.floor((fecha - fechaPost) / (1000 * 60 * 60)) !== 2) { %>s<% }
+													hora<% if(Math.floor((fecha - fechaPost) / (1000 * 60 * 60)) !== 1) { %>s<% }
 													%> <% } else if(fecha - fechaPost < 1000 * 60 * 60 * 24 * 2) { %> Hace 1 día
 													<% } else { %> <%= fechaPost.getDate() %>/<%= fechaPost.getMonth() + 1 %>/<%=
 													fechaPost.getFullYear() %> <% } %>
