@@ -17,15 +17,19 @@ const devolverIndex = async (req, res, next) => {
 
 			const filtro = {};
 			if (usuario.tls[0].config.filtro.autor.length > 0) {
-				filtro["autor.id"] = [];
+				filtro["autor.id"] = {
+					$in: []
+				};
 				for (let autor of usuario.tls[0].config.filtro.autor) {
-					filtro["autor.id"].push(autor);
+					filtro["autor.id"].$in.push(autor);
 				}
 			}
 			if (usuario.tls[0].config.filtro.tags.length > 0) {
-				filtro.tags = [];
+				filtro.tags = {
+					$in: []
+				};
 				for (let tag of usuario.tls[0].config.filtro.tags) {
-					filtro.tags.push(tag);
+					filtro.tags.$in.push(tag);
 				}
 			}
 			if (usuario.tls[0].config.filtro.fecha) {
@@ -38,6 +42,8 @@ const devolverIndex = async (req, res, next) => {
 					orden += campo + " ";
 				}
 			}
+
+			console.log(filtro);
 
 			const posts = await Post.find(filtro).sort(orden);
 

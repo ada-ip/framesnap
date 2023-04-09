@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const Post = require("../models/Post");
+const Follower = require("../models/Follower");
 const { anyadirSignedUrlsPosts, anyadirSignedUrlsUsuario, subirImagenPredeterminada } = require("../utils/aws");
 
 const registrarUsuario = async (req, res, next) => {
@@ -62,20 +63,7 @@ const devolverPerfilUsuario = async (req, res, next) => {
 
 		const postsConSignedUrls = anyadirSignedUrlsPosts(postsUsuario, req);
 
-		const timelines = await User.aggregate()
-			.unwind("$tls")
-			.unwind("$tls.config.filtro.autor")
-			.lookup({
-				from: "users",
-				localField: "tls.config.filtro.autor",
-				foreignField: "_id",
-				as: "tls.config.filtro.datosAutor"
-			})
-			.match({ "tls.config.filtro.datosAutor.nombre": usuario })
-			.group({
-				_id: "$tls.config.filtro.datosAutor.nombre",
-				count: { $sum: 1 }
-			});
+		const timelines = await User.countDocuments({ "tls.config.filtro.autor.nombre": usuario });
 
 		res.render("perfil", {
 			usuario: usuarioConSignedUrl,
@@ -117,32 +105,23 @@ const obtenerNombresUsuarios = async (req, res, next) => {
 		const regex = new RegExp(`^${usuario}`, "i");
 
 		if (req.session.idUsuario) {
-			const usuariosSeguidos = await User.aggregate()
-				.match({ _id: req.session.idUsuario })
-				.unwind("$seguidos")
-				.lookup({
-					from: "users",
-					localField: "seguidos",
-					foreignField: "_id",
-					as: "usuariosSeguidos"
-				})
-				.match({ "usuariosSeguidos.nombre": regex })
-				.project({
-					_id: 0,
-					"usuariosSeguidos.nombre": 1
-				})
-				.limit(10);
+			const usuariosSeguidos = await User.find({ "seguidos.nombre": regex }).select("-_id nombre").limit(10);
 			usuarios.push(...usuariosSeguidos);
 		}
 
 		const otrosUsuarios = await User.aggregate()
 			.match({ nombre: regex })
-			.unwind({ path: "$seguidores", preserveNullAndEmptyArrays: true })
-			.group({ _id: "$nombre", count: { $sum: 1 } })
-			.sort({ count: -1 })
-			.project({ _id: 0, nombre: "$_id" })
-			.limit(10);
+			.group({ _id: "$nombre", numSeguidores: { $sum: { $size: "$seguidores" } } })
+			.project({ _id: 0, nombre: "$_id", numSeguidores: 1 });
+
+		const usuariosOutliers = await Follower.aggregate()
+			.match({ "usuario.nombre": regex })
+			.group({ _id: "$usuario.nombre", numSeguidores: { $sum: { $size: "$seguidores" } } })
+			.project({ _id: 0, nombre: "$_id", numSeguidores: 1 });
+
 		usuarios.push(...otrosUsuarios);
+
+		console.log(usuarios);
 
 		res.status(200).json(usuarios);
 	} catch (error) {
