@@ -1,27 +1,29 @@
 const User = require("../models/User");
 const Post = require("../models/Post");
-const anyadirSignedUrls = require("../utils/aws");
+const { anyadirSignedUrlsPosts, anyadirSignedUrlsUsuario, subirImagenPredeterminada } = require("../utils/aws");
 
 const registrarUsuario = async (req, res, next) => {
-	const usuario = {
-		nombre: req.body.nombre,
-		correo: req.body.correo,
-		contrasenya: req.body.passw1,
-		tls: [
-			{
-				nombre: "Timeline",
-				config: {
-					filtro: {
-						autor: [],
-						tags: [],
-						fecha: {}
-					},
-					orden: ["-fecha"]
-				}
-			}
-		]
-	};
 	try {
+		const usuario = {
+			nombre: req.body.nombre,
+			correo: req.body.correo,
+			contrasenya: req.body.passw1,
+			fotoPerfil: await subirImagenPredeterminada(req.body.nombre),
+			tls: [
+				{
+					nombre: "Timeline",
+					config: {
+						filtro: {
+							autor: [],
+							tags: [],
+							fecha: {}
+						},
+						orden: ["-fecha"]
+					}
+				}
+			]
+		};
+
 		const nuevoUsuario = new User(usuario);
 		await nuevoUsuario.save();
 		res.redirect("/iniciar-sesion");
@@ -52,15 +54,13 @@ const devolverPerfilUsuario = async (req, res, next) => {
 	try {
 		const datosUsuario = await User.findOne({ nombre: usuario }).select("_id nombre fotoPerfil seguidos seguidores");
 
-		const postsUsuario = await Post.find({})
-			.populate({
-				path: "autor",
-				match: { nombre: usuario }
-			})
-			.select("_id imagen texto favs comentarios fecha")
+		const usuarioConSignedUrl = anyadirSignedUrlsUsuario(datosUsuario, req);
+
+		const postsUsuario = await Post.find({ "autor.nombre": usuario })
+			.select("_id imagen texto favs autor comentarios fecha")
 			.sort("-fecha");
 
-		const signedUrlsPosts = anyadirSignedUrls(postsUsuario, req);
+		const postsConSignedUrls = anyadirSignedUrlsPosts(postsUsuario, req);
 
 		const timelines = await User.aggregate()
 			.unwind("$tls")
@@ -78,8 +78,8 @@ const devolverPerfilUsuario = async (req, res, next) => {
 			});
 
 		res.render("perfil", {
-			usuario: datosUsuario,
-			postsUsuario: signedUrlsPosts,
+			usuario: usuarioConSignedUrl,
+			postsUsuario: postsConSignedUrls,
 			tlsUsuario: timelines,
 			usuarioLogeado: req.session.idUsuario
 		});

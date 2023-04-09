@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const DenormUserSchema = require("./aux-models/DenormUser");
 
 const NotificationSchema = new mongoose.Schema({
 	tipo: {
@@ -10,8 +11,7 @@ const NotificationSchema = new mongoose.Schema({
 		default: "seguidor"
 	},
 	usuario: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "User",
+		type: DenormUserSchema,
 		required: true
 	},
 	post: {
@@ -19,8 +19,7 @@ const NotificationSchema = new mongoose.Schema({
 		ref: "Post"
 	},
 	autor: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "User",
+		type: DenormUserSchema,
 		required: true
 	},
 	visto: {

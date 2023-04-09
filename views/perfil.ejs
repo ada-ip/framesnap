@@ -167,7 +167,7 @@
 									data-bs-toggle="dropdown"
 									aria-expanded="false">
 									<img
-										src="<%= usuario.fotoPerfil %>"
+										src="<%= usuario.signedUrlUsuario %>"
 										alt="foto de perfil de <%= usuario.nombre %>"
 										width="40"
 										height="40"
@@ -200,7 +200,7 @@
 			<div class="container my-5">
 				<div class="p-5 text-center bg-body-tertiary rounded-3">
 					<img
-						src="<%= usuario.fotoPerfil %>"
+						src="<%= usuario.signedUrlUsuario %>"
 						alt="foto de perfil de <%= usuario.nombre %>"
 						width="80"
 						height="80"
@@ -231,13 +231,13 @@
 							<div class="card shadow-sm">
 								<div class="card-title">
 									<img
-										src="<%= usuario.fotoPerfil %>"
-										alt="foto de perfil de <%= usuario.nombre %>"
+										src="<%= post.signedUrlAutor %>"
+										alt="foto de perfil de <%= post.autor.nombre %>"
 										width="40"
 										height="40"
 										class="rounded-circle foto-perfil-nav" />
 									<div>
-										<p><%= usuario.nombre %></p>
+										<p><%= post.autor.nombre %></p>
 										<p>
 											<% const fecha = new Date(); const fechaPost = new Date(post.fecha); if (fecha -
 											fechaPost < 1000 * 60) { %> Hace <%= Math.round((fecha - fechaPost) / 1000) %>
@@ -253,7 +253,7 @@
 									</div>
 								</div>
 								<img
-									src="<%= post.signedUrl %>"
+									src="<%= post.signedUrlPost %>"
 									alt=""
 									width="100%"
 									class="bd-placeholder-img card-img-top post-img"
@@ -263,9 +263,9 @@
 										<p><%= post.favs.length %> favoritos</p>
 										<img
 											src="<% if(post.favs.findIndex(id => id === usuario._id) === -1) { 
-													%>/images/app/no-fav.png<% 
+													%>/images/no-fav.png<% 
 												} else { 
-													%>/images/app/fav.png<% 
+													%>/images/fav.png<% 
 												} %>"
 											alt="haz click para des/favoritear el post"
 											width="30"

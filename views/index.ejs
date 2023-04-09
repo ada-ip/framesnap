@@ -167,7 +167,7 @@
 									data-bs-toggle="dropdown"
 									aria-expanded="false">
 									<img
-										src="<%= usuario.fotoPerfil %>"
+										src="<%= usuario.signedUrlUsuario %>"
 										alt="foto de perfil de <%= usuario.nombre %>"
 										width="40"
 										height="40"
@@ -292,7 +292,7 @@
 									<div class="card shadow-sm">
 										<div class="card-title">
 											<img
-												src="<%= post.autor.fotoPerfil %>"
+												src="<%= post.signedUrlAutor %>"
 												alt="foto de perfil de <%= post.autor.nombre %>"
 												width="40"
 												height="40"
@@ -315,7 +315,7 @@
 											</div>
 										</div>
 										<img
-											src="<%= post.signedUrl %>"
+											src="<%= post.signedUrlPost %>"
 											alt=""
 											width="100%"
 											class="bd-placeholder-img card-img-top post-img"
@@ -325,9 +325,9 @@
 												<p><%= post.favs.length %> favoritos</p>
 												<img
 													src="<% if(post.favs.findIndex(id => id === usuario._id) === -1) { 
-															%>/images/app/no-fav.png<% 
+															%>/images/no-fav.png<% 
 														} else { 
-															%>/images/app/fav.png<% 
+															%>/images/fav.png<% 
 														} %>"
 													alt="haz click para des/favoritear el post"
 													width="30"

@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const TlSchema = require("./aux-models/Tl");
+const DenormUserSchema = require("./aux-models/DenormUser");
 
 const UserSchema = new mongoose.Schema({
 	nombre: {
@@ -27,20 +28,18 @@ const UserSchema = new mongoose.Schema({
 	},
 	fotoPerfil: {
 		type: String,
-		default: "/images/perfil/anonymous.jpg"
+		required: true
 	},
-	seguidos: [
-		{
-			type: mongoose.Schema.Types.ObjectId,
-			ref: "User"
-		}
-	],
-	seguidores: [
-		{
-			type: mongoose.Schema.Types.ObjectId,
-			ref: "User"
-		}
-	],
+	seguidos: [DenormUserSchema],
+	outlierSeguidos: {
+		type: Boolean,
+		default: false
+	},
+	seguidores: [DenormUserSchema],
+	outlierSeguidores: {
+		type: Boolean,
+		default: false
+	},
 	tls: {
 		type: [TlSchema],
 		required: true,

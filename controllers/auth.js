@@ -25,15 +25,15 @@ const devolverRegistrarse = (req, res, next) => {
 };
 
 const conectarse = async (req, res, next) => {
-	const { correo, passw } = req.body;
+	const { nombre, passw } = req.body;
 	try {
-		const usuario = await User.findOne({ correo });
+		const usuario = await User.findOne({ nombre: nombre });
 
 		if (!usuario) {
 			return res.render("iniciarSesion", {
 				error: "usuario",
-				mensaje: "El correo no está registrado",
-				datos: [correo, passw]
+				mensaje: "El usuario no está registrado",
+				datos: [nombre, passw]
 			});
 		}
 
@@ -43,12 +43,13 @@ const conectarse = async (req, res, next) => {
 			return res.render("IniciarSesion", {
 				error: "contrasenya",
 				mensaje: "La contraseña es incorrecta",
-				datos: [correo, passw]
+				datos: [nombre, passw]
 			});
 		}
 
 		req.session.idUsuario = usuario._id;
 		req.session.usuario = usuario.nombre;
+		req.session.fotoPerfil = usuario.fotoPerfil;
 
 		res.redirect("/");
 	} catch (error) {

@@ -7,7 +7,11 @@ const crearPost = async (req, res, next) => {
 		const post = {
 			imagen: req.file.location,
 			texto: req.body.texto,
-			autor: req.session.idUsuario,
+			autor: {
+				id: req.session.idUsuario,
+				nombre: req.session.usuario,
+				fotoPerfil: req.session.fotoPerfil
+			},
 			favs: [],
 			comentarios: [],
 			tags: req.body.texto.split(" ").filter((palabra) => palabra.startsWith("#"))

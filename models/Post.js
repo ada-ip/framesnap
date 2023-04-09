@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const DenormUserSchema = require("./aux-models/DenormUser");
 
 const PostSchema = new mongoose.Schema({
 	imagen: {
@@ -12,22 +13,18 @@ const PostSchema = new mongoose.Schema({
 		maxLength: [1000, "el comentario no puede tener más de 1000 caracteres"]
 	},
 	autor: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "User",
+		type: DenormUserSchema,
 		required: true
 	},
-	favs: [
-		{
-			type: mongoose.Schema.Types.ObjectId,
-			ref: "User",
-			required: true
-		}
-	],
+	favs: [DenormUserSchema],
+	outlierFavs: {
+		type: Boolean,
+		default: false
+	},
 	comentarios: [
 		{
 			usuario: {
-				type: mongoose.Schema.Types.ObjectId,
-				ref: "User",
+				type: DenormUserSchema,
 				required: true
 			},
 			texto: {
@@ -37,6 +34,10 @@ const PostSchema = new mongoose.Schema({
 			}
 		}
 	],
+	outlierComentarios: {
+		type: Boolean,
+		default: false
+	},
 	tags: [String],
 	fecha: {
 		type: Date,
