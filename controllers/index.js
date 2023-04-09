@@ -43,8 +43,6 @@ const devolverIndex = async (req, res, next) => {
 				}
 			}
 
-			console.log(filtro);
-
 			const posts = await Post.find(filtro).sort(orden);
 
 			const postsConSignedUrls = anyadirSignedUrlsPosts(posts, req);

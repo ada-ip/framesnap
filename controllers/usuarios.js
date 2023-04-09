@@ -2,6 +2,7 @@ const User = require("../models/User");
 const Post = require("../models/Post");
 const Follower = require("../models/Follower");
 const { anyadirSignedUrlsPosts, anyadirSignedUrlsUsuario, subirImagenPredeterminada } = require("../utils/aws");
+const { sumarSeguidoresOutliers } = require("../utils/outliers");
 
 const registrarUsuario = async (req, res, next) => {
 	try {
@@ -97,7 +98,12 @@ const obtenerNombresUsuarios = async (req, res, next) => {
 	try {
 		const usuarios = [];
 
-		const usuarioEncontrado = await User.findOne({ nombre: usuario }).select("-_id nombre");
+		const filtroUsuarios = [{ nombre: usuario }];
+		if (req.session.usuario) {
+			filtroUsuarios.push({ nombre: { $ne: req.session.usuario } });
+		}
+
+		const usuarioEncontrado = await User.findOne({ $and: filtroUsuarios }).select("-_id nombre");
 		if (usuarioEncontrado !== null) {
 			usuarios.push(usuarioEncontrado);
 		}
@@ -109,19 +115,26 @@ const obtenerNombresUsuarios = async (req, res, next) => {
 			usuarios.push(...usuariosSeguidos);
 		}
 
+		filtroUsuarios[0].nombre = regex;
 		const otrosUsuarios = await User.aggregate()
-			.match({ nombre: regex })
+			.match({ $and: filtroUsuarios })
 			.group({ _id: "$nombre", numSeguidores: { $sum: { $size: "$seguidores" } } })
 			.project({ _id: 0, nombre: "$_id", numSeguidores: 1 });
 
+		filtroUsuarios.forEach((filtro) => {
+			filtro["usuario.nombre"] = filtro.nombre;
+			delete filtro.nombre;
+		});
 		const usuariosOutliers = await Follower.aggregate()
-			.match({ "usuario.nombre": regex })
+			.match({ $and: filtroUsuarios })
 			.group({ _id: "$usuario.nombre", numSeguidores: { $sum: { $size: "$seguidores" } } })
 			.project({ _id: 0, nombre: "$_id", numSeguidores: 1 });
 
-		usuarios.push(...otrosUsuarios);
+		const otrosUsuariosTotales = sumarSeguidoresOutliers([...otrosUsuarios, ...usuariosOutliers])
+			.sort((us1, us2) => us2.numSeguidores - us1.numSeguidores)
+			.slice(0, 10);
 
-		console.log(usuarios);
+		usuarios.push(...otrosUsuariosTotales);
 
 		res.status(200).json(usuarios);
 	} catch (error) {
