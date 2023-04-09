@@ -226,7 +226,7 @@
 			<div class="album py-5 bg-body-tertiary cont-timeline">
 				<div class="container">
 					<div class="row row-cols-1 g-3">
-						<% for(let post of postsUsuario) { %>
+						<% if(postsUsuario.length > 0) { %> <% for(let post of postsUsuario) { %>
 						<div class="col">
 							<div class="card shadow-sm">
 								<div class="card-title">
@@ -263,10 +263,10 @@
 										<p><%= post.favs.length %> favoritos</p>
 										<img
 											src="<% if(post.favs.findIndex(id => id === usuario._id) === -1) { 
-													%>/images/no-fav.png<% 
-												} else { 
-													%>/images/fav.png<% 
-												} %>"
+														%>/images/no-fav.png<% 
+													} else { 
+														%>/images/fav.png<% 
+													} %>"
 											alt="haz click para des/favoritear el post"
 											width="30"
 											height="30" />
@@ -276,6 +276,11 @@
 									<div>Añadir comentarios</div>
 								</div>
 							</div>
+						</div>
+						<% } %> <% } else { %>
+						<div>
+							Parece que <% if(usuarioLogeado != usuario._id) { %>usuario.nombre<% } %> todavía no ha<%
+							if(usuarioLogeado == usuario._id) { %>s<% } %> subido nada
 						</div>
 						<% } %>
 					</div>

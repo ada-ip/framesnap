@@ -287,7 +287,7 @@
 
 						<div class="container">
 							<div class="row row-cols-1 g-3">
-								<% for(let post of posts) { %>
+								<% if(posts.length > 0) { %> <% for(let post of posts) { %>
 								<div class="col">
 									<div class="card shadow-sm">
 										<div class="card-title">
@@ -325,10 +325,10 @@
 												<p><%= post.favs.length %> favoritos</p>
 												<img
 													src="<% if(post.favs.findIndex(id => id === usuario._id) === -1) { 
-															%>/images/no-fav.png<% 
-														} else { 
-															%>/images/fav.png<% 
-														} %>"
+																%>/images/no-fav.png<% 
+															} else { 
+																%>/images/fav.png<% 
+															} %>"
 													alt="haz click para des/favoritear el post"
 													width="30"
 													height="30" />
@@ -339,6 +339,8 @@
 										</div>
 									</div>
 								</div>
+								<% } %> <% } else { %>
+								<div class="col">Parece que todavía no hay nada aquí</div>
 								<% } %>
 							</div>
 						</div>
