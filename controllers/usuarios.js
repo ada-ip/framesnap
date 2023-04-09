@@ -1,8 +1,10 @@
 const User = require("../models/User");
 const Post = require("../models/Post");
 const Follower = require("../models/Follower");
+const Follow = require("../models/Follow");
 const { anyadirSignedUrlsPosts, anyadirSignedUrlsUsuario, subirImagenPredeterminada } = require("../utils/aws");
-const { sumarSeguidoresOutliers } = require("../utils/outliers");
+const { sumarSeguidoresOutliers, sumarSeguidosOutliers } = require("../utils/outliers");
+const LIMITE_ELEMENTOS = 1000;
 
 const registrarUsuario = async (req, res, next) => {
 	try {
@@ -54,9 +56,37 @@ const devolverPerfilUsuario = async (req, res, next) => {
 	const { usuario } = req.params;
 
 	try {
-		const datosUsuario = await User.findOne({ nombre: usuario }).select("_id nombre fotoPerfil seguidos seguidores");
+		const datosUsuario = await User.aggregate()
+			.match({ nombre: usuario })
+			.project({
+				_id: 1,
+				nombre: 1,
+				fotoPerfil: 1,
+				tls: 1,
+				numSeguidos: { $size: "$seguidos" },
+				numSeguidores: { $size: "$seguidores" }
+			});
 
-		const usuarioConSignedUrl = anyadirSignedUrlsUsuario(datosUsuario, req);
+		let datosUsuarioTotales = datosUsuario;
+
+		if (datosUsuario[0].numSeguidos === LIMITE_ELEMENTOS || datosUsuario[0].numSeguidores === LIMITE_ELEMENTOS) {
+			const seguidoresOutliers = await Follower.aggregate()
+				.match({ "usuario.nombre": usuario })
+				.group({ _id: "$usuario.nombre", numSeguidores: { $sum: { $size: "$seguidores" } } })
+				.project({ _id: 0, nombre: "$_id", numSeguidores: 1 });
+
+			const seguidosOutliers = await Follow.aggregate()
+				.match({ "usuario.nombre": usuario })
+				.group({ _id: "$usuario.nombre", numSeguidos: { $sum: { $size: "$seguidos" } } })
+				.project({ _id: 0, nombre: "$_id", numSeguidos: 1 });
+
+			datosUsuarioTotales = sumarSeguidoresOutliers([
+				...sumarSeguidosOutliers([...datosUsuario, ...seguidosOutliers]),
+				...seguidoresOutliers
+			]);
+		}
+
+		const usuarioConSignedUrl = anyadirSignedUrlsUsuario(datosUsuarioTotales[0], req);
 
 		const postsUsuario = await Post.find({ "autor.nombre": usuario })
 			.select("_id imagen texto favs autor comentarios fecha")
@@ -64,13 +94,21 @@ const devolverPerfilUsuario = async (req, res, next) => {
 
 		const postsConSignedUrls = anyadirSignedUrlsPosts(postsUsuario, req);
 
-		const timelines = await User.countDocuments({ "tls.config.filtro.autor.nombre": usuario });
+		const timelines = await User.countDocuments({ "tls.config.filtro.autor": usuarioConSignedUrl._id });
+
+		const usuarioLogeado = anyadirSignedUrlsUsuario(
+			{ _id: req.session.idUsuario, nombre: req.session.usuario, fotoPerfil: req.session.fotoPerfil },
+			req
+		);
+
+		const esSeguidor = await User.findOne({ nombre: usuario, "seguidores.id": req.session.idUsuario });
+		const esSeguidorOutlier = await Follower.findOne({ "usuario.nombre": usuario, "seguidores.id": req.session.idUsuario });
 
 		res.render("perfil", {
 			usuario: usuarioConSignedUrl,
 			postsUsuario: postsConSignedUrls,
 			tlsUsuario: timelines,
-			usuarioLogeado: req.session.idUsuario
+			usuarioLogeado: { ...usuarioLogeado, esSeguidor: esSeguidor !== null || esSeguidorOutlier !== null ? true : false }
 		});
 	} catch (error) {
 		next(error);

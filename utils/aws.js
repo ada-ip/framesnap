@@ -67,7 +67,7 @@ const anyadirSignedUrlsUsuario = (usuario, req) => {
 		req.session.signedUrls = (req.session.signedUrls || []).concat([{ imagen: claveImagen, signedUrl: signedUrlUsuario }]);
 	}
 
-	return { ...usuario.toObject(), signedUrlUsuario };
+	return { ...usuario, signedUrlUsuario };
 };
 
 const subirImagenPredeterminada = async (nombreUsuario) => {

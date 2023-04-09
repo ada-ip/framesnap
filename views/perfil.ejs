@@ -149,7 +149,7 @@
 										class="form-control"
 										placeholder="Buscar..."
 										aria-label="Buscar"
-										name="q" />
+										name="usuario" />
 									<ul id="autocompletar" class="dropdown-menu text-small"></ul>
 								</form>
 							</li>
@@ -167,22 +167,22 @@
 									data-bs-toggle="dropdown"
 									aria-expanded="false">
 									<img
-										src="<%= usuario.signedUrlUsuario %>"
-										alt="foto de perfil de <%= usuario.nombre %>"
+										src="<%= usuarioLogeado.signedUrlUsuario %>"
+										alt="foto de perfil de <%= usuarioLogeado.nombre %>"
 										width="40"
 										height="40"
 										class="rounded-circle foto-perfil-nav" />
 								</a>
 								<ul class="dropdown-menu text-small">
 									<li>
-										<a class="dropdown-item" href="/usuarios/<%= usuario.nombre %>">Perfil</a>
+										<a class="dropdown-item" href="/usuarios/<%= usuarioLogeado.nombre %>">Perfil</a>
 									</li>
 									<li><a class="dropdown-item" href="#">Settings</a></li>
 									<li><a class="dropdown-item" href="#">Profile</a></li>
 									<li><hr class="dropdown-divider" /></li>
 									<li>
 										<form
-											action="/api/v1/usuarios/desconectar/<%= usuarioLogeado %>"
+											action="/api/v1/usuarios/desconectar/<%= usuarioLogeado._id %>"
 											method="post"
 											class="dropdown-item">
 											<input type="submit" name="desconectarse" value="Desconectarse" />
@@ -207,13 +207,13 @@
 						class="rounded-circle foto-perfil-nav" />
 					<div>
 						<div><%= usuario.nombre %></div>
-						<% if(usuarioLogeado && usuarioLogeado != usuario._id) { %>
+						<% if(usuarioLogeado != usuario._id) { %>
 						<button type="button">
-							<% if(usuario.seguidores.includes(usuarioLogeado)) { %>Dejar de seguir<% } else { %>Seguir<% } %>
+							<% if(usuarioLogeado.esSeguidor) { %>Dejar de seguir<% } else { %>Seguir<% } %>
 						</button>
 						<% } %>
-						<div><%= usuario.seguidores.length %> seguidores</div>
-						<div><%= usuario.seguidos.length %> seguidos</div>
+						<div><%= usuario.numSeguidores %> seguidores</div>
+						<div><%= usuario.numSeguidos %> seguidos</div>
 						<div><%= postsUsuario.length %> post<% if(postsUsuario.length > 1) { %>s<% } %></div>
 						<div>En <%= tlsUsuario %> timeline<%if(tlsUsuario !== 1) { %>s<% } %></div>
 					</div>

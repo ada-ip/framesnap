@@ -13,7 +13,7 @@ const devolverIndex = async (req, res, next) => {
 				return res.status(404).end();
 			}
 
-			const usuarioConSignedUrls = anyadirSignedUrlsUsuario(usuario, req);
+			const usuarioConSignedUrls = anyadirSignedUrlsUsuario(usuario.toObject(), req);
 
 			const filtro = {};
 			if (usuario.tls[0].config.filtro.autor.length > 0) {
