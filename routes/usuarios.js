@@ -6,10 +6,11 @@ const {
 	comprobarUsuarioExiste,
 	devolverPerfilUsuario,
 	desconectarUsuario,
-	obtenerNombresUsuarios
+	obtenerNombresUsuarios,
+	obtenerUsuarios
 } = require("../controllers/usuarios");
 
-router.route("/usuarios").get(obtenerNombresUsuarios);
+router.route("/usuarios").get(obtenerUsuarios);
 router.route("/usuarios/:usuario").get(devolverPerfilUsuario);
 router.route("/api/v1/usuarios").post(registrarUsuario);
 router.route("/api/v1/usuarios/:usuario").get(obtenerNombresUsuarios);

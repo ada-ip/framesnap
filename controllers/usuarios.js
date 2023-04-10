@@ -3,7 +3,8 @@ const Post = require("../models/Post");
 const Follower = require("../models/Follower");
 const Follow = require("../models/Follow");
 const { anyadirSignedUrlsPosts, anyadirSignedUrlsUsuario, subirImagenPredeterminada } = require("../utils/aws");
-const { sumarSeguidoresOutliers, sumarSeguidosOutliers } = require("../utils/outliers");
+const { sumarSeguidoresOutliers, sumarSeguidosOutliers, sumarSeguidoresYSeguidos } = require("../utils/outliers");
+const { sumarNumPosts, eliminarDuplicados } = require("../utils/metodosConsultas");
 const LIMITE_ELEMENTOS = 1000;
 
 const registrarUsuario = async (req, res, next) => {
@@ -64,40 +65,28 @@ const devolverPerfilUsuario = async (req, res, next) => {
 				fotoPerfil: 1,
 				tls: 1,
 				numSeguidos: { $size: "$seguidos" },
-				numSeguidores: { $size: "$seguidores" }
+				numSeguidores: { $size: "$seguidores" },
+				outlierSeguidos: 1,
+				outlierSeguidores: 1
 			});
 
-		let datosUsuarioTotales = datosUsuario;
+		const datosUsuarioTotales = await sumarSeguidoresYSeguidos(datosUsuario);
 
-		if (datosUsuario[0].numSeguidos === LIMITE_ELEMENTOS || datosUsuario[0].numSeguidores === LIMITE_ELEMENTOS) {
-			const seguidoresOutliers = await Follower.aggregate()
-				.match({ "usuario.nombre": usuario })
-				.group({ _id: "$usuario.nombre", numSeguidores: { $sum: { $size: "$seguidores" } } })
-				.project({ _id: 0, nombre: "$_id", numSeguidores: 1 });
-
-			const seguidosOutliers = await Follow.aggregate()
-				.match({ "usuario.nombre": usuario })
-				.group({ _id: "$usuario.nombre", numSeguidos: { $sum: { $size: "$seguidos" } } })
-				.project({ _id: 0, nombre: "$_id", numSeguidos: 1 });
-
-			datosUsuarioTotales = sumarSeguidoresOutliers([
-				...sumarSeguidosOutliers([...datosUsuario, ...seguidosOutliers]),
-				...seguidoresOutliers
-			]);
+		let usuarioConSignedUrl = [];
+		if (datosUsuarioTotales.length > 0) {
+			console.log(datosUsuarioTotales);
+			usuarioConSignedUrl = anyadirSignedUrlsUsuario(datosUsuarioTotales, req);
 		}
-
-		const usuarioConSignedUrl = anyadirSignedUrlsUsuario(datosUsuarioTotales[0], req);
-
 		const postsUsuario = await Post.find({ "autor.nombre": usuario })
 			.select("_id imagen texto favs autor comentarios fecha")
 			.sort("-fecha");
 
 		const postsConSignedUrls = anyadirSignedUrlsPosts(postsUsuario, req);
 
-		const timelines = await User.countDocuments({ "tls.config.filtro.autor": usuarioConSignedUrl._id });
+		const timelines = await User.countDocuments({ "tls.config.filtro.autor": usuarioConSignedUrl[0]._id });
 
 		const usuarioLogeado = anyadirSignedUrlsUsuario(
-			{ _id: req.session.idUsuario, nombre: req.session.usuario, fotoPerfil: req.session.fotoPerfil },
+			[{ _id: req.session.idUsuario, nombre: req.session.usuario, fotoPerfil: req.session.fotoPerfil }],
 			req
 		);
 
@@ -105,10 +94,10 @@ const devolverPerfilUsuario = async (req, res, next) => {
 		const esSeguidorOutlier = await Follower.findOne({ "usuario.nombre": usuario, "seguidores.id": req.session.idUsuario });
 
 		res.render("perfil", {
-			usuario: usuarioConSignedUrl,
+			usuario: usuarioConSignedUrl[0],
 			postsUsuario: postsConSignedUrls,
 			tlsUsuario: timelines,
-			usuarioLogeado: { ...usuarioLogeado, esSeguidor: esSeguidor !== null || esSeguidorOutlier !== null ? true : false }
+			usuarioLogeado: { ...usuarioLogeado[0], esSeguidor: esSeguidor !== null || esSeguidorOutlier !== null ? true : false }
 		});
 	} catch (error) {
 		next(error);
@@ -136,12 +125,10 @@ const obtenerNombresUsuarios = async (req, res, next) => {
 	try {
 		const usuarios = [];
 
-		const filtroUsuarios = [{ nombre: usuario }];
-		if (req.session.usuario) {
-			filtroUsuarios.push({ nombre: { $ne: req.session.usuario } });
-		}
+		const usuarioEncontrado = await User.findOne({
+			$and: [{ nombre: usuario }, { nombre: { $ne: req.session.usuario } }]
+		}).select("-_id nombre");
 
-		const usuarioEncontrado = await User.findOne({ $and: filtroUsuarios }).select("-_id nombre");
 		if (usuarioEncontrado !== null) {
 			usuarios.push(usuarioEncontrado);
 		}
@@ -153,28 +140,126 @@ const obtenerNombresUsuarios = async (req, res, next) => {
 			usuarios.push(...usuariosSeguidos);
 		}
 
-		filtroUsuarios[0].nombre = regex;
 		const otrosUsuarios = await User.aggregate()
-			.match({ $and: filtroUsuarios })
-			.group({ _id: "$nombre", numSeguidores: { $sum: { $size: "$seguidores" } } })
-			.project({ _id: 0, nombre: "$_id", numSeguidores: 1 });
+			.match({ $and: [{ nombre: regex }, { nombre: { $ne: req.session.usuario } }] })
+			.project({ _id: 0, nombre: 1, numSeguidores: { $size: "$seguidores" }, outlierSeguidores: 1 });
 
-		filtroUsuarios.forEach((filtro) => {
-			filtro["usuario.nombre"] = filtro.nombre;
-			delete filtro.nombre;
-		});
-		const usuariosOutliers = await Follower.aggregate()
-			.match({ $and: filtroUsuarios })
-			.group({ _id: "$usuario.nombre", numSeguidores: { $sum: { $size: "$seguidores" } } })
-			.project({ _id: 0, nombre: "$_id", numSeguidores: 1 });
+		if (otrosUsuarios.some((usuario) => usuario.outlierSeguidores)) {
+			const usuariosOutliers = await Follower.aggregate()
+				.match({ $and: [{ "usuario.nombre": regex }, { "usuario.nombre": { $ne: req.session.usuario } }] })
+				.project({ _id: 0, nombre: "$usuario.nombre", numSeguidores: { $size: "$seguidores" } });
 
-		const otrosUsuariosTotales = sumarSeguidoresOutliers([...otrosUsuarios, ...usuariosOutliers])
-			.sort((us1, us2) => us2.numSeguidores - us1.numSeguidores)
-			.slice(0, 10);
+			const otrosUsuariosTotales = sumarSeguidoresOutliers([...otrosUsuarios, ...usuariosOutliers])
+				.sort((us1, us2) => us2.numSeguidores - us1.numSeguidores)
+				.slice(0, 10);
+			usuarios.push(...otrosUsuariosTotales);
+		} else {
+			usuarios.push(...otrosUsuarios.sort((us1, us2) => us2.numSeguidores - us1.numSeguidores).slice(0, 10));
+		}
 
-		usuarios.push(...otrosUsuariosTotales);
+		res.status(200).json(eliminarDuplicados(usuarios));
+	} catch (error) {
+		next(error);
+	}
+};
 
-		res.status(200).json(usuarios);
+const obtenerUsuarios = async (req, res, next) => {
+	const { usuario } = req.query;
+	try {
+		const usuarios = [];
+
+		const usuarioEncontrado = await User.aggregate()
+			.match({ $and: [{ nombre: usuario }, { nombre: { $ne: req.session.usuario } }] })
+			.project({
+				_id: 1,
+				nombre: 1,
+				fotoPerfil: 1,
+				numSeguidos: { $size: "$seguidos" },
+				numSeguidores: { $size: "$seguidores" },
+				outlierSeguidos: 1,
+				outlierSeguidores: 1
+			});
+
+		const datosUsuarioTotales = await sumarSeguidoresYSeguidos(usuarioEncontrado);
+
+		if (datosUsuarioTotales.length > 0) {
+			const postsUsuarioEncontrado = await Post.countDocuments({
+				$and: [{ "autor.nombre": usuario }, { "autor.nombre": { $ne: req.session.usuario } }]
+			});
+			const usuarioConSignedUrl = anyadirSignedUrlsUsuario(
+				[{ ...datosUsuarioTotales[0], numPosts: postsUsuarioEncontrado }],
+				req
+			);
+			usuarios.push(usuarioConSignedUrl[0]);
+		}
+
+		const regex = new RegExp(`^${usuario}`, "i");
+
+		const postsUsuarios = await Post.aggregate()
+			.match({ $and: [{ "autor.nombre": regex }, { "autor.nombre": { $ne: req.session.usuario } }] })
+			.group({ _id: "$autor.nombre", numPosts: { $sum: 1 } })
+			.project({
+				_id: 0,
+				nombre: "$_id",
+				numPosts: 1
+			});
+
+		if (req.session.idUsuario) {
+			const usuariosSeguidos = await User.aggregate()
+				.match({ "seguidos.nombre": regex })
+				.lookup({
+					from: "users",
+					localField: "seguidos.id",
+					foreignField: "_id",
+					as: "datosSeguidos"
+				})
+				.project({
+					_id: "$datosSeguidos._id",
+					nombre: "$datosSeguidos.nombre",
+					fotoPerfil: "$datosSeguidos.fotoPerfil",
+					numSeguidos: { $size: "$datosSeguidos.seguidos" },
+					numSeguidores: { $size: "$datosSeguidos.seguidores" },
+					outlierSeguidos: "$datosSeguidos.outlierSeguidos",
+					outlierSeguidores: "$datosSeguidos.outlierSeguidores"
+				});
+
+			const usuariosSeguidosTotales = await sumarSeguidoresYSeguidos(usuariosSeguidos);
+
+			if (usuariosSeguidosTotales.length > 0) {
+				const usuariosConSignedUrl = anyadirSignedUrlsUsuario(sumarNumPosts(usuariosSeguidosTotales, postsUsuarios), req);
+				usuarios.push(...usuariosConSignedUrl);
+			} else {
+				usuarios.push(...usuariosSeguidosTotales);
+			}
+		}
+
+		const otrosUsuarios = await User.aggregate()
+			.match({ $and: [{ nombre: regex }, { nombre: { $ne: req.session.usuario } }] })
+			.project({
+				_id: 0,
+				nombre: 1,
+				fotoPerfil: 1,
+				numSeguidos: { $size: "$seguidos" },
+				numSeguidores: { $size: "$seguidores" },
+				outlierSeguidos: 1,
+				outlierSeguidores: 1
+			});
+
+		const otrosUsuariosTotales = await sumarSeguidoresYSeguidos(otrosUsuarios);
+
+		if (otrosUsuariosTotales.length > 0) {
+			const usuariosConSignedUrl = anyadirSignedUrlsUsuario(sumarNumPosts(otrosUsuariosTotales, postsUsuarios), req);
+			usuarios.push(...usuariosConSignedUrl);
+		} else {
+			usuarios.push(...otrosUsuariosTotales);
+		}
+
+		const usuarioLogeado = anyadirSignedUrlsUsuario(
+			[{ _id: req.session.idUsuario, nombre: req.session.usuario, fotoPerfil: req.session.fotoPerfil }],
+			req
+		);
+
+		res.render("busquedaUsuarios", { usuarios: eliminarDuplicados(usuarios), usuarioLogeado: usuarioLogeado[0] });
 	} catch (error) {
 		next(error);
 	}
@@ -185,5 +270,6 @@ module.exports = {
 	comprobarUsuarioExiste,
 	devolverPerfilUsuario,
 	desconectarUsuario,
-	obtenerNombresUsuarios
+	obtenerNombresUsuarios,
+	obtenerUsuarios
 };

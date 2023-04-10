@@ -167,20 +167,22 @@
 									data-bs-toggle="dropdown"
 									aria-expanded="false">
 									<img
-										src="<%= usuario.signedUrlUsuario %>"
-										alt="foto de perfil de <%= usuario.nombre %>"
+										src="<%= usuarioLogeado.signedUrlUsuario %>"
+										alt="foto de perfil de <%= usuarioLogeado.nombre %>"
 										width="40"
 										height="40"
 										class="rounded-circle foto-perfil-nav" />
 								</a>
 								<ul class="dropdown-menu text-small">
-									<li><a class="dropdown-item" href="/usuarios/<%= usuario.nombre %>">Perfil</a></li>
+									<li>
+										<a class="dropdown-item" href="/usuarios/<%= usuarioLogeado.nombre %>">Perfil</a>
+									</li>
 									<li><a class="dropdown-item" href="#">Settings</a></li>
 									<li><a class="dropdown-item" href="#">Profile</a></li>
 									<li><hr class="dropdown-divider" /></li>
 									<li>
 										<form
-											action="/api/v1/usuarios/desconectar/<%= usuario._id %>"
+											action="/api/v1/usuarios/desconectar/<%= usuarioLogeado._id %>"
 											method="post"
 											class="dropdown-item">
 											<input type="submit" name="desconectarse" value="Desconectarse" />
@@ -195,155 +197,31 @@
 		</header>
 
 		<main class="main">
-			<div class="row g-5">
-				<div class="col-md-4">
-					<div class="p-5 mb-4 bg-body-tertiary rounded-3">
-						<div class="container-fluid py-5">
-							<h1 class="display-5 fw-bold">Custom jumbotron</h1>
-							<p class="col-md-8 fs-4">
-								Using a series of utilities, you can create this jumbotron, just like the one in previous versions
-								of Bootstrap. Check out the examples below for how you can remix and restyle it to your liking.
-							</p>
-							<button class="btn btn-primary btn-lg" type="button">Example button</button>
-						</div>
-					</div>
-					<div class="p-5 mb-4 bg-body-tertiary rounded-3">
-						<div class="container-fluid py-5">
-							<h1 class="display-5 fw-bold">Custom jumbotron</h1>
-							<p class="col-md-8 fs-4">
-								Using a series of utilities, you can create this jumbotron, just like the one in previous versions
-								of Bootstrap. Check out the examples below for how you can remix and restyle it to your liking.
-							</p>
-							<button class="btn btn-primary btn-lg" type="button">Example button</button>
-						</div>
-					</div>
-				</div>
-
-				<div class="col-md-8">
-					<div class="album py-5 bg-body-tertiary cont-timeline">
-						<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#subirPostModal">
-							+
-						</button>
-
-						<div
-							class="modal fade"
-							id="subirPostModal"
-							tabindex="-1"
-							aria-labelledby="subirPostModal"
-							aria-hidden="true">
-							<div class="modal-dialog">
-								<form
-									action="/api/v1/posts"
-									method="post"
-									enctype="multipart/form-data"
-									class="modal-content"
-									id="form-subir-foto">
-									<div class="modal-header">
-										<h1 class="modal-title fs-5" id="subirPostModalLabel">Subir post</h1>
-										<button
-											type="button"
-											class="btn-close"
-											data-bs-dismiss="modal"
-											aria-label="Close"></button>
-									</div>
-									<div class="modal-body">
-										<div class="mb-3">
-											<label for="imagenASubir" class="col-form-label">Elige una imagen:</label>
-											<input
-												type="file"
-												id="imagenASubir"
-												name="imagenASubir"
-												class="form-control"
-												accept=".jpg, .jpeg" />
-										</div>
-
-										<div class="mb-3">
-											<label for="texto" class="col-form-label">Escribe el pie de foto:</label>
-											<textarea class="form-control" id="texto" name="texto" rows="4"></textarea>
-										</div>
-									</div>
-									<div class="modal-footer">
-										<input
-											type="submit"
-											class="btn btn-primary"
-											id="btn-subir-img"
-											name="btn-subir-img"
-											value="Subir" />
-									</div>
-								</form>
-							</div>
-						</div>
-
-						<div class="timelines">
-							<form action="" method="get" class="dropdown">
-								<select>
-									<% for(let tl of usuario.tls) { %>
-									<option><%= tl.nombre %></option>
-									<% } %>
-									<option>Nuevo timeline</option>
-								</select>
-							</form>
-						</div>
-
-						<div class="container">
-							<div class="row row-cols-1 g-3">
-								<% if(posts.length > 0) { %> <% for(let post of posts) { %>
-								<div class="col">
-									<div class="card shadow-sm">
-										<div class="card-title">
-											<img
-												src="<%= post.signedUrlAutor %>"
-												alt="foto de perfil de <%= post.autor.nombre %>"
-												width="40"
-												height="40"
-												class="rounded-circle foto-perfil-nav" />
-											<div>
-												<p><%= post.autor.nombre %></p>
-												<p>
-													<% const fecha = new Date(); const fechaPost = new Date(post.fecha); if (fecha
-													- fechaPost < 1000 * 60) {%> Hace <%= Math.round((fecha - fechaPost) / 1000)
-													%> segundo<% if(Math.round((fecha - fechaPost) / 1000) !== 1) { %>s<% } %> <%
-													} else if(fecha - fechaPost < 1000 * 60 * 60) { %> Hace <%= Math.floor((fecha
-													- fechaPost) / (1000 * 60))%> minuto<% if(Math.floor((fecha - fechaPost) /
-													(1000 * 60)) !== 1) { %>s<% } %> <% } else if(fecha - fechaPost < 1000 * 60 *
-													60 * 24) { %> Hace <%= Math.floor((fecha - fechaPost) / (1000 * 60 * 60))%>
-													hora<% if(Math.floor((fecha - fechaPost) / (1000 * 60 * 60)) !== 1) { %>s<% }
-													%> <% } else if(fecha - fechaPost < 1000 * 60 * 60 * 24 * 2) { %> Hace 1 día
-													<% } else { %> <%= fechaPost.getDate() %>/<%= fechaPost.getMonth() + 1 %>/<%=
-													fechaPost.getFullYear() %> <% } %>
-												</p>
-											</div>
-										</div>
-										<img
-											src="<%= post.signedUrlPost %>"
-											alt=""
-											width="100%"
-											class="bd-placeholder-img card-img-top post-img"
-											preserveAspectRatio="xMidYMid slice" />
-										<div class="card-body">
-											<div>
-												<p><%= post.favs.length %> favoritos</p>
-												<img
-													src="<% if(post.favs.findIndex(id => id === usuario._id) === -1) { 
-																%>/images/no-fav.png<% 
-															} else { 
-																%>/images/fav.png<% 
-															} %>"
-													alt="haz click para des/favoritear el post"
-													width="30"
-													height="30" />
-											</div>
-
-											<p class="card-text"><%= post.texto %></p>
-											<div>Añadir comentarios</div>
-										</div>
+			<div class="album py-5 bg-body-tertiary cont-timeline">
+				<div class="container">
+					<div class="row row-cols-1 g-3">
+						<% if(usuarios.length > 0) { %> <% for(let usuario of usuarios) { %>
+						<div class="col">
+							<div class="card shadow-sm">
+								<div class="card-body">
+									<img
+										src="<%= usuario.signedUrlUsuario %>"
+										alt="foto de perfil de <%= usuario.nombre %>"
+										width="80"
+										height="80"
+										class="rounded-circle foto-perfil-nav" />
+									<div>
+										<div><%= usuario.nombre %></div>
+										<div><%= usuario.numSeguidores %> seguidores</div>
+										<div><%= usuario.numSeguidos %> seguidos</div>
+										<div><%= usuario.numPosts %> posts</div>
 									</div>
 								</div>
-								<% } %> <% } else { %>
-								<div class="col">Parece que todavía no hay nada aquí</div>
-								<% } %>
 							</div>
 						</div>
+						<% } %> <% } else { %>
+						<div>No se ha encontrado a ningún usuario que coincida con la búsqueda</div>
+						<% } %>
 					</div>
 				</div>
 			</div>
@@ -353,6 +231,5 @@
 			integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N"
 			crossorigin="anonymous"></script>
 		<script src="/javascript/menu.js" type="module" crossorigin="anonymous"></script>
-		<script src="/javascript/index.js" type="module" crossorigin="anonymous"></script>
 	</body>
 </html>

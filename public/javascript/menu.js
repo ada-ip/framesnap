@@ -23,11 +23,7 @@ inputBusqueda.addEventListener(
 					return response.json();
 				})
 				.then((usuarios) => {
-					const usuariosEncontrados = usuarios.filter(
-						(usuario, i, array) => array.findIndex((elem) => elem.nombre === usuario.nombre) === i
-					);
-
-					ulAutocompletar.innerHTML = crearElemAutocompletar(usuariosEncontrados);
+					ulAutocompletar.innerHTML = crearElemAutocompletar(usuarios);
 					ulAutocompletar.classList.add("mostrar");
 				})
 				.catch((error) => {});
