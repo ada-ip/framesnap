@@ -74,7 +74,6 @@ const devolverPerfilUsuario = async (req, res, next) => {
 
 		let usuarioConSignedUrl = [];
 		if (datosUsuarioTotales.length > 0) {
-			console.log(datosUsuarioTotales);
 			usuarioConSignedUrl = anyadirSignedUrlsUsuario(datosUsuarioTotales, req);
 		}
 		const postsUsuario = await Post.find({ "autor.nombre": usuario })
