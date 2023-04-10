@@ -35,10 +35,18 @@ const UserSchema = new mongoose.Schema({
 		type: Boolean,
 		default: false
 	},
+	numSeguidos: {
+		type: Number,
+		default: 0
+	},
 	seguidores: [DenormUserSchema],
 	outlierSeguidores: {
 		type: Boolean,
 		default: false
+	},
+	numSeguidores: {
+		type: Number,
+		default: 0
 	},
 	tls: {
 		type: [TlSchema],

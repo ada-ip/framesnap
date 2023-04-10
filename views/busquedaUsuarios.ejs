@@ -146,7 +146,7 @@
 										<div><%= usuario.nombre %></div>
 										<div><%= usuario.numSeguidores %> seguidores</div>
 										<div><%= usuario.numSeguidos %> seguidos</div>
-										<div><%= usuario.numPosts %> posts</div>
+										<div><%= usuario.numPosts %> post<% if(usuario.numPosts !== 1) { %>s<% } %></div>
 									</div>
 								</div>
 							</div>

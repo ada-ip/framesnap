@@ -1,3 +1,6 @@
+const Fav = require("../models/Fav");
+const Post = require("../models/Post");
+
 const LIMITE_ELEMENTOS = 1000;
 
 const sumarSeguidoresOutliers = (usuarios) => {
@@ -57,4 +60,21 @@ const sumarSeguidoresYSeguidos = async (usuarios) => {
 	return await Promise.all(resultado);
 };
 
-module.exports = { sumarSeguidoresOutliers, sumarSeguidosOutliers, sumarSeguidoresYSeguidos };
+const comprobarFavs = async (posts, req) => {
+	const resultado = posts.map(async (post) => {
+		const esFavorito = await Post.findOne({ _id: post._id, "favs.id": req.session.idUsuario });
+		let esFavoritoOutlier;
+		if (post.outlierFavs && !esFavorito) {
+			esFavoritoOutlier = await Fav.findOne({ idPost: post._id, "favs.id": req.session.idUsuario });
+		}
+		if (esFavorito || esFavoritoOutlier) {
+			return { ...post, esFavorito: true };
+		} else {
+			return { ...post, esFavorito: false };
+		}
+	});
+
+	return await Promise.all(resultado);
+};
+
+module.exports = { sumarSeguidoresOutliers, sumarSeguidosOutliers, sumarSeguidoresYSeguidos, comprobarFavs };

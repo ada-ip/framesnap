@@ -21,6 +21,10 @@ const PostSchema = new mongoose.Schema({
 		type: Boolean,
 		default: false
 	},
+	numFavs: {
+		type: Number,
+		default: 0
+	},
 	comentarios: [
 		{
 			usuario: {

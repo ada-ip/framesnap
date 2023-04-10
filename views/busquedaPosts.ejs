@@ -128,39 +128,12 @@
 		<%- include("./partials/header.ejs"); %>
 
 		<main class="main">
-			<div class="container my-5">
-				<div class="p-5 text-center bg-body-tertiary rounded-3">
-					<img
-						src="<%= usuario.signedUrlUsuario %>"
-						alt="foto de perfil de <%= usuario.nombre %>"
-						width="80"
-						height="80"
-						class="rounded-circle foto-perfil-nav"
-						loading="lazy" />
-					<div>
-						<div><%= usuario.nombre %></div>
-						<% if(usuarioLogeado._id != usuario._id) { %>
-						<button type="button">
-							<% if(usuarioLogeado.esSeguidor) { %>Dejar de seguir<% } else { %>Seguir<% } %>
-						</button>
-						<% } %>
-						<div><%= usuario.numSeguidores %> seguidores</div>
-						<div><%= usuario.numSeguidos %> seguidos</div>
-						<div><%= postsUsuario.length %> post<% if(postsUsuario.length > 1) { %>s<% } %></div>
-						<div>En <%= tlsUsuario %> timeline<%if(tlsUsuario !== 1) { %>s<% } %></div>
-					</div>
-				</div>
-			</div>
-
 			<div class="album py-5 bg-body-tertiary cont-timeline">
 				<div class="container">
 					<div class="row row-cols-1 g-3">
-						<% if(postsUsuario.length > 0) { %> <% for(let post of postsUsuario) { %> <%-
-						include("./partials/post.ejs", {post: post}); %> <% } %> <% } else { %>
-						<div>
-							Parece que <% if(usuarioLogeado != usuario._id) { %><%= usuario.nombre %><% } %> todavía no ha<%
-							if(usuarioLogeado == usuario._id) { %>s<% } %> subido nada
-						</div>
+						<% if(posts.length > 0) { %> <% for(let post of posts) { %> <%- include("./partials/post.ejs", {post:
+						post}); %> <% } %> <% } else { %>
+						<div>Parece que aquí no hay nada</div>
 						<% } %>
 					</div>
 				</div>

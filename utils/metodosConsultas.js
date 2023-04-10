@@ -2,12 +2,10 @@ const sumarNumPosts = (usuarios, posts) =>
 	usuarios.map((usuario) => {
 		let usuarioEncontrado = posts.find((post) => post.nombre === usuario.nombre);
 		if (usuarioEncontrado) {
-			usuario.numPosts = usuarioEncontrado.numPosts;
+			return { ...usuario.toObject(), numPosts: usuarioEncontrado.numPosts };
 		} else {
-			usuario.numPosts = 0;
+			return { ...usuario.toObject(), numPosts: 0 };
 		}
-
-		return usuario;
 	});
 
 const eliminarDuplicados = (usuarios) =>

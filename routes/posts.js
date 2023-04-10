@@ -3,8 +3,9 @@ const router = express.Router();
 
 const { cargarImagen, subirImagenAS3 } = require("../middleware/multer");
 
-const crearPost = require("../controllers/posts");
+const { crearPost, obtenerPosts } = require("../controllers/posts");
 
-router.route("/").post(cargarImagen.single("imagenASubir"), subirImagenAS3, crearPost);
+router.route("/posts").get(obtenerPosts);
+router.route("/api/v1/posts").post(cargarImagen.single("imagenASubir"), subirImagenAS3, crearPost);
 
 module.exports = router;

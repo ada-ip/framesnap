@@ -46,7 +46,7 @@ const anyadirSignedUrlsPosts = (posts, req) =>
 		return { ...post.toObject(), signedUrlPost, signedUrlAutor };
 	});
 
-const anyadirSignedUrlsUsuario = (usuarios, req) =>
+const anyadirSignedUrlsUsuario = (usuarios, req, mongooseObj = false) =>
 	usuarios.map((usuario) => {
 		let signedUrlUsuario;
 
@@ -70,7 +70,11 @@ const anyadirSignedUrlsUsuario = (usuarios, req) =>
 			]);
 		}
 
-		return { ...usuario, signedUrlUsuario };
+		if (mongooseObj) {
+			return { ...usuario.toObject(), signedUrlUsuario };
+		} else {
+			return { ...usuario, signedUrlUsuario };
+		}
 	});
 
 const subirImagenPredeterminada = async (nombreUsuario) => {

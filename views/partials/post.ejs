@@ -31,13 +31,13 @@
 			loading="lazy" />
 		<div class="card-body">
 			<div>
-				<p><%= post.favs.length %> favoritos</p>
+				<p><%= post.numFavs %> favoritos</p>
 				<img
-					src="<% if(post.favs.findIndex(id => id === usuario._id) === -1) { 
-																%>/images/no-fav.png<% 
-															} else { 
-																%>/images/fav.png<% 
-															} %>"
+					src="<% if(post.esFavorito) { 
+								%>/images/fav.png<% 
+							} else { 
+								%>/images/no-fav.png<% 
+							} %>"
 					alt="haz click para des/favoritear el post"
 					width="30"
 					height="30" />

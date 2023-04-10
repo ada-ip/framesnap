@@ -2,8 +2,9 @@ const mongoose = require("mongoose");
 const DenormUserSchema = require("./aux-models/DenormUser");
 
 const CommentSchema = new mongoose.Schema({
-	usuario: {
-		type: DenormUserSchema,
+	idPost: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "Post",
 		required: true
 	},
 	comentarios: [

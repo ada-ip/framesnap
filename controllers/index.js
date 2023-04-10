@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const Post = require("../models/Post");
 const { anyadirSignedUrlsPosts, anyadirSignedUrlsUsuario } = require("../utils/aws");
+const { comprobarFavs } = require("../utils/outliers");
 
 const devolverIndex = async (req, res, next) => {
 	if (!req.session.idUsuario) {
@@ -43,11 +44,13 @@ const devolverIndex = async (req, res, next) => {
 				}
 			}
 
-			const posts = await Post.find(filtro).sort(orden);
+			const posts = await Post.find(filtro).select("-favs -outlierComentarios -tags").sort(orden);
 
 			const postsConSignedUrls = anyadirSignedUrlsPosts(posts, req);
 
-			res.render("index", { usuario: usuarioConSignedUrls[0], posts: postsConSignedUrls });
+			const postsConFavs = await comprobarFavs(postsConSignedUrls, req);
+
+			res.render("index", { usuario: usuarioConSignedUrls[0], posts: postsConFavs });
 		} catch (error) {
 			next(error);
 		}

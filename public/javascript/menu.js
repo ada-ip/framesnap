@@ -7,7 +7,7 @@ const ulAutocompletar = document.getElementById("autocompletar");
 inputBusqueda.addEventListener(
 	"input",
 	debounce((e) => {
-		if (e.target.value.trim().length < 3) {
+		if (e.target.value.trim().length < 2) {
 			for (let elem of ulAutocompletar.children) {
 				elem.remove();
 			}
