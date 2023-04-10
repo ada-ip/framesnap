@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
 
-const subirImagen = require("../middleware/multer");
+const { cargarImagen, subirImagenAS3 } = require("../middleware/multer");
 
 const crearPost = require("../controllers/posts");
 
-router.route("/").post(subirImagen.single("imagenASubir"), crearPost);
+router.route("/").post(cargarImagen.single("imagenASubir"), subirImagenAS3, crearPost);
 
 module.exports = router;

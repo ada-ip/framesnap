@@ -5,7 +5,7 @@ const crearPost = async (req, res, next) => {
 		res.redirect("/iniciar-sesion");
 	} else {
 		const post = {
-			imagen: req.file.location,
+			imagen: req.s3url,
 			texto: req.body.texto,
 			autor: {
 				id: req.session.idUsuario,
