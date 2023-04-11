@@ -2,8 +2,8 @@ const multer = require("multer");
 const { s3 } = require("../config/aws");
 const sharp = require("sharp");
 
-const MAX_TAMANYO = 500 * 1024;
-const TAMANYO_GRANDE = 5000 * 1024;
+const MAX_TAMANYO = 300 * 1024;
+const TAMANYO_GRANDE = 4000 * 1024;
 const MAX_ANCHO = 1600;
 
 const customStorage = multer.memoryStorage();
@@ -19,7 +19,7 @@ const subirImagenAS3 = async (req, res, next) => {
 		let imagenBuffer = imagen.buffer;
 
 		if (imagen.size > TAMANYO_GRANDE) {
-			imagenBuffer = await sharp(imagen.buffer).rotate().resize({ width: 1600 }).jpeg({ quality: 67 }).toBuffer();
+			imagenBuffer = await sharp(imagen.buffer).rotate().resize({ width: 1600 }).jpeg({ quality: 55 }).toBuffer();
 		} else if (imagen.size > MAX_TAMANYO) {
 			const metadata = await sharp(imagen.buffer).metadata();
 			const ancho = metadata.width;
