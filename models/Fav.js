@@ -7,6 +7,10 @@ const FavSchema = new mongoose.Schema({
 		ref: "Post",
 		required: true
 	},
+	doc: {
+		type: Number,
+		default: 1
+	},
 	favs: [DenormUserSchema]
 });
 

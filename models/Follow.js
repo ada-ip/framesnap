@@ -6,6 +6,10 @@ const FollowSchema = new mongoose.Schema({
 		type: DenormUserSchema,
 		required: true
 	},
+	doc: {
+		type: Number,
+		default: 1
+	},
 	seguidos: [DenormUserSchema]
 });
 

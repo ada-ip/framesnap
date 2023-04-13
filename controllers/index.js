@@ -8,7 +8,7 @@ const devolverIndex = async (req, res, next) => {
 		res.redirect("/iniciar-sesion");
 	} else {
 		try {
-			const usuario = await User.findById(req.session.idUsuario).select("_id nombre fotoPerfil tls");
+			const usuario = await User.findById(req.session.idUsuario).select("_id nombre fotoPerfil seguidos tls");
 
 			if (!usuario) {
 				return res.status(404).end();
@@ -16,35 +16,37 @@ const devolverIndex = async (req, res, next) => {
 
 			const usuarioConSignedUrls = anyadirSignedUrlsUsuario([usuario.toObject()], req);
 
-			const filtro = {};
-			if (usuario.tls[0].config.filtro.autor.length > 0) {
-				filtro["autor.id"] = {
-					$in: []
-				};
-				for (let autor of usuario.tls[0].config.filtro.autor) {
-					filtro["autor.id"].$in.push(autor);
-				}
-			}
-			if (usuario.tls[0].config.filtro.tags.length > 0) {
-				filtro.tags = {
-					$in: []
-				};
-				for (let tag of usuario.tls[0].config.filtro.tags) {
-					filtro.tags.$in.push(tag);
-				}
-			}
-			if (usuario.tls[0].config.filtro.fecha) {
-				filtro.fecha = usuario.tls[0].config.filtro.fecha;
-			}
+			// const filtro = {};
+			// if (usuario.tls[0].config.filtro.autor.length > 0) {
+			// 	filtro["autor.id"] = {
+			// 		$in: []
+			// 	};
+			// 	for (let autor of usuario.tls[0].config.filtro.autor) {
+			// 		filtro["autor.id"].$in.push(autor);
+			// 	}
+			// }
+			// if (usuario.tls[0].config.filtro.tags.length > 0) {
+			// 	filtro.tags = {
+			// 		$in: []
+			// 	};
+			// 	for (let tag of usuario.tls[0].config.filtro.tags) {
+			// 		filtro.tags.$in.push(tag);
+			// 	}
+			// }
+			// if (usuario.tls[0].config.filtro.fecha) {
+			// 	filtro.fecha = usuario.tls[0].config.filtro.fecha;
+			// }
 
-			let orden = "";
-			if (usuario.tls[0].config.orden.length > 0) {
-				for (let campo of usuario.tls[0].config.orden) {
-					orden += campo + " ";
-				}
-			}
+			// let orden = "";
+			// if (usuario.tls[0].config.orden.length > 0) {
+			// 	for (let campo of usuario.tls[0].config.orden) {
+			// 		orden += campo + " ";
+			// 	}
+			// }
 
-			const posts = await Post.find(filtro).select("-favs -outlierComentarios -tags").sort(orden);
+			// const posts = await Post.find(filtro).select("-favs -outlierComentarios -tags").sort(orden);
+
+			const posts = await usuario.obtenerPostsTimeline();
 
 			const postsConSignedUrls = anyadirSignedUrlsPosts(posts, req);
 

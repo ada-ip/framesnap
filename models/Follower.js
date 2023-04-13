@@ -6,6 +6,10 @@ const FollowerSchema = new mongoose.Schema({
 		type: DenormUserSchema,
 		required: true
 	},
+	doc: {
+		type: Number,
+		default: 1
+	},
 	seguidores: [DenormUserSchema]
 });
 

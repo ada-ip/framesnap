@@ -134,21 +134,23 @@
 						<% if(usuarios.length > 0) { %> <% for(let usuario of usuarios) { %>
 						<div class="col">
 							<div class="card shadow-sm">
-								<div class="card-body">
-									<img
-										src="<%= usuario.signedUrlUsuario %>"
-										alt="foto de perfil de <%= usuario.nombre %>"
-										width="80"
-										height="80"
-										class="rounded-circle foto-perfil-nav"
-										loading="lazy" />
-									<div>
-										<div><%= usuario.nombre %></div>
-										<div><%= usuario.numSeguidores %> seguidores</div>
-										<div><%= usuario.numSeguidos %> seguidos</div>
-										<div><%= usuario.numPosts %> post<% if(usuario.numPosts !== 1) { %>s<% } %></div>
+								<a href="/usuarios/<%= usuario.nombre %>">
+									<div class="card-body">
+										<img
+											src="<%= usuario.signedUrlUsuario %>"
+											alt="foto de perfil de <%= usuario.nombre %>"
+											width="80"
+											height="80"
+											class="rounded-circle foto-perfil-nav"
+											loading="lazy" />
+										<div>
+											<div><%= usuario.nombre %></div>
+											<div><%= usuario.numSeguidores %> seguidores</div>
+											<div><%= usuario.numSeguidos %> seguidos</div>
+											<div><%= usuario.numPosts %> post<% if(usuario.numPosts !== 1) { %>s<% } %></div>
+										</div>
 									</div>
-								</div>
+								</a>
 							</div>
 						</div>
 						<% } %> <% } else { %>

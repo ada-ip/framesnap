@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const TlSchema = require("./aux-models/Tl");
+const Post = require("../models/Post");
+const Follow = require("../models/Follow");
 const DenormUserSchema = require("./aux-models/DenormUser");
 
 const UserSchema = new mongoose.Schema({
@@ -77,12 +79,33 @@ UserSchema.pre("save", async function (next) {
 });
 
 UserSchema.pre("save", function (next) {
-	this.tls[0].config.filtro.autor = [this._id];
+	if (this.isNew) {
+		this.tls[0].config.filtro.autor = [this._id];
+	}
 	next();
 });
 
 UserSchema.methods.compararPassw = async function (inputPassw) {
 	return await bcrypt.compare(inputPassw, this.contrasenya);
+};
+
+UserSchema.methods.obtenerPostsTimeline = async function () {
+	const usuariosSeguidos = [this._id];
+	this.seguidos.forEach((us) => usuariosSeguidos.push(us.id));
+
+	if (this.outlierSeguidos) {
+		const usuariosOutlier = await Follow.find({ "usuario.id": this._id }).select("seguidos");
+		usuariosOutlier.forEach((doc) => {
+			doc.seguidos.forEach((us) => usuariosSeguidos.push(us.id));
+		});
+	}
+
+	const postsUsuarios = await Post.find({ "autor.id": { $in: usuariosSeguidos } })
+		.select("-favs -outlierComentarios -tags")
+		.sort("-fecha")
+		.limit(15);
+
+	return postsUsuarios;
 };
 
 module.exports = mongoose.model("User", UserSchema);

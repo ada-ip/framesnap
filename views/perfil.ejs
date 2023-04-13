@@ -140,7 +140,7 @@
 					<div>
 						<div><%= usuario.nombre %></div>
 						<% if(usuarioLogeado._id != usuario._id) { %>
-						<button type="button">
+						<button type="button" id="btn-seguir" class="btn btn-primary">
 							<% if(usuarioLogeado.esSeguidor) { %>Dejar de seguir<% } else { %>Seguir<% } %>
 						</button>
 						<% } %>
@@ -171,5 +171,6 @@
 			integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N"
 			crossorigin="anonymous"></script>
 		<script src="/javascript/menu.js" type="module" crossorigin="anonymous"></script>
+		<script src="/javascript/perfil.js" type="module" crossorigin="anonymous"></script>
 	</body>
 </html>

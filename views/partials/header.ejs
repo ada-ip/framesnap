@@ -55,10 +55,10 @@
 							<li><hr class="dropdown-divider" /></li>
 							<li>
 								<form
-									action="/api/v1/usuarios/desconectar/<%= usuarioLogeado._id %>"
+									action="/api/v1/usuarios/<%= usuarioLogeado._id %>/desconectar"
 									method="post"
 									class="dropdown-item">
-									<input type="submit" name="desconectarse" value="Desconectarse" />
+									<input type="submit" class="btn btn-primary" name="desconectarse" value="Desconectarse" />
 								</form>
 							</li>
 						</ul>

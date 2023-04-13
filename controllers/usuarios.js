@@ -1,10 +1,11 @@
+const mongoose = require("mongoose");
 const User = require("../models/User");
 const Post = require("../models/Post");
 const Follower = require("../models/Follower");
 const Follow = require("../models/Follow");
 const { anyadirSignedUrlsPosts, anyadirSignedUrlsUsuario, subirImagenPredeterminada } = require("../utils/aws");
 const { sumarSeguidoresOutliers, sumarSeguidosOutliers, sumarSeguidoresYSeguidos } = require("../utils/outliers");
-const { sumarNumPosts, eliminarDuplicados } = require("../utils/metodosConsultas");
+const { sumarNumPosts, eliminarDuplicados, anyadirSeguidor, anyadirSeguido } = require("../utils/metodosConsultas");
 const LIMITE_ELEMENTOS = 1000;
 
 const registrarUsuario = async (req, res, next) => {
@@ -117,6 +118,8 @@ const obtenerNombresUsuarios = async (req, res, next) => {
 			$and: [{ nombre: usuario }, { nombre: { $ne: req.session.usuario } }]
 		}).select("-_id nombre");
 
+		console.log(usuarios);
+
 		if (usuarioEncontrado !== null) {
 			usuarios.push(usuarioEncontrado);
 		}
@@ -124,8 +127,12 @@ const obtenerNombresUsuarios = async (req, res, next) => {
 		const regex = new RegExp(`^${usuario}`, "i");
 
 		if (req.session.idUsuario) {
-			const usuariosSeguidos = await User.find({ "seguidos.nombre": regex }).select("-_id nombre").limit(10);
+			const usuariosSeguidos = await User.aggregate()
+				.match({ nombre: req.session.usuario, "seguidos.nombre": regex })
+				.project({ _id: 0, nombre: "$seguidos.nombre" })
+				.limit(10);
 			usuarios.push(...usuariosSeguidos);
+			console.log(usuarios);
 		}
 
 		const otrosUsuarios = await User.find({ $and: [{ nombre: regex }, { nombre: { $ne: req.session.usuario } }] })
@@ -134,6 +141,7 @@ const obtenerNombresUsuarios = async (req, res, next) => {
 			.limit(10);
 
 		usuarios.push(...otrosUsuarios);
+		console.log(usuarios);
 
 		res.status(200).json(eliminarDuplicados(usuarios));
 	} catch (error) {
@@ -215,11 +223,44 @@ const obtenerUsuarios = async (req, res, next) => {
 	}
 };
 
+const seguirUsuario = async (req, res, next) => {
+	const { usuario } = req.params;
+
+	const sesion = await mongoose.startSession();
+	sesion.startTransaction();
+
+	try {
+		const usuarioASeguir = await User.findOne({ nombre: usuario }, null, { session: sesion }).select(
+			"_id nombre fotoPerfil seguidores numSeguidores outlierSeguidores seguidos numSeguidos outlierSeguidos"
+		);
+		const usuarioLogeado = await User.findOne({ nombre: req.session.usuario }, null, { session: sesion }).select(
+			"_id nombre fotoPerfil seguidores numSeguidores outlierSeguidores seguidos numSeguidos outlierSeguidos tls"
+		);
+
+		if (!usuarioASeguir || !usuarioLogeado) {
+			throw new Error("El usuario no existe");
+		}
+
+		await anyadirSeguidor(usuarioASeguir, usuarioLogeado, sesion);
+		await anyadirSeguido(usuarioASeguir, usuarioLogeado, sesion);
+
+		await await sesion.commitTransaction();
+
+		res.status(200).json({ estado: "ok" });
+	} catch (error) {
+		await sesion.abortTransaction();
+		next(error);
+	} finally {
+		sesion.endSession();
+	}
+};
+
 module.exports = {
 	registrarUsuario,
 	comprobarUsuarioExiste,
 	devolverPerfilUsuario,
 	desconectarUsuario,
 	obtenerNombresUsuarios,
-	obtenerUsuarios
+	obtenerUsuarios,
+	seguirUsuario
 };

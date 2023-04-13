@@ -13,7 +13,7 @@ inputBusqueda.addEventListener(
 			}
 			ulAutocompletar.classList.remove("mostrar");
 		} else {
-			const url = "/api/v1/usuarios/" + e.target.value.trim().toLowerCase();
+			let url = "/api/v1/usuarios/" + e.target.value.trim().toLowerCase();
 
 			fetch(url)
 				.then((response) => {
@@ -23,6 +23,7 @@ inputBusqueda.addEventListener(
 					return response.json();
 				})
 				.then((usuarios) => {
+					console.log(usuarios);
 					ulAutocompletar.innerHTML = crearElemAutocompletar(usuarios);
 					ulAutocompletar.classList.add("mostrar");
 				})

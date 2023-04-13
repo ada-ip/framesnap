@@ -11,7 +11,7 @@ inputNombre.addEventListener("change", (e) => {
 
 inputNombre.addEventListener("change", (e) => {
 	if (e.target.classList.contains("input-valido")) {
-		const url = "/api/v1/usuarios/validez/" + e.target.value.trim().toLowerCase();
+		const url = "/api/v1/usuarios/" + e.target.value.trim().toLowerCase() + "/validez";
 
 		fetch(url)
 			.then((response) => {
