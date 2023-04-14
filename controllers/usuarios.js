@@ -118,8 +118,6 @@ const obtenerNombresUsuarios = async (req, res, next) => {
 			$and: [{ nombre: usuario }, { nombre: { $ne: req.session.usuario } }]
 		}).select("-_id nombre");
 
-		console.log(usuarios);
-
 		if (usuarioEncontrado !== null) {
 			usuarios.push(usuarioEncontrado);
 		}
@@ -129,10 +127,19 @@ const obtenerNombresUsuarios = async (req, res, next) => {
 		if (req.session.idUsuario) {
 			const usuariosSeguidos = await User.aggregate()
 				.match({ nombre: req.session.usuario, "seguidos.nombre": regex })
+				.unwind("$seguidos")
 				.project({ _id: 0, nombre: "$seguidos.nombre" })
 				.limit(10);
+
 			usuarios.push(...usuariosSeguidos);
-			console.log(usuarios);
+
+			const usuariosSeguidosOutlier = await Follow.aggregate()
+				.match({ "usuario.nombre": req.session.usuario, "seguidos.nombre": regex })
+				.unwind("$seguidos")
+				.project({ _id: 0, nombre: "$seguidos.nombre" })
+				.limit(10);
+
+			usuarios.push(...usuariosSeguidosOutlier);
 		}
 
 		const otrosUsuarios = await User.find({ $and: [{ nombre: regex }, { nombre: { $ne: req.session.usuario } }] })
@@ -141,7 +148,6 @@ const obtenerNombresUsuarios = async (req, res, next) => {
 			.limit(10);
 
 		usuarios.push(...otrosUsuarios);
-		console.log(usuarios);
 
 		res.status(200).json(eliminarDuplicados(usuarios));
 	} catch (error) {
