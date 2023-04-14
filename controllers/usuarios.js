@@ -188,7 +188,8 @@ const obtenerUsuarios = async (req, res, next) => {
 
 		if (req.session.idUsuario) {
 			const usuariosSeguidos = await User.aggregate()
-				.match({ "seguidos.nombre": regex })
+				.match({ nombre: req.session.usuario, "seguidos.nombre": regex })
+				.unwind("$seguidos")
 				.lookup({
 					from: "users",
 					localField: "seguidos.id",
@@ -205,6 +206,28 @@ const obtenerUsuarios = async (req, res, next) => {
 
 			if (usuariosSeguidos.length > 0) {
 				const usuariosConSignedUrl = anyadirSignedUrlsUsuario(sumarNumPosts(usuariosSeguidos, postsUsuarios), req);
+				usuarios.push(...usuariosConSignedUrl);
+			}
+
+			const usuariosSeguidosOutlier = await Follow.aggregate()
+				.match({ "usuario.nombre": req.session.usuario, "seguidos.nombre": regex })
+				.unwind("$seguidos")
+				.lookup({
+					from: "users",
+					localField: "seguidos.id",
+					foreignField: "_id",
+					as: "datosSeguidos"
+				})
+				.project({
+					_id: "$datosSeguidos._id",
+					nombre: "$datosSeguidos.nombre",
+					fotoPerfil: "$datosSeguidos.fotoPerfil",
+					numSeguidos: "$datosSeguidos.numSeguidos",
+					numSeguidores: "$datosSeguidos.numSeguidores"
+				});
+
+			if (usuariosSeguidosOutlier.length > 0) {
+				const usuariosConSignedUrl = anyadirSignedUrlsUsuario(sumarNumPosts(usuariosSeguidosOutlier, postsUsuarios), req);
 				usuarios.push(...usuariosConSignedUrl);
 			}
 		}
