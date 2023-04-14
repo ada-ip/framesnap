@@ -72,7 +72,8 @@ const devolverPerfilUsuario = async (req, res, next) => {
 
 		const postsConSignedUrls = anyadirSignedUrlsPosts(postsUsuario, req);
 
-		const timelines = await User.countDocuments({ "tls.config.filtro.autor": usuarioConSignedUrl[0]._id });
+		let timelines = await User.countDocuments({ "tls.config.filtro.autor": datosUsuario._id });
+		timelines += datosUsuario.numSeguidores;
 
 		const usuarioLogeado = anyadirSignedUrlsUsuario(
 			[{ _id: req.session.idUsuario, nombre: req.session.usuario, fotoPerfil: req.session.fotoPerfil }],
@@ -126,16 +127,16 @@ const obtenerNombresUsuarios = async (req, res, next) => {
 
 		if (req.session.idUsuario) {
 			const usuariosSeguidos = await User.aggregate()
-				.match({ nombre: req.session.usuario, "seguidos.nombre": regex })
 				.unwind("$seguidos")
+				.match({ nombre: req.session.usuario, "seguidos.nombre": regex })
 				.project({ _id: 0, nombre: "$seguidos.nombre" })
 				.limit(10);
 
 			usuarios.push(...usuariosSeguidos);
 
 			const usuariosSeguidosOutlier = await Follow.aggregate()
-				.match({ "usuario.nombre": req.session.usuario, "seguidos.nombre": regex })
 				.unwind("$seguidos")
+				.match({ "usuario.nombre": req.session.usuario, "seguidos.nombre": regex })
 				.project({ _id: 0, nombre: "$seguidos.nombre" })
 				.limit(10);
 
@@ -188,14 +189,15 @@ const obtenerUsuarios = async (req, res, next) => {
 
 		if (req.session.idUsuario) {
 			const usuariosSeguidos = await User.aggregate()
-				.match({ nombre: req.session.usuario, "seguidos.nombre": regex })
 				.unwind("$seguidos")
+				.match({ nombre: req.session.usuario, "seguidos.nombre": regex })
 				.lookup({
 					from: "users",
 					localField: "seguidos.id",
 					foreignField: "_id",
 					as: "datosSeguidos"
 				})
+				.unwind("$datosSeguidos")
 				.project({
 					_id: "$datosSeguidos._id",
 					nombre: "$datosSeguidos.nombre",
@@ -210,14 +212,15 @@ const obtenerUsuarios = async (req, res, next) => {
 			}
 
 			const usuariosSeguidosOutlier = await Follow.aggregate()
-				.match({ "usuario.nombre": req.session.usuario, "seguidos.nombre": regex })
 				.unwind("$seguidos")
+				.match({ "usuario.nombre": req.session.usuario, "seguidos.nombre": regex })
 				.lookup({
 					from: "users",
 					localField: "seguidos.id",
 					foreignField: "_id",
 					as: "datosSeguidos"
 				})
+				.unwind("$datosSeguidos")
 				.project({
 					_id: "$datosSeguidos._id",
 					nombre: "$datosSeguidos.nombre",
@@ -225,6 +228,8 @@ const obtenerUsuarios = async (req, res, next) => {
 					numSeguidos: "$datosSeguidos.numSeguidos",
 					numSeguidores: "$datosSeguidos.numSeguidores"
 				});
+
+			console.log(usuariosSeguidosOutlier);
 
 			if (usuariosSeguidosOutlier.length > 0) {
 				const usuariosConSignedUrl = anyadirSignedUrlsUsuario(sumarNumPosts(usuariosSeguidosOutlier, postsUsuarios), req);
@@ -237,7 +242,7 @@ const obtenerUsuarios = async (req, res, next) => {
 		);
 
 		if (otrosUsuarios.length > 0) {
-			const usuariosConSignedUrl = anyadirSignedUrlsUsuario(sumarNumPosts(otrosUsuarios, postsUsuarios), req);
+			const usuariosConSignedUrl = anyadirSignedUrlsUsuario(sumarNumPosts(otrosUsuarios, postsUsuarios, true), req);
 			usuarios.push(...usuariosConSignedUrl);
 		}
 

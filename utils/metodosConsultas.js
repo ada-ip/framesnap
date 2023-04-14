@@ -3,13 +3,15 @@ const User = require("../models/User");
 const Follower = require("../models/Follower");
 const Follow = require("../models/Follow");
 
-const sumarNumPosts = (usuarios, posts) =>
+const sumarNumPosts = (usuarios, posts, mongooseObj = false) =>
 	usuarios.map((usuario) => {
 		let usuarioEncontrado = posts.find((post) => post.nombre === usuario.nombre);
 		if (usuarioEncontrado) {
-			return { ...usuario.toObject(), numPosts: usuarioEncontrado.numPosts };
+			if (mongooseObj) return { ...usuario.toObject(), numPosts: usuarioEncontrado.numPosts };
+			else return { ...usuario, numPosts: usuarioEncontrado.numPosts };
 		} else {
-			return { ...usuario.toObject(), numPosts: 0 };
+			if (mongooseObj) return { ...usuario.toObject(), numPosts: 0 };
+			else return { ...usuario, numPosts: 0 };
 		}
 	});
 
