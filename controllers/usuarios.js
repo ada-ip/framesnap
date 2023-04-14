@@ -5,7 +5,14 @@ const Follower = require("../models/Follower");
 const Follow = require("../models/Follow");
 const { anyadirSignedUrlsPosts, anyadirSignedUrlsUsuario, subirImagenPredeterminada } = require("../utils/aws");
 const { sumarSeguidoresOutliers, sumarSeguidosOutliers, sumarSeguidoresYSeguidos } = require("../utils/outliers");
-const { sumarNumPosts, eliminarDuplicados, anyadirSeguidor, anyadirSeguido } = require("../utils/metodosConsultas");
+const {
+	sumarNumPosts,
+	eliminarDuplicados,
+	anyadirSeguidor,
+	anyadirSeguido,
+	quitarSeguidor,
+	quitarSeguido
+} = require("../utils/metodosConsultas");
 const LIMITE_ELEMENTOS = 1000;
 
 const registrarUsuario = async (req, res, next) => {
@@ -265,10 +272,10 @@ const seguirUsuario = async (req, res, next) => {
 
 	try {
 		const usuarioASeguir = await User.findOne({ nombre: usuario }, null, { session: sesion }).select(
-			"_id nombre fotoPerfil seguidores numSeguidores outlierSeguidores seguidos numSeguidos outlierSeguidos"
+			"_id nombre fotoPerfil seguidores numSeguidores outlierSeguidores"
 		);
 		const usuarioLogeado = await User.findOne({ nombre: req.session.usuario }, null, { session: sesion }).select(
-			"_id nombre fotoPerfil seguidores numSeguidores outlierSeguidores seguidos numSeguidos outlierSeguidos tls"
+			"_id nombre fotoPerfil seguidos numSeguidos outlierSeguidos"
 		);
 
 		if (!usuarioASeguir || !usuarioLogeado) {
@@ -278,7 +285,39 @@ const seguirUsuario = async (req, res, next) => {
 		await anyadirSeguidor(usuarioASeguir, usuarioLogeado, sesion);
 		await anyadirSeguido(usuarioASeguir, usuarioLogeado, sesion);
 
-		await await sesion.commitTransaction();
+		await sesion.commitTransaction();
+
+		res.status(200).json({ estado: "ok" });
+	} catch (error) {
+		await sesion.abortTransaction();
+		next(error);
+	} finally {
+		sesion.endSession();
+	}
+};
+
+const dejarSeguirUsuario = async (req, res, next) => {
+	const { usuario } = req.params;
+
+	const sesion = await mongoose.startSession();
+	sesion.startTransaction();
+
+	try {
+		const usuarioADejarDeSeguir = await User.findOne({ nombre: usuario }, null, { session: sesion }).select(
+			"_id nombre seguidores numSeguidores"
+		);
+		const usuarioLogeado = await User.findOne({ nombre: req.session.usuario }, null, { session: sesion }).select(
+			"_id nombre seguidos numSeguidos"
+		);
+
+		if (!usuarioADejarDeSeguir || !usuarioLogeado) {
+			throw new Error("El usuario no existe");
+		}
+
+		await quitarSeguidor(usuarioADejarDeSeguir, usuarioLogeado, sesion);
+		await quitarSeguido(usuarioADejarDeSeguir, usuarioLogeado, sesion);
+
+		await sesion.commitTransaction();
 
 		res.status(200).json({ estado: "ok" });
 	} catch (error) {
@@ -296,5 +335,6 @@ module.exports = {
 	desconectarUsuario,
 	obtenerNombresUsuarios,
 	obtenerUsuarios,
-	seguirUsuario
+	seguirUsuario,
+	dejarSeguirUsuario
 };

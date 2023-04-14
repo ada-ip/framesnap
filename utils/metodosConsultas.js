@@ -109,4 +109,49 @@ const anyadirSeguido = async (usuarioASeguir, usuarioLogeado, sesion) => {
 	}
 };
 
-module.exports = { sumarNumPosts, eliminarDuplicados, anyadirSeguidor, anyadirSeguido };
+const quitarSeguidor = async (usuarioADejarDeSeguir, usuarioLogeado, sesion) => {
+	let indexUsuarioLogeado = usuarioADejarDeSeguir.seguidores.findIndex((seguidor) => seguidor.nombre === usuarioLogeado.nombre);
+	if (indexUsuarioLogeado !== -1) {
+		usuarioADejarDeSeguir.seguidores.pull({ id: usuarioLogeado._id });
+	} else {
+		const usuarioOutlier = await Follower.findOneAndUpdate(
+			{ "usuario.id": usuarioADejarDeSeguir._id, "seguidores.id": usuarioLogeado._id },
+			{
+				$pull: {
+					seguidores: {
+						id: usuarioLogeado._id
+					}
+				}
+			},
+			{ session: sesion }
+		);
+
+		if (!usuarioOutlier) throw new Error("El usuario no se encuentra entre los seguidores");
+	}
+	usuarioADejarDeSeguir.numSeguidores--;
+	await usuarioADejarDeSeguir.save({ session: sesion });
+};
+
+const quitarSeguido = async (usuarioADejarDeSeguir, usuarioLogeado, sesion) => {
+	let indexUsuarioADejarDeSeguir = usuarioLogeado.seguidos.findIndex(
+		(seguido) => seguido.nombre === usuarioADejarDeSeguir.nombre
+	);
+	if (indexUsuarioADejarDeSeguir !== -1) {
+		usuarioLogeado.seguidos.pull({ id: usuarioADejarDeSeguir._id });
+	} else {
+		const usuarioOutlier = await Follow.findOneAndUpdate(
+			{
+				"usuario.id": usuarioLogeado._id,
+				"seguidos.id": usuarioADejarDeSeguir._id
+			},
+			{ $pull: { seguidos: { id: usuarioADejarDeSeguir._id } } },
+			{ session: sesion }
+		);
+
+		if (!usuarioOutlier) throw new Error("El usuario no se encuentra entre los seguidos");
+	}
+	usuarioLogeado.numSeguidos--;
+	await usuarioLogeado.save({ session: sesion });
+};
+
+module.exports = { sumarNumPosts, eliminarDuplicados, anyadirSeguidor, anyadirSeguido, quitarSeguidor, quitarSeguido };
