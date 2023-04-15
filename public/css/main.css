@@ -32,6 +32,10 @@ nav {
 	object-fit: cover;
 }
 
+.img-fav {
+	cursor: pointer;
+}
+
 /******************************* Formularios *******************************/
 
 .input-no-valido {

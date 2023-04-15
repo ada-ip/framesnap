@@ -9,7 +9,7 @@
 				class="rounded-circle foto-perfil-nav"
 				loading="lazy" />
 			<div>
-				<p><%= post.autor.nombre %></p>
+				<a href="/usuarios/<%= post.autor.nombre %>"><%= post.autor.nombre %></a>
 				<p>
 					<% const fecha = new Date(); const fechaPost = new Date(post.fecha); if (fecha - fechaPost < 1000 * 60) {%>
 					Hace <%= Math.round((fecha - fechaPost) / 1000) %> segundo<% if(Math.round((fecha - fechaPost) / 1000) !== 1)
@@ -29,7 +29,7 @@
 			class="bd-placeholder-img card-img-top post-img"
 			preserveAspectRatio="xMidYMid slice"
 			loading="lazy" />
-		<div class="card-body">
+		<div class="card-body" id="post<%= post._id %>">
 			<div>
 				<p><%= post.numFavs %> favoritos</p>
 				<img
@@ -39,6 +39,7 @@
 								%>/images/no-fav.png<% 
 							} %>"
 					alt="haz click para des/favoritear el post"
+					class="img-fav"
 					width="30"
 					height="30" />
 			</div>

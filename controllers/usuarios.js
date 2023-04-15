@@ -4,7 +4,7 @@ const Post = require("../models/Post");
 const Follower = require("../models/Follower");
 const Follow = require("../models/Follow");
 const { anyadirSignedUrlsPosts, anyadirSignedUrlsUsuario, subirImagenPredeterminada } = require("../utils/aws");
-const { sumarSeguidoresOutliers, sumarSeguidosOutliers, sumarSeguidoresYSeguidos } = require("../utils/outliers");
+const { sumarSeguidoresOutliers, sumarSeguidosOutliers, sumarSeguidoresYSeguidos, comprobarFavs } = require("../utils/outliers");
 const {
 	sumarNumPosts,
 	eliminarDuplicados,
@@ -78,6 +78,7 @@ const devolverPerfilUsuario = async (req, res, next) => {
 			.sort("-fecha");
 
 		const postsConSignedUrls = anyadirSignedUrlsPosts(postsUsuario, req);
+		const postsConFavsYUrls = await comprobarFavs(postsConSignedUrls, req);
 
 		let timelines = await User.countDocuments({ "tls.config.filtro.autor": datosUsuario._id });
 		timelines += datosUsuario.numSeguidores;
@@ -92,9 +93,9 @@ const devolverPerfilUsuario = async (req, res, next) => {
 
 		res.render("perfil", {
 			usuario: usuarioConSignedUrl[0],
-			postsUsuario: postsConSignedUrls,
+			postsUsuario: postsConFavsYUrls,
 			tlsUsuario: timelines,
-			usuarioLogeado: { ...usuarioLogeado[0], esSeguidor: esSeguidor !== null || esSeguidorOutlier !== null ? true : false }
+			usuarioLogeado: { ...usuarioLogeado[0], esSeguidor: esSeguidor || esSeguidorOutlier ? true : false }
 		});
 	} catch (error) {
 		next(error);

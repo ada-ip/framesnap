@@ -42,7 +42,7 @@ const anyadirSeguidor = async (usuarioASeguir, usuarioLogeado, sesion) => {
 		if (usuarioOutlier.length === 0 || usuarioOutlier[0].seguidores.length === LIMITE_ELEMENTOS) {
 			const nuevoUsuarioParams = {
 				usuario: { id: usuarioASeguir._id, nombre: usuarioASeguir.nombre, fotoPerfil: usuarioASeguir.fotoPerfil },
-				doc: usuarioOutlier[0].doc + 1 || 1,
+				doc: (usuarioOutlier[0]?.doc ?? 0) + 1,
 				seguidores: [{ id: usuarioLogeado._id, nombre: usuarioLogeado.nombre, fotoPerfil: usuarioLogeado.fotoPerfil }]
 			};
 
@@ -84,7 +84,7 @@ const anyadirSeguido = async (usuarioASeguir, usuarioLogeado, sesion) => {
 		if (usuarioOutlier.length === 0 || usuarioOutlier[0].seguidos.length === LIMITE_ELEMENTOS) {
 			const nuevoUsuarioParams = {
 				usuario: { id: usuarioLogeado._id, nombre: usuarioLogeado.nombre, fotoPerfil: usuarioLogeado.fotoPerfil },
-				doc: usuarioOutlier[0].doc + 1 || 1,
+				doc: (usuarioOutlier[0]?.doc ?? 0) + 1,
 				seguidos: [{ id: usuarioASeguir._id, nombre: usuarioASeguir.nombre, fotoPerfil: usuarioASeguir.fotoPerfil }]
 			};
 
