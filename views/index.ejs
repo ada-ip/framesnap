@@ -208,14 +208,97 @@
 						</div>
 
 						<div class="timelines">
-							<form action="" method="get" class="dropdown">
-								<select>
-									<% for(let tl of usuario.tls) { %>
-									<option><%= tl.nombre %></option>
-									<% } %>
-									<option>Nuevo timeline</option>
-								</select>
+							<form action="" method="post" class="dropdown">
+								<div class="dropdown">
+									<button
+										class="btn btn-primary dropdown-toggle"
+										type="button"
+										data-bs-toggle="dropdown"
+										aria-expanded="false">
+										<%= usuario.tlElegido %>
+									</button>
+									<ul class="dropdown-menu">
+										<% for(let tl of usuario.tls) { %> <% if(tl.nombre !== usuario.tlElegido) { %>
+										<li><a class="dropdown-item" href="#"><%= tl.nombre %></a></li>
+										<% } %> <% } %> <% if(usuario.tls.length > 1) { %>
+										<li><hr class="dropdown-divider" /></li>
+										<% } %>
+										<li>
+											<a
+												class="dropdown-item"
+												data-bs-toggle="modal"
+												data-bs-target="#crearTLModal"
+												href="#"
+												>Nuevo Timeline</a
+											>
+										</li>
+									</ul>
+								</div>
 							</form>
+							<div
+								class="modal fade"
+								id="crearTLModal"
+								tabindex="-1"
+								aria-labelledby="crearTLModal"
+								aria-hidden="true">
+								<div class="modal-dialog">
+									<form id="form-timeline" action="/api/v1/usuarios/tls" method="POST" class="modal-content">
+										<div class="modal-header">
+											<h1 class="modal-title fs-5" id="crearTLModalLabel">Crear nuevo timeline</h1>
+											<button
+												type="button"
+												class="btn-close"
+												data-bs-dismiss="modal"
+												aria-label="Close"></button>
+										</div>
+										<div class="modal-body">
+											<div class="mb-3">
+												<label for="nombre-tl" class="col-form-label">Nombre:</label>
+												<input type="text" class="form-control" id="nombre-tl" name="nombre-tl" />
+											</div>
+											<div class="row mb-3">
+												<div class="column col-6">
+													<label for="usuarios-tl" class="col-form-label">Añadir usuarios:</label>
+													<input
+														type="text"
+														class="form-control"
+														id="usuarios-tl"
+														name="usuarios-tl[]" />
+													<ul class="dropdown-menu text-small autocompletar-tl-ul"></ul>
+												</div>
+												<div class="column col-6">
+													<label for="tags-tl" class="col-form-label">Añadir tags:</label>
+													<input type="text" class="form-control" id="tags-tl" name="tags-tl[]" />
+												</div>
+											</div>
+											<div class="row mb-3">
+												<div class="column col-6">
+													<label for="desde-tl" class="col-form-label">Desde:</label>
+													<input type="date" class="form-control" id="desde-tl" name="desde-tl" />
+												</div>
+												<div class="column col-6">
+													<label for="hasta-tl" class="col-form-label">Hasta:</label>
+													<input type="date" class="form-control" id="hasta-tl" name="hasta-tl" />
+												</div>
+											</div>
+											<div class="mb-3">
+												<label for="orden-tl" class="col-form-label">Orden:</label>
+												<select class="form-select input-valido" id="orden-tl" name="orden-tl">
+													<option value="-fecha" selected>Más reciente</option>
+													<option value="fecha">Más antiguo</option>
+													<option value="-numFavs">Mayor número de favoritos</option>
+													<option value="numFavs">Menor número de favoritos</option>
+													<option value="-numSeguidores">Mayor número de seguidores</option>
+													<option value="numSeguidores">Menor número de seguidores</option>
+												</select>
+											</div>
+										</div>
+										<div class="modal-footer">
+											<input type="submit" class="btn btn-primary" value="Crear" />
+										</div>
+									</form>
+								</div>
+							</div>
 						</div>
 
 						<div class="container">

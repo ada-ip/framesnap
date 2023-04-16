@@ -329,6 +329,21 @@ const dejarSeguirUsuario = async (req, res, next) => {
 	}
 };
 
+const obtenerNombresTls = async (req, res, next) => {
+	const { nombreTL } = req.params;
+	try {
+		const tl = await User.findOne({ _id: req.session.idUsuario, "tls.nombre": nombreTL }).select("_id");
+		console.log(tl);
+		if (tl) {
+			res.status(200).json({ esRepetido: true });
+		} else {
+			res.status(200).json({ esRepetido: false });
+		}
+	} catch (error) {
+		next(error);
+	}
+};
+
 module.exports = {
 	registrarUsuario,
 	comprobarUsuarioExiste,
@@ -337,5 +352,6 @@ module.exports = {
 	obtenerNombresUsuarios,
 	obtenerUsuarios,
 	seguirUsuario,
-	dejarSeguirUsuario
+	dejarSeguirUsuario,
+	obtenerNombresTls
 };

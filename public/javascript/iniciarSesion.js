@@ -49,7 +49,7 @@ form.addEventListener("submit", (e) => {
 
 		if (!inputPassw.classList.contains("input-no-valido")) {
 			let mensajeError = "Tienes que rellenar la contraseña";
-			comprobarValidez(inputPassw, () => inputPassw.value.trim() != "", mensajeError);
+			comprobarValidez(inputPassw, (valorInput) => valorInput != "", mensajeError);
 		}
 	}
 });

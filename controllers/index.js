@@ -50,9 +50,9 @@ const devolverIndex = async (req, res, next) => {
 
 			const postsConSignedUrls = anyadirSignedUrlsPosts(posts, req);
 
-			const postsConFavs = await comprobarFavs(postsConSignedUrls, req);
+			const postsConFavsYUrls = await comprobarFavs(postsConSignedUrls, req);
 
-			res.render("index", { usuario: usuarioConSignedUrls[0], posts: postsConFavs });
+			res.render("index", { usuario: { ...usuarioConSignedUrls[0], tlElegido: "Timeline" }, posts: postsConFavsYUrls });
 		} catch (error) {
 			next(error);
 		}

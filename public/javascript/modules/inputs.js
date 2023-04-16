@@ -12,6 +12,18 @@ function comprobarValidez(input, validador, error, imagen = false) {
 	}
 }
 
+function comprobarValidezFechas(inputs, validador, error, fechaIntroducida = 0) {
+	if (!validador(inputs)) {
+		inputs[fechaIntroducida].classList.remove("input-valido");
+		inputs[fechaIntroducida].classList.add("input-no-valido");
+		crearMensajeError(inputs[fechaIntroducida], error);
+	} else {
+		inputs[fechaIntroducida].classList.remove("input-no-valido");
+		inputs[fechaIntroducida].classList.add("input-valido");
+		borrarMensajeError(inputs[fechaIntroducida]);
+	}
+}
+
 function comprobarContrasenyas(input1, input2, boton) {
 	let pass2 = input2.value.trim();
 	let pass1 = input1.value.trim();
@@ -28,7 +40,12 @@ function comprobarContrasenyas(input1, input2, boton) {
 }
 
 function nombreValido(nombre) {
-	let regex = /^[a-z0-9]{3,20}$/i;
+	let regex = /^[a-z0-9]{3,30}$/i;
+	return regex.test(nombre);
+}
+
+function nombreTLValido(nombre) {
+	let regex = /^[a-z0-9\-_]{1,20}$/i;
 	return regex.test(nombre);
 }
 
@@ -54,14 +71,28 @@ function imagenValida(imagen) {
 	}
 }
 
-function comprobarInputs(inputs, boton) {
+function fechaValida(fechas) {
+	if (fechas[0].value != "" && fechas[1].value != "") {
+		const fecha1 = new Date(fechas[0].value);
+		const fecha2 = new Date(fechas[1].value);
+
+		if (fecha2 < fecha1) return false;
+	}
+
+	return true;
+}
+
+function comprobarInputs(inputs) {
 	if (inputs.every((input) => input.classList.contains("input-valido"))) {
 		return true;
 	}
 }
 
 function crearMensajeError(input, mensaje) {
-	if (!input.nextElementSibling || input.nextElementSibling.textContent !== mensaje) {
+	if (
+		!input.nextElementSibling ||
+		(input.nextElementSibling.textContent !== mensaje && !input.nextElementSibling.classList.contains("error-input"))
+	) {
 		borrarMensajeError(input);
 		const p = document.createElement("p");
 		p.classList.add("error-input");
@@ -71,7 +102,7 @@ function crearMensajeError(input, mensaje) {
 }
 
 function borrarMensajeError(input) {
-	if (input.nextElementSibling) {
+	if (input.nextElementSibling && input.nextElementSibling.classList.contains("error-input")) {
 		input.nextElementSibling.remove();
 	}
 }
@@ -85,5 +116,8 @@ export {
 	comprobarInputs,
 	crearMensajeError,
 	borrarMensajeError,
-	imagenValida
+	imagenValida,
+	nombreTLValido,
+	fechaValida,
+	comprobarValidezFechas
 };

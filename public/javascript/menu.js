@@ -2,7 +2,7 @@ import { debounce } from "./modules/debounce.js";
 import { crearElemAutocompletar } from "./modules/dom.js";
 
 const inputBusqueda = document.getElementById("buscar");
-const ulAutocompletar = document.getElementById("autocompletar");
+const ulAutocompletar = document.getElementById("autocompletar-busqueda");
 
 inputBusqueda.addEventListener(
 	"input",

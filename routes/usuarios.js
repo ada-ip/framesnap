@@ -9,7 +9,8 @@ const {
 	obtenerNombresUsuarios,
 	obtenerUsuarios,
 	seguirUsuario,
-	dejarSeguirUsuario
+	dejarSeguirUsuario,
+	obtenerNombresTls
 } = require("../controllers/usuarios");
 
 router.route("/usuarios").get(obtenerUsuarios);
@@ -20,5 +21,6 @@ router.route("/api/v1/usuarios/:usuario/desconectar").post(desconectarUsuario);
 router.route("/api/v1/usuarios/:usuario/dejardeseguir").patch(dejarSeguirUsuario);
 router.route("/api/v1/usuarios/:usuario/seguir").patch(seguirUsuario);
 router.route("/api/v1/usuarios/:usuario/validez").get(comprobarUsuarioExiste);
+router.route("/api/v1/usuarios/tls/:nombreTL").get(obtenerNombresTls);
 
 module.exports = router;
