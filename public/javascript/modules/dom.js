@@ -36,4 +36,14 @@ function crearNuevoInputUsuario(elemAutocompletar) {
 	contenedorUsuarios.append(nuevaUl);
 }
 
-export { crearElemAutocompletar, crearAutocompletarUsuariosTL, crearNuevoInputUsuario };
+function crearNuevoInputTags(ultimoTag) {
+	const contenedorTags = ultimoTag.parentElement;
+
+	const nuevoInput = document.createElement("input");
+	nuevoInput.type = "text";
+	nuevoInput.name = "tags-tl[]";
+	nuevoInput.classList.add("form-control");
+	contenedorTags.append(nuevoInput);
+}
+
+export { crearElemAutocompletar, crearAutocompletarUsuariosTL, crearNuevoInputUsuario, crearNuevoInputTags };

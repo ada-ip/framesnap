@@ -79,6 +79,10 @@ function fechaValida(fechas) {
 		if (fecha2 < fecha1) return false;
 	}
 
+	if (fechas[0].value == "" && fechas[1].value == "") {
+		return false;
+	}
+
 	return true;
 }
 

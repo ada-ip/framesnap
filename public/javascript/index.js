@@ -9,7 +9,7 @@ import {
 	comprobarValidezFechas
 } from "./modules/inputs.js";
 import { debounce } from "./modules/debounce.js";
-import { crearAutocompletarUsuariosTL, crearNuevoInputUsuario } from "./modules/dom.js";
+import { crearAutocompletarUsuariosTL, crearNuevoInputUsuario, crearNuevoInputTags } from "./modules/dom.js";
 
 const inputImagen = document.getElementById("imagenASubir");
 const inputTexto = document.getElementById("texto");
@@ -43,12 +43,14 @@ formImagen.addEventListener("submit", (e) => {
 	}
 });
 
-const inputNombreTL = document.getElementById("nombre-tl");
-const inputUsuariosTL = document.getElementsByName("usuarios-tl[]");
-const inputTagsTL = document.getElementsByName("tags-tl[]");
-const inputFechaDesde = document.getElementById("desde-tl");
-const inputFechaHasta = document.getElementById("hasta-tl");
-const inputOrden = document.getElementById("orden-tl");
+const inputNombreTL = document.getElementById("nombreTl");
+const inputUsuariosTL = document.getElementsByName("usuariosTl[]");
+const inputTagsTL = document.getElementsByName("tagsTl[]");
+const inputFechaTL = document.getElementById("fechaTl");
+const contRangoFechas = document.getElementById("rango-fechas-tl");
+const inputFechaDesde = document.getElementById("desdeTl");
+const inputFechaHasta = document.getElementById("hastaTl");
+const inputOrdenTL = document.getElementById("ordenTl");
 const formTimeline = document.getElementById("form-timeline");
 
 inputNombreTL.addEventListener("change", (e) => {
@@ -142,8 +144,19 @@ inputTagsTL.forEach((input) =>
 	input.addEventListener("change", (e) => {
 		let mensajeError = "";
 		comprobarValidez(e.target, (valor) => true, mensajeError);
+		crearNuevoInputTags(e.target);
 	})
 );
+
+inputFechaTL.addEventListener("change", (e) => {
+	if (e.target.value === "elegir") {
+		contRangoFechas.classList.remove("ocultar");
+	} else {
+		inputFechaDesde.value = "";
+		inputFechaHasta.value = "";
+		contRangoFechas.classList.add("ocultar");
+	}
+});
 
 inputFechaDesde.addEventListener("change", (e) => {
 	let mensajeError = "La fecha tiene que ser anterior a la de hasta";
@@ -162,17 +175,23 @@ inputFechaHasta.addEventListener("change", (e) => {
 formTimeline.addEventListener("submit", (e) => {
 	e.preventDefault();
 
-	if (comprobarInputs([inputNombreTL, inputFechaDesde, inputFechaHasta, inputOrden])) {
+	if (comprobarInputs([inputNombreTL, inputFechaTL, inputFechaDesde, inputFechaHasta, inputOrdenTL])) {
 		e.target.submit();
 	} else {
 		if (!inputNombreTL.classList.contains("input-no-valido") && !inputNombreTL.classList.contains("input-valido")) {
-			let mensajeError = "Tiene que escribir el nombre del timeline";
+			let mensajeError = "Tienes que escribir el nombre del timeline";
 			comprobarValidez(inputNombreTL, (valor) => valor != "", mensajeError);
 		} else if (
-			!inputFechaDesde.classList.contains("input-no-valido") ||
-			!inputFechaHasta.classList.contains("input-no-valido")
+			inputFechaTL.value != "elegir" ||
+			inputFechaDesde.classList.contains("input-valido") ||
+			inputFechaHasta.classList.contains("input-valido")
 		) {
 			e.target.submit();
+		} else {
+			let mensajeError = "Tienes que rellenar una de las dos fechas";
+			comprobarValidez(inputFechaDesde, (valor) => valor != "", mensajeError);
+			mensajeError = "Tienes que rellenar una de las dos fechas";
+			comprobarValidez(inputFechaHasta, (valor) => valor != "", mensajeError);
 		}
 	}
 });

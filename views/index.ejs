@@ -253,37 +253,43 @@
 										</div>
 										<div class="modal-body">
 											<div class="mb-3">
-												<label for="nombre-tl" class="col-form-label">Nombre:</label>
-												<input type="text" class="form-control" id="nombre-tl" name="nombre-tl" />
+												<label for="nombreTl" class="col-form-label">Nombre:</label>
+												<input type="text" class="form-control" id="nombreTl" name="nombreTl" />
 											</div>
 											<div class="row mb-3">
 												<div class="column col-6">
-													<label for="usuarios-tl" class="col-form-label">Añadir usuarios:</label>
-													<input
-														type="text"
-														class="form-control"
-														id="usuarios-tl"
-														name="usuarios-tl[]" />
+													<label for="usuariosTl" class="col-form-label">Añadir usuarios:</label>
+													<input type="text" class="form-control" id="usuariosTl" name="usuariosTl[]" />
 													<ul class="dropdown-menu text-small autocompletar-tl-ul"></ul>
 												</div>
 												<div class="column col-6">
-													<label for="tags-tl" class="col-form-label">Añadir tags:</label>
-													<input type="text" class="form-control" id="tags-tl" name="tags-tl[]" />
-												</div>
-											</div>
-											<div class="row mb-3">
-												<div class="column col-6">
-													<label for="desde-tl" class="col-form-label">Desde:</label>
-													<input type="date" class="form-control" id="desde-tl" name="desde-tl" />
-												</div>
-												<div class="column col-6">
-													<label for="hasta-tl" class="col-form-label">Hasta:</label>
-													<input type="date" class="form-control" id="hasta-tl" name="hasta-tl" />
+													<label for="tagsTl" class="col-form-label">Añadir tags:</label>
+													<input type="text" class="form-control" id="tagsTl" name="tagsTl[]" />
 												</div>
 											</div>
 											<div class="mb-3">
-												<label for="orden-tl" class="col-form-label">Orden:</label>
-												<select class="form-select input-valido" id="orden-tl" name="orden-tl">
+												<label for="fechaTl" class="col-form-label">Fecha de subida:</label>
+												<select class="form-select input-valido" id="fechaTl" name="fechaTl">
+													<option value="dia" selected>Hoy</option>
+													<option value="semana">Esta semana</option>
+													<option value="mes">Este mes</option>
+													<option value="smes">Desde hace 6 meses</option>
+													<option value="elegir">Elegir fecha</option>
+												</select>
+											</div>
+											<div class="row mb-3 ocultar" id="rango-fechas-tl">
+												<div class="column col-6">
+													<label for="desdeTl" class="col-form-label">Desde:</label>
+													<input type="date" class="form-control" id="desdeTl" name="desdeTl" />
+												</div>
+												<div class="column col-6">
+													<label for="hastaTl" class="col-form-label">Hasta:</label>
+													<input type="date" class="form-control" id="hastaTl" name="hastaTl" />
+												</div>
+											</div>
+											<div class="mb-3">
+												<label for="ordenTl" class="col-form-label">Orden:</label>
+												<select class="form-select input-valido" id="ordenTl" name="ordenTl">
 													<option value="-fecha" selected>Más reciente</option>
 													<option value="fecha">Más antiguo</option>
 													<option value="-numFavs">Mayor número de favoritos</option>

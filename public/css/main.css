@@ -49,3 +49,7 @@ nav {
 .error-input {
 	color: red;
 }
+
+.ocultar {
+	display: none;
+}
