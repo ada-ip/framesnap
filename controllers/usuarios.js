@@ -31,7 +31,7 @@ const registrarUsuario = async (req, res, next) => {
 							tags: [],
 							fecha: {}
 						},
-						orden: ["-fecha"]
+						orden: "-fecha"
 					}
 				}
 			]
@@ -348,20 +348,41 @@ const crearTl = async (req, res, next) => {
 	try {
 		const { nombreTl, usuariosTl, tagsTl, fechaTl, desdeTl, hastaTl, ordenTl } = req.body;
 
+		if(nombreTl === "" || fechaTl === "" || ordenTl === "") throw new Error("No se han rellenado los campos obligatorios.");
+
 		const paramsNuevoTl = {
 			nombre: nombreTl,
 			config: {
 				filtro: {
-					autor: [],
-					tags: [],
+					autor: usuariosTl.filter(usuario => usuario !== ""),
+					tags: tagsTl.filter(tag => tag !== ""),
 					fecha: {}
 				},
-				orden: [ordenTl]
+				orden: ordenTl
 			}
 		};
 
-		console.log(req.body);
-		res.end();
+		if(fechaTl === "elegir" && desdeTl !== "") {
+			paramsNuevoTl.config.filtro.fecha["$gte"] = new Date(desdeTl).toISOString();
+		} 
+		if (fechaTl === "elegir" && hastaTl !== "") {
+			paramsNuevoTl.config.filtro.fecha["$lte"] = new Date(hastaTl).toISOString();
+		}
+		if(fechaTl !== "elegir") {
+			const tiempo = {
+				dia: 1,
+				semana: 7,
+				mes: 30,
+				smes: 6 * 30
+			}
+
+			paramsNuevoTl.config.filtro.fecha["$gte"] = 24 * 60 * 60 * 1000 * tiempo[fechaTl];
+		}
+
+		const usuario = await User.findByIdAndUpdate(req.session.idUsuario, {$push: {
+			tls: paramsNuevoTl
+		}});
+
 	} catch (error) {
 		next(error);
 	}

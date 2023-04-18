@@ -23,12 +23,11 @@ const ConfigSchema = new mongoose.Schema(
 		filtro: {
 			type: FiltroSchema
 		},
-		orden: [
+		orden: 
 			{
 				type: String,
 				required: true
 			}
-		]
 	},
 	{
 		_id: false
