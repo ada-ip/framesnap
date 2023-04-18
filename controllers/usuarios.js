@@ -344,6 +344,29 @@ const obtenerNombresTls = async (req, res, next) => {
 	}
 };
 
+const crearTl = async (req, res, next) => {
+	try {
+		const { nombreTl, usuariosTl, tagsTl, fechaTl, desdeTl, hastaTl, ordenTl } = req.body;
+
+		const paramsNuevoTl = {
+			nombre: nombreTl,
+			config: {
+				filtro: {
+					autor: [],
+					tags: [],
+					fecha: {}
+				},
+				orden: [ordenTl]
+			}
+		};
+
+		console.log(req.body);
+		res.end();
+	} catch (error) {
+		next(error);
+	}
+};
+
 module.exports = {
 	registrarUsuario,
 	comprobarUsuarioExiste,
@@ -353,5 +376,6 @@ module.exports = {
 	obtenerUsuarios,
 	seguirUsuario,
 	dejarSeguirUsuario,
-	obtenerNombresTls
+	obtenerNombresTls,
+	crearTl
 };
