@@ -10,6 +10,7 @@ import {
 } from "./modules/inputs.js";
 import { debounce } from "./modules/debounce.js";
 import { crearAutocompletarUsuariosTL, crearNuevoInputUsuario, crearNuevoInputTags } from "./modules/dom.js";
+import { validarTag, autocompletarUsuarioTL } from "./modules/listeners.js";
 
 const inputImagen = document.getElementById("imagenASubir");
 const inputTexto = document.getElementById("texto");
@@ -80,73 +81,9 @@ inputNombreTL.addEventListener("change", (e) => {
 	}
 });
 
-inputUsuariosTL.forEach((input) =>
-	input.addEventListener(
-		"input",
-		debounce((e) => {
-			const autocompletar = e.target.nextElementSibling;
-			if (e.target.value.trim().length < 2) {
-				for (let elem of autocompletar.children) {
-					elem.remove();
-				}
-				autocompletar.classList.remove("mostrar");
-				if (autocompletar.nextElementSibling) {
-					autocompletar.nextElementSibling.nextElementSibling.remove();
-					autocompletar.nextElementSibling.remove();
-				}
-			} else {
-				let url = "/api/v1/usuarios/" + e.target.value.trim().toLowerCase();
+inputUsuariosTL.forEach(input => autocompletarUsuarioTL(input));
 
-				fetch(url)
-					.then((response) => {
-						if (!response.ok) {
-							throw new Error(`Error status: ${response.status}`);
-						}
-						return response.json();
-					})
-					.then((usuarios) => {
-						autocompletar.innerHTML = crearAutocompletarUsuariosTL(usuarios);
-						autocompletar.classList.add("mostrar");
-						anyadirListenerAutocompletarTL();
-					})
-					.catch((error) => {});
-			}
-		}, 200)
-	)
-);
-
-function anyadirListenerAutocompletarTL() {
-	const autocompletarElems = document.querySelectorAll(".autocompletar-tl");
-	autocompletarElems.forEach((elem) =>
-		elem.addEventListener("click", (e) => {
-			let texto = e.target.textContent;
-			const ulAutocompletar = e.target.parentElement;
-
-			const inputUsuarios = ulAutocompletar.previousElementSibling;
-			inputUsuarios.value = texto;
-
-			let mensajeError = "";
-			comprobarValidez(inputUsuarios, (valorInput) => valorInput != "", mensajeError);
-
-			if (!ulAutocompletar.nextElementSibling) {
-				crearNuevoInputUsuario(e.target);
-			}
-
-			for (let elem of ulAutocompletar.children) {
-				elem.remove();
-			}
-			ulAutocompletar.classList.remove("mostrar");
-		})
-	);
-}
-
-inputTagsTL.forEach((input) =>
-	input.addEventListener("change", (e) => {
-		let mensajeError = "";
-		comprobarValidez(e.target, (valor) => true, mensajeError);
-		crearNuevoInputTags(e.target);
-	})
-);
+inputTagsTL.forEach(input => input.addEventListener("change", validarTag));
 
 inputFechaTL.addEventListener("change", (e) => {
 	if (e.target.value === "elegir") {

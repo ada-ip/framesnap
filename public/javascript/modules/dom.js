@@ -1,3 +1,5 @@
+import { validarTag, autocompletarUsuarioTL } from "./listeners.js";
+
 function crearElemAutocompletar(elementos) {
 	let texto = "";
 	elementos.forEach((elem) => {
@@ -28,6 +30,7 @@ function crearNuevoInputUsuario(elemAutocompletar) {
 	nuevoInput.type = "text";
 	nuevoInput.name = "usuarios-tl[]";
 	nuevoInput.classList.add("form-control");
+	autocompletarUsuarioTL(nuevoInput)
 	contenedorUsuarios.append(nuevoInput);
 
 	const nuevaUl = document.createElement("ul");
@@ -43,6 +46,7 @@ function crearNuevoInputTags(ultimoTag) {
 	nuevoInput.type = "text";
 	nuevoInput.name = "tags-tl[]";
 	nuevoInput.classList.add("form-control");
+	nuevoInput.addEventListener("change", validarTag);
 	contenedorTags.append(nuevoInput);
 }
 

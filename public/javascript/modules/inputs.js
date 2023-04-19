@@ -86,6 +86,11 @@ function fechaValida(fechas) {
 	return true;
 }
 
+function tagValido(tag) {
+	let regex = /^\w*$/;
+	return regex.test(tag);
+}
+
 function comprobarInputs(inputs) {
 	if (inputs.every((input) => input.classList.contains("input-valido"))) {
 		return true;
@@ -123,5 +128,6 @@ export {
 	imagenValida,
 	nombreTLValido,
 	fechaValida,
-	comprobarValidezFechas
+	comprobarValidezFechas,
+	tagValido
 };
