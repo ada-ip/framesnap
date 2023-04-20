@@ -384,6 +384,14 @@ const crearTl = async (req, res, next) => {
 			tls: paramsNuevoTl
 		}});
 
+		req.session.nombreTl = paramsNuevoTl.nombre;
+		req.session.save((error) => {
+			if (error) {
+				return next(error);
+			}
+			return res.redirect("/");
+			});
+
 	} catch (error) {
 		next(error);
 	}
