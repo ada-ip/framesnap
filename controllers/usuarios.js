@@ -237,8 +237,6 @@ const obtenerUsuarios = async (req, res, next) => {
 					numSeguidores: "$datosSeguidos.numSeguidores"
 				});
 
-			console.log(usuariosSeguidosOutlier);
-
 			if (usuariosSeguidosOutlier.length > 0) {
 				const usuariosConSignedUrl = anyadirSignedUrlsUsuario(sumarNumPosts(usuariosSeguidosOutlier, postsUsuarios), req);
 				usuarios.push(...usuariosConSignedUrl);
@@ -333,7 +331,7 @@ const obtenerNombresTls = async (req, res, next) => {
 	const { nombreTL } = req.params;
 	try {
 		const tl = await User.findOne({ _id: req.session.idUsuario, "tls.nombre": nombreTL }).select("_id");
-		console.log(tl);
+
 		if (tl) {
 			res.status(200).json({ esRepetido: true });
 		} else {
@@ -354,13 +352,16 @@ const crearTl = async (req, res, next) => {
 			nombre: nombreTl,
 			config: {
 				filtro: {
-					autor: usuariosTl.filter(usuario => usuario !== ""),
+					autor: [],
 					tags: tagsTl.filter(tag => tag !== ""),
 					fecha: {}
 				},
 				orden: ordenTl
 			}
 		};
+
+		const idUsuarios = await User.find({nombre: {$in: usuariosTl.filter(usuario => usuario !== "")}}).select("_id");
+		paramsNuevoTl.config.filtro.autor = idUsuarios.map(usuario => usuario._id);
 
 		if(fechaTl === "elegir" && desdeTl !== "") {
 			paramsNuevoTl.config.filtro.fecha["$gte"] = new Date(desdeTl).toISOString();

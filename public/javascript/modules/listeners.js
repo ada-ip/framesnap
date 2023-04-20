@@ -29,8 +29,8 @@ function autocompletarUsuarioTL(input) {
                 }
                 autocompletar.classList.remove("mostrar");
                 if (autocompletar.nextElementSibling) {
-                    autocompletar.nextElementSibling.nextElementSibling.remove();
-                    autocompletar.nextElementSibling.remove();
+                    e.target.remove();
+                    autocompletar.remove();
                 }
             } else {
                 let url = "/api/v1/usuarios/" + e.target.value.trim().toLowerCase();

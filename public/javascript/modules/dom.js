@@ -28,7 +28,7 @@ function crearNuevoInputUsuario(elemAutocompletar) {
 
 	const nuevoInput = document.createElement("input");
 	nuevoInput.type = "text";
-	nuevoInput.name = "usuarios-tl[]";
+	nuevoInput.name = "usuariosTl[]";
 	nuevoInput.classList.add("form-control");
 	autocompletarUsuarioTL(nuevoInput)
 	contenedorUsuarios.append(nuevoInput);
@@ -44,7 +44,7 @@ function crearNuevoInputTags(ultimoTag) {
 
 	const nuevoInput = document.createElement("input");
 	nuevoInput.type = "text";
-	nuevoInput.name = "tags-tl[]";
+	nuevoInput.name = "tagsTl[]";
 	nuevoInput.classList.add("form-control");
 	nuevoInput.addEventListener("change", validarTag);
 	contenedorTags.append(nuevoInput);
