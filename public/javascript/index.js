@@ -138,6 +138,46 @@ const btnsConfigTls = document.querySelectorAll("#timelines i.fa-gear");
 btnsConfigTls.forEach((btn) =>
 	btn.addEventListener("click", (e) => {
 		e.preventDefault();
+
+		let url = "";
+
 		crearModalConfigTl();
 	})
 );
+
+function getScrollbarWidth() {
+	const outer = document.createElement("div");
+	outer.style.visibility = "hidden";
+	outer.style.overflow = "scroll";
+	document.body.appendChild(outer);
+
+	const inner = document.createElement("div");
+	outer.appendChild(inner);
+
+	const scrollbarWidth = outer.offsetWidth - inner.offsetWidth;
+
+	outer.parentNode.removeChild(outer);
+
+	return scrollbarWidth;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+	const scrollbarWidth = getScrollbarWidth();
+	console.log(scrollbarWidth);
+
+	document.body.addEventListener("show.bs.modal", () => {
+		const navbar = document.querySelector("nav.fixed-top");
+		if (navbar) {
+			let pixels = scrollbarWidth + 15;
+			navbar.style.paddingRight = `${pixels}px`;
+			console.log(`calc(${scrollbarWidth}px + 15px)`);
+		}
+	});
+
+	document.body.addEventListener("hide.bs.modal", () => {
+		const navbar = document.querySelector("nav.fixed-top");
+		if (navbar) {
+			navbar.style.paddingRight = "";
+		}
+	});
+});

@@ -250,26 +250,16 @@
 										<li><hr class="dropdown-divider" /></li>
 										<% } %>
 										<li>
-											<a
-												class="dropdown-item"
-												data-bs-toggle="modal"
-												data-bs-target="#crearTLModal"
-												href="#"
+											<a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#tlsModal" href="#"
 												>Nuevo Timeline</a
 											>
 										</li>
 									</ul>
 								</div>
 							</form>
-							<div
-								class="modal fade"
-								id="crearTLModal"
-								tabindex="-1"
-								aria-labelledby="crearTLModal"
-								aria-hidden="true"
-							>
+							<div class="modal fade" id="tlsModal" tabindex="-1" aria-labelledby="crearTLModal" aria-hidden="true">
 								<div class="modal-dialog">
-									<form id="form-timeline" action="/api/v1/usuarios/tls" method="POST" class="modal-content">
+									<form id="form-timeline" action="/api/v1/tls" method="POST" class="modal-content">
 										<div class="modal-header">
 											<h1 class="modal-title fs-5" id="crearTLModalLabel">Crear nuevo timeline</h1>
 											<button

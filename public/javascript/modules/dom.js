@@ -54,13 +54,12 @@ function crearModalConfigTl() {
 	const modal = document.createElement("div");
 	modal.classList.add("modal");
 	modal.classList.add("fade");
-	modal.classList.add("show");
 	modal.id = "config-timeline";
 	modal.setAttribute("tabindex", "-1");
-	modal.setAttribute("aria-labelledby", "ConfigurarTimeline");
+	modal.setAttribute("aria-label", "ConfigurarTimeline");
+	modal.setAttribute("style", "display:block;");
 	modal.setAttribute("aria-modal", true);
 	modal.setAttribute("role", "dialog");
-	modal.setAttribute("style", "display:block;");
 	modal.innerHTML = `<div class="modal-dialog">
 							<form action="/api/v1/usuarios/tls" method="POST" class="modal-content">
 								<div class="modal-header">
@@ -131,6 +130,10 @@ function crearModalConfigTl() {
 	);
 
 	document.body.append(modal);
+
+	const bootstrapModal = new bootstrap.Modal(modal);
+
+	bootstrapModal.show();
 }
 
 export { crearElemAutocompletar, crearAutocompletarUsuariosTL, crearNuevoInputUsuario, crearNuevoInputTags, crearModalConfigTl };
