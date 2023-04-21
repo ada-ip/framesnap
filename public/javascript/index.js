@@ -6,10 +6,10 @@ import {
 	nombreTLValido,
 	crearMensajeError,
 	fechaValida,
-	comprobarValidezFechas
+	comprobarValidezFechas,
 } from "./modules/inputs.js";
 import { debounce } from "./modules/debounce.js";
-import { crearAutocompletarUsuariosTL, crearNuevoInputUsuario, crearNuevoInputTags } from "./modules/dom.js";
+import { crearAutocompletarUsuariosTL, crearNuevoInputUsuario, crearNuevoInputTags, crearModalConfigTl } from "./modules/dom.js";
 import { validarTag, autocompletarUsuarioTL } from "./modules/listeners.js";
 
 const inputImagen = document.getElementById("imagenASubir");
@@ -81,9 +81,9 @@ inputNombreTL.addEventListener("change", (e) => {
 	}
 });
 
-inputUsuariosTL.forEach(input => autocompletarUsuarioTL(input));
+inputUsuariosTL.forEach((input) => autocompletarUsuarioTL(input));
 
-inputTagsTL.forEach(input => input.addEventListener("change", validarTag));
+inputTagsTL.forEach((input) => input.addEventListener("change", validarTag));
 
 inputFechaTL.addEventListener("change", (e) => {
 	if (e.target.value === "elegir") {
@@ -132,3 +132,12 @@ formTimeline.addEventListener("submit", (e) => {
 		}
 	}
 });
+
+const btnsConfigTls = document.querySelectorAll("#timelines i.fa-gear");
+
+btnsConfigTls.forEach((btn) =>
+	btn.addEventListener("click", (e) => {
+		e.preventDefault();
+		crearModalConfigTl();
+	})
+);
