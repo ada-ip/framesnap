@@ -18,11 +18,10 @@ const devolverIndex = async (req, res, next) => {
 
 			let posts = [];
 
-			if(!req.session.nombreTl || req.session.nombreTl === "Timeline"){
-				if (req.session.nombreTl) delete req.session.nombreTl;
+			if(!req.query.timeline){
 				posts = await usuario.obtenerPostsTimeline();
 			} else {
-				const tl = await User.findOne({_id: req.session.idUsuario}).select({_id: 0, tls: {$elemMatch: {nombre: req.session.nombreTl}}});
+				const tl = await User.findOne({_id: req.session.idUsuario}).select({_id: 0, tls: {$elemMatch: {nombre: req.query.timeline}}});
 
 				const filtro = {
 					$or: [],
@@ -72,7 +71,7 @@ const devolverIndex = async (req, res, next) => {
 
 			const postsConFavsYUrls = await comprobarFavs(postsConSignedUrls, req);
 
-			res.render("index", { usuario: { ...usuarioConSignedUrls[0], tlElegido: req.session.nombreTl || "Timeline" }, posts: postsConFavsYUrls });
+			res.render("index", { usuario: { ...usuarioConSignedUrls[0], tlElegido: req.query.timeline || "Timeline" }, posts: postsConFavsYUrls });
 		} catch (error) {
 			next(error);
 		}

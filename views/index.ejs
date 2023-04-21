@@ -219,7 +219,7 @@
 									</button>
 									<ul class="dropdown-menu">
 										<% for(let tl of usuario.tls) { %> <% if(tl.nombre !== usuario.tlElegido) { %>
-										<li><a class="dropdown-item" href="#"><%= tl.nombre %></a></li>
+										<li><a class="dropdown-item" href="/<% if (tl.nombre !== 'Timeline') { %>?timeline=<%= tl.nombre %><% } %>"><%= tl.nombre %></a></li>
 										<% } %> <% } %> <% if(usuario.tls.length > 1) { %>
 										<li><hr class="dropdown-divider" /></li>
 										<% } %>
