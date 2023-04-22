@@ -31,7 +31,7 @@
 			loading="lazy" />
 		<div class="card-body" id="post<%= post._id %>">
 			<div>
-				<p><%= post.numFavs %> favoritos</p>
+				<p><%= post.numFavs %> favorito<% if(post.numFavs !== 1) { %>s<% } %></p>
 				<img
 					src="<% if(post.esFavorito) { 
 								%>/images/fav.png<% 

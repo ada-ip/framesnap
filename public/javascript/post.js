@@ -17,7 +17,15 @@ function anyadirEventoFavoritear(img) {
 				return response.json();
 			})
 			.then((resultado) => {
-				console.log(resultado);
+				const elemNumFavoritos = e.target.previousElementSibling;
+				let numFavoritos = parseInt(elemNumFavoritos.textContent.substring(0, elemNumFavoritos.textContent.indexOf(" ")));
+				if (e.target.src.includes("no-fav.png")) {
+					elemNumFavoritos.textContent = `${numFavoritos + 1} favorito`;
+					if (numFavoritos + 1 !== 1) elemNumFavoritos.textContent += "s";
+				} else {
+					elemNumFavoritos.textContent = `${numFavoritos - 1} favorito`;
+					if (numFavoritos - 1 !== 1) elemNumFavoritos.textContent += "s";
+				}
 				e.target.src = e.target.src.includes("no-fav.png") ? "/images/fav.png" : "/images/no-fav.png";
 			})
 			.catch((error) => {});
