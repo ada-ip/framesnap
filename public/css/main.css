@@ -36,6 +36,15 @@ nav {
 	cursor: pointer;
 }
 
+/******************************* Modales *******************************/
+
+.modal-open {
+	position: fixed;
+	overflow-y: scroll !important;
+	width: 100%;
+	padding-right: 0 !important;
+}
+
 /******************************* Formularios *******************************/
 
 .input-no-valido {
