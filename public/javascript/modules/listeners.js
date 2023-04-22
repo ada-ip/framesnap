@@ -1,6 +1,4 @@
-import {
-	comprobarValidez,
-} from "./inputs.js";
+import { comprobarValidez } from "./inputs.js";
 import { crearNuevoInputTags, crearAutocompletarUsuariosTL, crearNuevoInputUsuario } from "./dom.js";
 import { tagValido } from "./inputs.js";
 import { debounce } from "./debounce.js";
@@ -9,48 +7,51 @@ function validarTag(e) {
 	let mensajeError = "El tag no puede tener espacios";
 	comprobarValidez(e.target, tagValido, mensajeError);
 
-    if(e.target.classList.contains("input-valido") && e.target.value.trim() !== ""){
-        crearNuevoInputTags(e.target);
-    } else if(e.target.classList.contains("input-valido")) {
-        if(e.target.nextElementSibling.classList.contains("form-control") || e.target.previousElementSibling.classList.contains("form-control")) {
-            e.target.remove();
-        }
-    }
+	if (e.target.classList.contains("input-valido") && e.target.value.trim() !== "") {
+		crearNuevoInputTags(e.target);
+	} else if (e.target.classList.contains("input-valido")) {
+		if (
+			e.target.nextElementSibling.classList.contains("form-control") ||
+			e.target.previousElementSibling.classList.contains("form-control")
+		) {
+			e.target.remove();
+		}
+	}
 }
 
 function autocompletarUsuarioTL(input) {
-    input.addEventListener(
-        "input",
-        debounce((e) => {
-            const autocompletar = e.target.nextElementSibling;
-            if (e.target.value.trim().length < 2) {
-                for (let elem of autocompletar.children) {
-                    elem.remove();
-                }
-                autocompletar.classList.remove("mostrar");
-                if (autocompletar.nextElementSibling) {
-                    e.target.remove();
-                    autocompletar.remove();
-                }
-            } else {
-                let url = "/api/v1/usuarios/" + e.target.value.trim().toLowerCase();
+	input.addEventListener(
+		"input",
+		debounce((e) => {
+			const autocompletar = e.target.nextElementSibling;
+			if (e.target.value.trim().length < 2) {
+				for (let elem of autocompletar.children) {
+					elem.remove();
+				}
+				autocompletar.classList.remove("mostrar");
+				if (autocompletar.nextElementSibling) {
+					e.target.remove();
+					autocompletar.remove();
+				}
+			} else {
+				let url = "/api/v1/usuarios/" + e.target.value.trim().toLowerCase();
 
-                fetch(url)
-                    .then((response) => {
-                        if (!response.ok) {
-                            throw new Error(`Error status: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-                    .then((usuarios) => {
-                        autocompletar.innerHTML = crearAutocompletarUsuariosTL(usuarios);
-                        autocompletar.classList.add("mostrar");
-                        anyadirListenersElemsAutocompletar();
-                    })
-                    .catch((error) => {});
-            }
-        }, 200)
-    )
+				fetch(url)
+					.then((response) => {
+						if (!response.ok) {
+							throw new Error(`Error status: ${response.status}`);
+						}
+						return response.json();
+					})
+					.then((usuarios) => {
+						autocompletar.innerHTML = crearAutocompletarUsuariosTL(usuarios);
+						autocompletar.classList.add("mostrar");
+						anyadirListenersElemsAutocompletar();
+					})
+					.catch((error) => {});
+			}
+		}, 200)
+	);
 }
 
 function anyadirListenersElemsAutocompletar() {
@@ -67,7 +68,7 @@ function anyadirListenersElemsAutocompletar() {
 			comprobarValidez(inputUsuarios, (valorInput) => valorInput != "", mensajeError);
 
 			if (!ulAutocompletar.nextElementSibling) {
-				crearNuevoInputUsuario(e.target);
+				crearNuevoInputUsuario(e.target.parentElement);
 			}
 
 			for (let elem of ulAutocompletar.children) {
@@ -78,4 +79,4 @@ function anyadirListenersElemsAutocompletar() {
 	);
 }
 
-export {validarTag, autocompletarUsuarioTL}
+export { validarTag, autocompletarUsuarioTL };

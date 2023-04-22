@@ -1,5 +1,4 @@
 import {
-	nombreValido,
 	imagenValida,
 	comprobarValidez,
 	comprobarInputs,
@@ -8,8 +7,7 @@ import {
 	fechaValida,
 	comprobarValidezFechas
 } from "./modules/inputs.js";
-import { debounce } from "./modules/debounce.js";
-import { crearAutocompletarUsuariosTL, crearNuevoInputUsuario, crearNuevoInputTags, crearModalConfigTl } from "./modules/dom.js";
+import { rellenarModalConfigTl, resetearModalTl } from "./modules/dom.js";
 import { validarTag, autocompletarUsuarioTL } from "./modules/listeners.js";
 
 const inputImagen = document.getElementById("imagenASubir");
@@ -53,16 +51,17 @@ const inputFechaDesde = document.getElementById("desdeTl");
 const inputFechaHasta = document.getElementById("hastaTl");
 const inputOrdenTL = document.getElementById("ordenTl");
 const formTimeline = document.getElementById("form-timeline");
+const btnCerrarModal = formTimeline.firstElementChild.lastElementChild;
 
 inputNombreTL.addEventListener("change", (e) => {
-	let mensajeError = "El nombre tiene que tener entre 1 y 20 caracteres alfanuméricos/guiones";
+	let mensajeError = "El nombre tiene que tener entre 1 y 20 caracteres alfanuméricos o guiones";
 	comprobarValidez(e.target, nombreTLValido, mensajeError);
 });
 
 inputNombreTL.addEventListener("change", (e) => {
-	if (e.target.classList.contains("input-valido")) {
-		const url = "/api/v1/usuarios/tls/" + e.target.value.trim();
-
+	const nombreTl = e.target.getAttribute("data-value");
+	if (e.target.classList.contains("input-valido") && nombreTl !== e.target.value) {
+		const url = "/api/v1/tls/" + e.target.value.trim() + "/validez";
 		fetch(url)
 			.then((response) => {
 				if (!response.ok) {
@@ -71,6 +70,7 @@ inputNombreTL.addEventListener("change", (e) => {
 				return response.json();
 			})
 			.then((tl) => {
+				console.log(tl);
 				if (tl.esRepetido === true) {
 					e.target.classList.remove("input-valido");
 					e.target.classList.add("input-no-valido");
@@ -133,37 +133,34 @@ formTimeline.addEventListener("submit", (e) => {
 	}
 });
 
+btnCerrarModal.addEventListener("click", (e) => {
+	setTimeout(resetearModalTl, 500, e.target.parentElement.nextElementSibling);
+});
+
 const btnsConfigTls = document.querySelectorAll("#timelines i.fa-gear");
 
 btnsConfigTls.forEach((btn) =>
 	btn.addEventListener("click", (e) => {
 		e.preventDefault();
 
-		let url = "";
+		formTimeline.firstElementChild.firstElementChild.textContent = "Modificar timeline";
+		formTimeline.lastElementChild.firstElementChild.value = "Guardar";
 
-		crearModalConfigTl();
+		let url = "/api/v1/tls/" + e.target.previousElementSibling.textContent;
+
+		fetch(url)
+			.then((response) => {
+				if (!response.ok) {
+					throw new Error(`Error status: ${response.status}`);
+				}
+				return response.json();
+			})
+			.then((tl) => {
+				rellenarModalConfigTl(tl, formTimeline.children[1]);
+				const modal = formTimeline.parentElement.parentElement;
+				const bootstrapModal = new bootstrap.Modal(modal);
+				bootstrapModal.show();
+			})
+			.catch((error) => {});
 	})
 );
-
-function getScrollbarWidth() {
-	return window.innerWidth - document.documentElement.clientWidth;
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-	const scrollbarWidth = getScrollbarWidth();
-
-	document.body.addEventListener("shown.bs.modal", () => {
-		const navbar = document.querySelector("nav.fixed-top");
-		if (navbar) {
-			let pixels = scrollbarWidth + 15;
-			navbar.style.paddingRight = `${pixels}px`;
-		}
-	});
-
-	document.body.addEventListener("hidden.bs.modal", () => {
-		const navbar = document.querySelector("nav.fixed-top");
-		if (navbar) {
-			navbar.style.paddingRight = "";
-		}
-	});
-});

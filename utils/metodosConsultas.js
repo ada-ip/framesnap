@@ -154,4 +154,31 @@ const quitarSeguido = async (usuarioADejarDeSeguir, usuarioLogeado, sesion) => {
 	await usuarioLogeado.save({ session: sesion });
 };
 
-module.exports = { sumarNumPosts, eliminarDuplicados, anyadirSeguidor, anyadirSeguido, quitarSeguidor, quitarSeguido };
+const formatearFechaTl = (fecha) => {
+	const fechaFormateada = {};
+
+	if (typeof fecha.$gte === "number") {
+		const tiempo = {
+			1: "dia",
+			7: "semana",
+			30: "mes",
+			180: "smes"
+		};
+		fechaFormateada.opcion = tiempo[`${fecha.$gte / (24 * 60 * 60 * 1000)}`];
+	} else {
+		fechaFormateada.opcion = "elegir";
+		fechaFormateada.$gte = fecha.$gte;
+		if (fecha.$lte) fechaFormateada.$lte = fecha.$lte;
+	}
+	return fechaFormateada;
+};
+
+module.exports = {
+	sumarNumPosts,
+	eliminarDuplicados,
+	anyadirSeguidor,
+	anyadirSeguido,
+	quitarSeguidor,
+	quitarSeguido,
+	formatearFechaTl
+};

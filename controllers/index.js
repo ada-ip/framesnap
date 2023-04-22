@@ -18,20 +18,23 @@ const devolverIndex = async (req, res, next) => {
 
 			let posts = [];
 
-			if(!req.query.timeline){
+			if (!req.query.timeline) {
 				posts = await usuario.obtenerPostsTimeline();
 			} else {
-				const tl = await User.findOne({_id: req.session.idUsuario}).select({_id: 0, tls: {$elemMatch: {nombre: req.query.timeline}}});
+				const tl = await User.findOne({ _id: req.session.idUsuario }).select({
+					_id: 0,
+					tls: { $elemMatch: { nombre: req.query.timeline } }
+				});
 
 				const filtro = {
-					$or: [],
+					$or: []
 				};
 				if (tl.tls[0].config.filtro.autor.length > 0) {
 					filtroAutor = {
 						"autor.id": {
 							$in: []
 						}
-					}
+					};
 					for (let autor of tl.tls[0].config.filtro.autor) {
 						filtroAutor["autor.id"].$in.push(autor);
 					}
@@ -42,36 +45,49 @@ const devolverIndex = async (req, res, next) => {
 						tags: {
 							$in: []
 						}
-					}
+					};
 					for (let tag of tl.tls[0].config.filtro.tags) {
 						filtroTags.tags.$in.push(tag);
 					}
 					filtro.$or.push(filtroTags);
 				}
-				if (typeof tl.tls[0].config.filtro.fecha.$gte === 'number') {
+				if (typeof tl.tls[0].config.filtro.fecha.$gte === "number") {
 					filtro.fecha = {
 						$gte: new Date(Date.now() - tl.tls[0].config.filtro.fecha.$gte).toISOString()
-					}
+					};
 				} else {
 					filtro.fecha = tl.tls[0].config.filtro.fecha;
 				}
-	
-				let orden = tl.tls[0].config.orden;
-				if(orden !== "fecha" || orden !== "-fecha") orden += " -fecha";
 
-				if(filtro.$or.length !== 0) {
+				let orden = tl.tls[0].config.orden;
+
+				if (filtro.$or.length !== 0) {
 					posts = await Post.find(filtro)
-					.select("-favs -outlierComentarios -tags")
-					.sort(orden)
-					.limit(15);
-				} 
+						.populate({ path: "autor.id", select: "numSeguidores" })
+						.select("-favs -outlierComentarios -tags")
+						.sort("-fecha")
+						.sort(orden)
+						.limit(15);
+
+					if (orden !== "fecha" && orden !== "-fecha") {
+						posts.sort((post1, post2) => {
+							if (post1.autor.id.numSeguidores === post2.autor.id.numSeguidores) {
+								return post2.fecha - post1.fecha;
+							}
+							return -1;
+						});
+					}
+				}
 			}
 
 			const postsConSignedUrls = anyadirSignedUrlsPosts(posts, req);
 
 			const postsConFavsYUrls = await comprobarFavs(postsConSignedUrls, req);
 
-			res.render("index", { usuario: { ...usuarioConSignedUrls[0], tlElegido: req.query.timeline || "Timeline" }, posts: postsConFavsYUrls });
+			res.render("index", {
+				usuario: { ...usuarioConSignedUrls[0], tlElegido: req.query.timeline || "Timeline" },
+				posts: postsConFavsYUrls
+			});
 		} catch (error) {
 			next(error);
 		}

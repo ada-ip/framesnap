@@ -1,9 +1,10 @@
 const User = require("../models/User");
+const { formatearFechaTl } = require("../utils/metodosConsultas");
 
 const esTlRepetido = async (req, res, next) => {
-	const { nombreTL } = req.params;
+	const { nombreTl } = req.params;
 	try {
-		const tl = await User.findOne({ _id: req.session.idUsuario, "tls.nombre": nombreTL }).select("_id");
+		const tl = await User.findOne({ _id: req.session.idUsuario, "tls.nombre": nombreTl }).select("_id");
 
 		if (tl) {
 			res.status(200).json({ esRepetido: true });
@@ -27,10 +28,10 @@ const crearTl = async (req, res, next) => {
 				filtro: {
 					autor: [],
 					tags: tagsTl.filter((tag) => tag !== ""),
-					fecha: {},
+					fecha: {}
 				},
-				orden: ordenTl,
-			},
+				orden: ordenTl
+			}
 		};
 
 		const idUsuarios = await User.find({ nombre: { $in: usuariosTl.filter((usuario) => usuario !== "") } }).select("_id");
@@ -47,7 +48,7 @@ const crearTl = async (req, res, next) => {
 				dia: 1,
 				semana: 7,
 				mes: 30,
-				smes: 6 * 30,
+				smes: 6 * 30
 			};
 
 			paramsNuevoTl.config.filtro.fecha["$gte"] = 24 * 60 * 60 * 1000 * tiempo[fechaTl];
@@ -55,8 +56,8 @@ const crearTl = async (req, res, next) => {
 
 		const usuario = await User.findByIdAndUpdate(req.session.idUsuario, {
 			$push: {
-				tls: paramsNuevoTl,
-			},
+				tls: paramsNuevoTl
+			}
 		});
 
 		res.redirect("/?timeline=" + paramsNuevoTl.nombre);
@@ -65,7 +66,36 @@ const crearTl = async (req, res, next) => {
 	}
 };
 
+const obtenerTl = async (req, res, next) => {
+	try {
+		const { nombreTl } = req.params;
+
+		const tl = await User.aggregate()
+			.unwind("$tls")
+			.match({ nombre: req.session.usuario, "tls.nombre": nombreTl })
+			.lookup({
+				from: "users",
+				localField: "tls.config.filtro.autor",
+				foreignField: "_id",
+				as: "tls.autor"
+			})
+			.project({
+				_id: 0,
+				nombre: "$tls.nombre",
+				autor: "$tls.autor.nombre",
+				tags: "$tls.config.filtro.tags",
+				fecha: "$tls.config.filtro.fecha",
+				orden: "$tls.config.orden"
+			});
+
+		res.status(200).json({ ...tl[0], fechaFormateada: formatearFechaTl(tl[0].fecha) });
+	} catch (error) {
+		next(error);
+	}
+};
+
 module.exports = {
 	esTlRepetido,
 	crearTl,
+	obtenerTl
 };

@@ -24,13 +24,13 @@ app.use(
 		store: MongoStore.create({
 			mongoUrl: process.env.MONGO_DB_URI,
 			dbName: "framedb",
-			ttl: 60 * 60 * 24,
+			ttl: 60 * 60 * 24
 		}),
 		cookie: {
 			maxAge: 1000 * 60 * 60 * 24,
 			secure: false,
-			httpOnly: true,
-		},
+			httpOnly: true
+		}
 	})
 );
 
@@ -45,7 +45,7 @@ app.use("/", routerIndex);
 app.use("/", routerAuth);
 app.use("/", routerUsuarios);
 app.use("/", routerPosts);
-app.use("/api/v1/tls/", routerPosts);
+app.use("/api/v1/tls/", routerTls);
 
 // app.use(error404);
 // app.use(controlErrores);

@@ -24,7 +24,7 @@ function crearAutocompletarUsuariosTL(elementos) {
 }
 
 function crearNuevoInputUsuario(elemAutocompletar) {
-	const contenedorUsuarios = elemAutocompletar.parentElement.parentElement;
+	const contenedorUsuarios = elemAutocompletar.parentElement;
 
 	const nuevoInput = document.createElement("input");
 	nuevoInput.type = "text";
@@ -50,90 +50,109 @@ function crearNuevoInputTags(ultimoTag) {
 	contenedorTags.append(nuevoInput);
 }
 
-function crearModalConfigTl() {
-	const modal = document.createElement("div");
-	modal.classList.add("modal");
-	modal.classList.add("fade");
-	modal.id = "config-timeline";
-	modal.setAttribute("tabindex", "-1");
-	modal.setAttribute("aria-label", "ConfigurarTimeline");
-	modal.setAttribute("style", "display:block;");
-	modal.setAttribute("aria-modal", true);
-	modal.setAttribute("role", "dialog");
-	modal.innerHTML = `<div class="modal-dialog">
-							<form action="/api/v1/usuarios/tls" method="POST" class="modal-content">
-								<div class="modal-header">
-									<h1 class="modal-title fs-5" id="crearTLModalLabel">Crear nuevo timeline</h1>
-									<button
-										type="button"
-										class="btn-close"
-										data-bs-dismiss="modal"
-										aria-label="Close"
-									></button>
-								</div>
-								<div class="modal-body">
-									<div class="mb-3">
-										<label for="nombreTl" class="col-form-label">Nombre:</label>
-										<input type="text" class="form-control" id="nombreTl" name="nombreTl" />
-									</div>
-									<div class="row mb-3">
-										<div class="column col-6">
-											<label for="usuariosTl" class="col-form-label">Añadir usuarios:</label>
-											<input type="text" class="form-control" name="usuariosTl[]" />
-											<ul class="dropdown-menu text-small autocompletar-tl-ul"></ul>
-										</div>
-										<div class="column col-6">
-											<label for="tagsTl" class="col-form-label">Añadir tags:</label>
-											<input type="text" class="form-control" name="tagsTl[]" />
-										</div>
-									</div>
-									<div class="mb-3">
-										<label for="fechaTl" class="col-form-label">Fecha de subida:</label>
-										<select class="form-select input-valido" id="fechaTl" name="fechaTl">
-											<option value="dia" selected>Hoy</option>
-											<option value="semana">Esta semana</option>
-											<option value="mes">Este mes</option>
-											<option value="smes">Desde hace 6 meses</option>
-											<option value="elegir">Elegir fecha</option>
-										</select>
-									</div>
-									<div class="row mb-3 ocultar" id="rango-fechas-tl">
-										<div class="column col-6">
-											<label for="desdeTl" class="col-form-label">Desde:</label>
-											<input type="date" class="form-control" id="desdeTl" name="desdeTl" />
-										</div>
-										<div class="column col-6">
-											<label for="hastaTl" class="col-form-label">Hasta:</label>
-											<input type="date" class="form-control" id="hastaTl" name="hastaTl" />
-										</div>
-									</div>
-									<div class="mb-3">
-										<label for="ordenTl" class="col-form-label">Orden:</label>
-										<select class="form-select input-valido" id="ordenTl" name="ordenTl">
-											<option value="-fecha" selected>Más reciente</option>
-											<option value="fecha">Más antiguo</option>
-											<option value="-numFavs">Mayor número de favoritos</option>
-											<option value="numFavs">Menor número de favoritos</option>
-											<option value="-numSeguidores">Mayor número de seguidores</option>
-											<option value="numSeguidores">Menor número de seguidores</option>
-										</select>
-									</div>
-								</div>
-								<div class="modal-footer">
-									<input type="submit" class="btn btn-primary" value="Crear" />
-								</div>
-							</form>
-						</div>`;
+function rellenarModalConfigTl(datosTl, modalBody) {
+	const nombre = modalBody.firstElementChild.lastElementChild;
+	nombre.value = datosTl.nombre;
+	nombre.classList.add("input-valido");
+	nombre.setAttribute("data-value", datosTl.nombre);
 
-	modal.firstElementChild.firstElementChild.firstElementChild.children[1].addEventListener("click", (e) =>
-		e.target.parentElement.parentElement.parentElement.parentElement.remove()
-	);
+	const usuarios = modalBody.children[1].firstElementChild;
+	datosTl.autor.forEach((autor) => {
+		usuarios.lastElementChild.previousElementSibling.value = autor;
+		usuarios.lastElementChild.previousElementSibling.classList.add("input-valido");
+		crearNuevoInputUsuario(usuarios.lastElementChild);
+	});
 
-	document.body.append(modal);
+	const tags = modalBody.children[1].lastElementChild;
+	datosTl.tags.forEach((tag) => {
+		tags.lastElementChild.value = tag;
+		tags.lastElementChild.classList.add("input-valido");
+		crearNuevoInputTags(tags.lastElementChild);
+	});
 
-	const bootstrapModal = new bootstrap.Modal(modal);
+	const fecha = modalBody.children[2].lastElementChild;
+	for (let option of fecha) {
+		if (option.value === datosTl.fechaFormateada.opcion) option.selected = true;
+	}
 
-	bootstrapModal.show();
+	if (datosTl.fechaFormateada.opcion === "elegir") {
+		const contenedorFechas = modalBody.children[3];
+		contenedorFechas.classList.remove("ocultar");
+
+		const fechaDesde = new Date(datosTl.fechaFormateada.$gte);
+		contenedorFechas.firstElementChild.lastElementChild.value = `${fechaDesde.getFullYear()}-${(fechaDesde.getMonth() + 1)
+			.toString()
+			.padStart(2, "0")}-${fechaDesde.getDate().toString().padStart(2, "0")}`;
+
+		contenedorFechas.firstElementChild.lastElementChild.classList.add("input-valido");
+
+		if (datosTl.fechaFormateada.$lte) {
+			const fechaHasta = new Date(datosTl.fechaFormateada.$lte);
+			contenedorFechas.lastElementChild.lastElementChild.value = `${fechaHasta.getFullYear()}-${(fechaHasta.getMonth() + 1)
+				.toString()
+				.padStart(2, "0")}-${fechaHasta.getDate().toString().padStart(2, "0")}`;
+
+			contenedorFechas.lastElementChild.lastElementChild.classList.add("input-valido");
+		}
+	}
+
+	const orden = modalBody.lastElementChild.lastElementChild;
+	for (let option of orden) {
+		if (option.value === datosTl.orden) option.selected = true;
+	}
 }
 
-export { crearElemAutocompletar, crearAutocompletarUsuariosTL, crearNuevoInputUsuario, crearNuevoInputTags, crearModalConfigTl };
+function resetearModalTl(modalBody) {
+	modalBody.previousElementSibling.firstElementChild.textContent = "Crear nuevo timeline";
+	modalBody.nextElementSibling.firstElementChild.value = "Crear";
+
+	const nombre = modalBody.firstElementChild.lastElementChild;
+	nombre.value = "";
+	nombre.classList.remove("input-valido");
+	nombre.classList.remove("input-no-valido");
+	nombre.setAttribute("data-value", "");
+
+	const usuarios = modalBody.children[1].firstElementChild;
+	usuarios.children[1].value = "";
+	usuarios.children[1].classList.remove("input-valido");
+	usuarios.children[1].classList.remove("input-no-valido");
+	for (let i = usuarios.children.length - 1; i > 2; i--) {
+		usuarios.children[i].remove();
+	}
+
+	const tags = modalBody.children[1].lastElementChild;
+	tags.children[1].value = "";
+	tags.children[1].classList.remove("input-valido");
+	tags.children[1].classList.remove("input-no-valido");
+	for (let i = tags.children.length - 1; i > 1; i--) {
+		tags.children[i].remove();
+	}
+
+	const fecha = modalBody.children[2].lastElementChild;
+	for (let option of fecha) {
+		if (option.value === "dia") option.selected = true;
+	}
+
+	const contenedorFechas = modalBody.children[3];
+	contenedorFechas.classList.add("ocultar");
+	contenedorFechas.firstElementChild.lastElementChild.value = "";
+	contenedorFechas.firstElementChild.lastElementChild.classList.remove("input-valido");
+	contenedorFechas.firstElementChild.lastElementChild.classList.remove("input-no-valido");
+	contenedorFechas.lastElementChild.lastElementChild.value = "";
+	contenedorFechas.lastElementChild.lastElementChild.classList.remove("input-valido");
+	contenedorFechas.lastElementChild.lastElementChild.classList.remove("input-no-valido");
+
+	const orden = modalBody.lastElementChild.lastElementChild;
+	for (let option of orden) {
+		if (option.value === "-fecha") option.selected = true;
+	}
+}
+
+export {
+	crearElemAutocompletar,
+	crearAutocompletarUsuariosTL,
+	crearNuevoInputUsuario,
+	crearNuevoInputTags,
+	rellenarModalConfigTl,
+	resetearModalTl
+};
