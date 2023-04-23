@@ -106,6 +106,9 @@ function resetearModalTl(modalBody) {
 	modalBody.previousElementSibling.firstElementChild.textContent = "Crear nuevo timeline";
 	modalBody.nextElementSibling.firstElementChild.value = "Crear";
 
+	const errores = document.querySelectorAll(".error-input");
+	errores.forEach((error) => error.remove());
+
 	const nombre = modalBody.firstElementChild.lastElementChild;
 	nombre.value = "";
 	nombre.classList.remove("input-valido");

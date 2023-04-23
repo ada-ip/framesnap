@@ -173,6 +173,67 @@ const formatearFechaTl = (fecha) => {
 	return fechaFormateada;
 };
 
+const construirFiltroTl = (tl) => {
+	const filtro = {
+		$or: []
+	};
+	if (tl.config.filtro.autor.length > 0) {
+		filtroAutor = {
+			"autor.id": {
+				$in: []
+			}
+		};
+		for (let autor of tl.config.filtro.autor) {
+			filtroAutor["autor.id"].$in.push(autor);
+		}
+		filtro.$or.push(filtroAutor);
+	}
+	if (tl.config.filtro.tags.length > 0) {
+		filtroTags = {
+			tags: {
+				$in: []
+			}
+		};
+		for (let tag of tl.config.filtro.tags) {
+			filtroTags.tags.$in.push(tag);
+		}
+		filtro.$or.push(filtroTags);
+	}
+	if (typeof tl.config.filtro.fecha.$gte === "number") {
+		filtro.fecha = {
+			$gte: new Date(Date.now() - tl.config.filtro.fecha.$gte).toISOString()
+		};
+	} else {
+		filtro.fecha = tl.config.filtro.fecha;
+	}
+
+	return filtro;
+};
+
+const ordenarNumSeguidoresPorFecha = (posts, asc = true) => {
+	let orden = asc ? 1 : -1;
+
+	posts.sort((post1, post2) => {
+		if (post1.autor.id.numSeguidores === post2.autor.id.numSeguidores) {
+			return post2.fecha - post1.fecha;
+		} else {
+			return (post1.autor.id.numSeguidores - post2.autor.id.numSeguidores) * orden;
+		}
+	});
+};
+
+const ordenarNumFavsPorFecha = (posts, asc = true) => {
+	let orden = asc ? 1 : -1;
+
+	posts.sort((post1, post2) => {
+		if (post1.numFavs === post2.numFavs) {
+			return post2.fecha - post1.fecha;
+		} else {
+			return (post1.numFavs - post2.numFavs) * orden;
+		}
+	});
+};
+
 module.exports = {
 	sumarNumPosts,
 	eliminarDuplicados,
@@ -180,5 +241,8 @@ module.exports = {
 	anyadirSeguido,
 	quitarSeguidor,
 	quitarSeguido,
-	formatearFechaTl
+	formatearFechaTl,
+	construirFiltroTl,
+	ordenarNumSeguidoresPorFecha,
+	ordenarNumFavsPorFecha
 };

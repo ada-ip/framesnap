@@ -70,7 +70,6 @@ inputNombreTL.addEventListener("change", (e) => {
 				return response.json();
 			})
 			.then((tl) => {
-				console.log(tl);
 				if (tl.esRepetido === true) {
 					e.target.classList.remove("input-valido");
 					e.target.classList.add("input-no-valido");
@@ -115,20 +114,22 @@ formTimeline.addEventListener("submit", (e) => {
 	if (comprobarInputs([inputNombreTL, inputFechaTL, inputFechaDesde, inputFechaHasta, inputOrdenTL])) {
 		e.target.submit();
 	} else {
-		if (!inputNombreTL.classList.contains("input-no-valido") && !inputNombreTL.classList.contains("input-valido")) {
-			let mensajeError = "Tienes que escribir el nombre del timeline";
-			comprobarValidez(inputNombreTL, (valor) => valor != "", mensajeError);
-		} else if (
-			inputFechaTL.value != "elegir" ||
-			inputFechaDesde.classList.contains("input-valido") ||
-			inputFechaHasta.classList.contains("input-valido")
+		if (
+			inputNombreTL.classList.contains("input-valido") &&
+			(inputFechaTL.value !== "elegir" ||
+				inputFechaDesde.classList.contains("input-valido") ||
+				inputFechaHasta.classList.contains("input-valido"))
 		) {
 			e.target.submit();
-		} else {
+		} else if (inputFechaTL.value === "elegir" && inputFechaDesde.value === "" && inputFechaHasta.value === "") {
 			let mensajeError = "Tienes que rellenar una de las dos fechas";
 			comprobarValidez(inputFechaDesde, (valor) => valor != "", mensajeError);
 			mensajeError = "Tienes que rellenar una de las dos fechas";
 			comprobarValidez(inputFechaHasta, (valor) => valor != "", mensajeError);
+		}
+		if (inputNombreTL.value.trim() === "") {
+			let mensajeError = "Tienes que escribir el nombre del timeline";
+			comprobarValidez(inputNombreTL, (valor) => valor != "", mensajeError);
 		}
 	}
 });

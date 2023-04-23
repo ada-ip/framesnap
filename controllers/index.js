@@ -2,6 +2,7 @@ const User = require("../models/User");
 const Post = require("../models/Post");
 const { anyadirSignedUrlsPosts, anyadirSignedUrlsUsuario } = require("../utils/aws");
 const { comprobarFavs } = require("../utils/outliers");
+const { construirFiltroTl, ordenarNumSeguidoresPorFecha, ordenarNumFavsPorFecha } = require("../utils/metodosConsultas");
 
 const devolverIndex = async (req, res, next) => {
 	if (!req.session.idUsuario) {
@@ -26,38 +27,7 @@ const devolverIndex = async (req, res, next) => {
 					tls: { $elemMatch: { nombre: req.query.timeline } }
 				});
 
-				const filtro = {
-					$or: []
-				};
-				if (tl.tls[0].config.filtro.autor.length > 0) {
-					filtroAutor = {
-						"autor.id": {
-							$in: []
-						}
-					};
-					for (let autor of tl.tls[0].config.filtro.autor) {
-						filtroAutor["autor.id"].$in.push(autor);
-					}
-					filtro.$or.push(filtroAutor);
-				}
-				if (tl.tls[0].config.filtro.tags.length > 0) {
-					filtroTags = {
-						tags: {
-							$in: []
-						}
-					};
-					for (let tag of tl.tls[0].config.filtro.tags) {
-						filtroTags.tags.$in.push(tag);
-					}
-					filtro.$or.push(filtroTags);
-				}
-				if (typeof tl.tls[0].config.filtro.fecha.$gte === "number") {
-					filtro.fecha = {
-						$gte: new Date(Date.now() - tl.tls[0].config.filtro.fecha.$gte).toISOString()
-					};
-				} else {
-					filtro.fecha = tl.tls[0].config.filtro.fecha;
-				}
+				const filtro = construirFiltroTl(tl.tls[0]);
 
 				let orden = tl.tls[0].config.orden;
 
@@ -65,18 +35,13 @@ const devolverIndex = async (req, res, next) => {
 					posts = await Post.find(filtro)
 						.populate({ path: "autor.id", select: "numSeguidores" })
 						.select("-favs -outlierComentarios -tags")
-						.sort("-fecha")
 						.sort(orden)
 						.limit(15);
 
-					if (orden !== "fecha" && orden !== "-fecha") {
-						posts.sort((post1, post2) => {
-							if (post1.autor.id.numSeguidores === post2.autor.id.numSeguidores) {
-								return post2.fecha - post1.fecha;
-							}
-							return -1;
-						});
-					}
+					if (orden === "autor.id.numSeguidores") ordenarNumSeguidoresPorFecha(posts);
+					if (orden === "-autor.id.numSeguidores") ordenarNumSeguidoresPorFecha(posts, false);
+					if (orden === "numFavs") ordenarNumFavsPorFecha(posts);
+					if (orden === "-numFavs") ordenarNumFavsPorFecha(posts, false);
 				}
 			}
 

@@ -44,7 +44,16 @@ function autocompletarUsuarioTL(input) {
 						return response.json();
 					})
 					.then((usuarios) => {
-						autocompletar.innerHTML = crearAutocompletarUsuariosTL(usuarios);
+						const usuariosNoRepetidos = usuarios.filter((usuario) => {
+							const elems = e.target.parentElement.children;
+							for (let i = 0; i < elems.length; i++) {
+								if (elems[i].classList.contains("form-control") && elems[i].value === usuario.nombre)
+									return false;
+							}
+							return true;
+						});
+
+						autocompletar.innerHTML = crearAutocompletarUsuariosTL(usuariosNoRepetidos);
 						autocompletar.classList.add("mostrar");
 						anyadirListenersElemsAutocompletar();
 					})
