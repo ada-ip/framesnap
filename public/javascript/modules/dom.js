@@ -104,7 +104,9 @@ function rellenarModalConfigTl(datosTl, modalBody) {
 
 function resetearModalTl(modalBody) {
 	modalBody.previousElementSibling.firstElementChild.textContent = "Crear nuevo timeline";
-	modalBody.nextElementSibling.firstElementChild.value = "Crear";
+	modalBody.nextElementSibling.lastElementChild.value = "Crear";
+	modalBody.nextElementSibling.firstElementChild.value = "post";
+	modalBody.nextElementSibling.children[1].value = "Timeline";
 
 	const errores = document.querySelectorAll(".error-input");
 	errores.forEach((error) => error.remove());
