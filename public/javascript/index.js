@@ -5,11 +5,10 @@ import {
 	nombreTLValido,
 	crearMensajeError,
 	fechaValida,
-	comprobarValidezFechas
+	comprobarValidezFechas,
 } from "./modules/inputs.js";
 import { rellenarModalConfigTl, resetearModalTl } from "./modules/dom.js";
 import { validarTag, autocompletarUsuarioTL } from "./modules/listeners.js";
-import { pedirModificarTl } from "./modules/ajax.js";
 
 const inputImagen = document.getElementById("imagenASubir");
 const inputTexto = document.getElementById("texto");
@@ -145,12 +144,16 @@ btnsConfigTls.forEach((btn) =>
 	btn.addEventListener("click", (e) => {
 		e.preventDefault();
 
+		console.log("hola");
+
 		formTimeline.firstElementChild.firstElementChild.textContent = "Modificar timeline";
 		formTimeline.lastElementChild.lastElementChild.value = "Guardar";
 		formTimeline.lastElementChild.firstElementChild.value = "patch";
 		formTimeline.lastElementChild.children[1].value = e.target.previousElementSibling.textContent;
 
 		let url = "/api/v1/tls/" + e.target.previousElementSibling.textContent;
+
+		console.log(url);
 
 		fetch(url)
 			.then((response) => {
