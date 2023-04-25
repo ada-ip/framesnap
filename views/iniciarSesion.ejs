@@ -1,4 +1,3 @@
-<!-- Section: Design Block -->
 <!DOCTYPE html>
 <html lang="es">
 	<head>
@@ -10,7 +9,8 @@
 			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css"
 			rel="stylesheet"
 			integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp"
-			crossorigin="anonymous" />
+			crossorigin="anonymous"
+		/>
 		<link href="/css/main.css" rel="stylesheet" type="text/css" crossorigin="anonymous" />
 		<link href="/css/login-signup.css" rel="stylesheet" type="text/css" crossorigin="anonymous" />
 	</head>
@@ -20,8 +20,8 @@
 				<div class="row gx-lg-5 align-items-center mb-5">
 					<div class="col-lg-6 mb-5 mb-lg-0" style="z-index: 10">
 						<h1 class="my-5 display-5 fw-bold ls-tight" style="color: hsl(218, 81%, 95%)">
-							The best offer <br />
-							<span style="color: hsl(218, 81%, 75%)">for your business</span>
+							Lorem ipsum <br />
+							<span style="color: hsl(218, 81%, 75%)">lorem ipsum</span>
 						</h1>
 						<p class="mb-4 opacity-70" style="color: hsl(218, 81%, 85%)">
 							Lorem ipsum dolor, sit amet consectetur adipisicing elit. Temporibus, expedita iusto veniam atque,
@@ -45,7 +45,8 @@
 											id="nombre"
 											name="nombre"
 											class="form-control <% if(locals.error && error === 'usuario') { %> input-no-valido <% } else if (locals.error){ %> input-valido <% } %>"
-											value="<% if(locals.datos && datos[0]) { %><%= datos[0]%><% } %>" />
+											value="<% if(locals.datos && datos[0]) { %><%= datos[0]%><% } %>"
+										/>
 										<% if(locals.error && error === "usuario") { %>
 										<p class="error-input"><%= mensaje %></p>
 										<% } %>
@@ -59,7 +60,8 @@
 											id="passw"
 											name="passw"
 											class="form-control <% if(locals.error && error === 'contrasenya') { %> input-no-valido <% } else if(locals.error) { %> input-valido <%} %>"
-											value="<% if(locals.datos && datos[1]){%><%= datos[1] %><%}%>" />
+											value="<% if(locals.datos && datos[1]){%><%= datos[1] %><%}%>"
+										/>
 										<% if(locals.error && error === "contrasenya") { %>
 										<p class="error-input"><%= mensaje %></p>
 										<% } %>
@@ -70,7 +72,8 @@
 										class="btn btn-primary btn-block mb-4"
 										id="login-btn"
 										name="iniciarSesion"
-										value="Iniciar Sesión" />
+										value="Iniciar Sesión"
+									/>
 								</form>
 								<div class="d-flex align-items-center justify-content-center pb-4">
 									<p class="mb-0 me-2">¿No tienes una cuenta?</p>
@@ -85,7 +88,8 @@
 		<script
 			src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js"
 			integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N"
-			crossorigin="anonymous"></script>
+			crossorigin="anonymous"
+		></script>
 		<script src="/javascript/iniciarSesion.js" type="module" crossorigin="anonymous"></script>
 	</body>
 </html>

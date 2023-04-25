@@ -15,7 +15,7 @@ const inputTexto = document.getElementById("texto");
 const formImagen = document.getElementById("form-subir-foto");
 
 inputImagen.addEventListener("change", (e) => {
-	let mensajeError = "La imagen tiene que tener uno de los siguientes formatos: jpg, jpeg";
+	let mensajeError = "La imagen tiene que tener uno de los siguientes formatos: jpg, jpeg, png";
 	comprobarValidez(inputImagen, imagenValida, mensajeError, true);
 });
 
@@ -31,7 +31,7 @@ formImagen.addEventListener("submit", (e) => {
 		e.target.submit();
 	} else {
 		if (!inputImagen.classList.contains("input-no-valido")) {
-			let mensajeError = "La imagen tiene que tener uno de los siguientes formatos: jpg, jpeg";
+			let mensajeError = "La imagen tiene que tener uno de los siguientes formatos: jpg, jpeg, png";
 			comprobarValidez(inputImagen, imagenValida, mensajeError, true);
 		}
 

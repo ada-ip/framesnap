@@ -1,23 +1,48 @@
-const btnSeguir = document.getElementById("btn-seguir");
+import { imagenValida, comprobarValidez, comprobarInputs } from "./modules/inputs.js";
 
-btnSeguir.addEventListener("click", (e) => {
-	let textoBtn = e.target.textContent.trim();
+if (document.getElementById("btn-seguir")) {
+	const btnSeguir = document.getElementById("btn-seguir");
 
-	let url = "/api/v1/usuarios/" + e.target.previousElementSibling.textContent;
-	url += textoBtn === "Seguir" ? "/seguir" : "/dejardeseguir";
+	btnSeguir.addEventListener("click", (e) => {
+		let textoBtn = e.target.textContent.trim();
 
-	fetch(url, {
-		method: "PATCH"
-	})
-		.then((response) => {
-			if (!response.ok) {
-				throw new Error(`Error status: ${response.status}`);
-			}
-			return response.json();
+		let url = "/api/v1/usuarios/" + e.target.previousElementSibling.textContent;
+		url += textoBtn === "Seguir" ? "/seguir" : "/dejardeseguir";
+
+		fetch(url, {
+			method: "PATCH",
 		})
-		.then((resultado) => {
-			if (resultado.estado === "ok" && textoBtn === "Seguir") e.target.textContent = "Dejar de seguir";
-			if (resultado.estado === "ok" && textoBtn === "Dejar de seguir") e.target.textContent = "Seguir";
-		})
-		.catch((error) => {});
+			.then((response) => {
+				if (!response.ok) {
+					throw new Error(`Error status: ${response.status}`);
+				}
+				return response.json();
+			})
+			.then((resultado) => {
+				if (resultado.estado === "ok" && textoBtn === "Seguir") e.target.textContent = "Dejar de seguir";
+				if (resultado.estado === "ok" && textoBtn === "Dejar de seguir") e.target.textContent = "Seguir";
+			})
+			.catch((error) => {});
+	});
+}
+
+const inputImagen = document.getElementById("imagenElegida");
+const formImagen = document.getElementById("form-editar-foto-perfil");
+
+inputImagen.addEventListener("change", (e) => {
+	let mensajeError = "La imagen tiene que tener uno de los siguientes formatos: jpg, jpeg, png";
+	comprobarValidez(inputImagen, imagenValida, mensajeError, true);
+});
+
+formImagen.addEventListener("submit", (e) => {
+	e.preventDefault();
+
+	if (comprobarInputs([inputImagen])) {
+		e.target.submit();
+	} else {
+		if (!inputImagen.classList.contains("input-no-valido")) {
+			let mensajeError = "La imagen tiene que tener uno de los siguientes formatos: jpg, jpeg, png";
+			comprobarValidez(inputImagen, imagenValida, mensajeError, true);
+		}
+	}
 });

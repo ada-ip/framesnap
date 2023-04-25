@@ -11,7 +11,7 @@ const {
 	seguirUsuario,
 	dejarSeguirUsuario,
 	obtenerNombresTls,
-	crearTl,
+	editarFotoPerfil,
 } = require("../controllers/usuarios");
 
 router.route("/usuarios").get(obtenerUsuarios);
@@ -22,5 +22,6 @@ router.route("/api/v1/usuarios/:usuario/desconectar").post(desconectarUsuario);
 router.route("/api/v1/usuarios/:usuario/dejardeseguir").patch(dejarSeguirUsuario);
 router.route("/api/v1/usuarios/:usuario/seguir").patch(seguirUsuario);
 router.route("/api/v1/usuarios/:usuario/validez").get(comprobarUsuarioExiste);
+router.route("/api/v1/usuarios/:usuario/subirfotoperfil").post(editarFotoPerfil);
 
 module.exports = router;

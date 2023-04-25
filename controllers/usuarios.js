@@ -11,7 +11,7 @@ const {
 	anyadirSeguidor,
 	anyadirSeguido,
 	quitarSeguidor,
-	quitarSeguido
+	quitarSeguido,
 } = require("../utils/metodosConsultas");
 const LIMITE_ELEMENTOS = 1000;
 
@@ -29,12 +29,12 @@ const registrarUsuario = async (req, res, next) => {
 						filtro: {
 							autor: [],
 							tags: [],
-							fecha: {}
+							fecha: {},
 						},
-						orden: "-fecha"
-					}
-				}
-			]
+						orden: "-fecha",
+					},
+				},
+			],
 		};
 
 		const nuevoUsuario = new User(usuario);
@@ -95,7 +95,7 @@ const devolverPerfilUsuario = async (req, res, next) => {
 			usuario: usuarioConSignedUrl[0],
 			postsUsuario: postsConFavsYUrls,
 			tlsUsuario: timelines,
-			usuarioLogeado: { ...usuarioLogeado[0], esSeguidor: esSeguidor || esSeguidorOutlier ? true : false }
+			usuarioLogeado: { ...usuarioLogeado[0], esSeguidor: esSeguidor || esSeguidorOutlier ? true : false },
 		});
 	} catch (error) {
 		next(error);
@@ -124,7 +124,7 @@ const obtenerNombresUsuarios = async (req, res, next) => {
 		const usuarios = [];
 
 		const usuarioEncontrado = await User.findOne({
-			$and: [{ nombre: usuario }, { nombre: { $ne: req.session.usuario } }]
+			$and: [{ nombre: usuario }, { nombre: { $ne: req.session.usuario } }],
 		}).select("-_id nombre");
 
 		if (usuarioEncontrado !== null) {
@@ -170,12 +170,12 @@ const obtenerUsuarios = async (req, res, next) => {
 		const usuarios = [];
 
 		const usuarioEncontrado = await User.findOne({
-			$and: [{ nombre: usuario }, { nombre: { $ne: req.session.usuario } }]
+			$and: [{ nombre: usuario }, { nombre: { $ne: req.session.usuario } }],
 		}).select("_id nombre fotoPerfil numSeguidos numSeguidores");
 
 		if (usuarioEncontrado) {
 			const postsUsuarioEncontrado = await Post.countDocuments({
-				$and: [{ "autor.nombre": usuario }, { "autor.nombre": { $ne: req.session.usuario } }]
+				$and: [{ "autor.nombre": usuario }, { "autor.nombre": { $ne: req.session.usuario } }],
 			});
 			const usuarioConSignedUrl = anyadirSignedUrlsUsuario(
 				[{ ...usuarioEncontrado.toObject(), numPosts: postsUsuarioEncontrado }],
@@ -192,7 +192,7 @@ const obtenerUsuarios = async (req, res, next) => {
 			.project({
 				_id: 0,
 				nombre: "$_id",
-				numPosts: 1
+				numPosts: 1,
 			});
 
 		if (req.session.idUsuario) {
@@ -203,7 +203,7 @@ const obtenerUsuarios = async (req, res, next) => {
 					from: "users",
 					localField: "seguidos.id",
 					foreignField: "_id",
-					as: "datosSeguidos"
+					as: "datosSeguidos",
 				})
 				.unwind("$datosSeguidos")
 				.project({
@@ -211,7 +211,7 @@ const obtenerUsuarios = async (req, res, next) => {
 					nombre: "$datosSeguidos.nombre",
 					fotoPerfil: "$datosSeguidos.fotoPerfil",
 					numSeguidos: "$datosSeguidos.numSeguidos",
-					numSeguidores: "$datosSeguidos.numSeguidores"
+					numSeguidores: "$datosSeguidos.numSeguidores",
 				});
 
 			if (usuariosSeguidos.length > 0) {
@@ -226,7 +226,7 @@ const obtenerUsuarios = async (req, res, next) => {
 					from: "users",
 					localField: "seguidos.id",
 					foreignField: "_id",
-					as: "datosSeguidos"
+					as: "datosSeguidos",
 				})
 				.unwind("$datosSeguidos")
 				.project({
@@ -234,7 +234,7 @@ const obtenerUsuarios = async (req, res, next) => {
 					nombre: "$datosSeguidos.nombre",
 					fotoPerfil: "$datosSeguidos.fotoPerfil",
 					numSeguidos: "$datosSeguidos.numSeguidos",
-					numSeguidores: "$datosSeguidos.numSeguidores"
+					numSeguidores: "$datosSeguidos.numSeguidores",
 				});
 
 			if (usuariosSeguidosOutlier.length > 0) {
@@ -342,6 +342,13 @@ const obtenerNombresTls = async (req, res, next) => {
 	}
 };
 
+const editarFotoPerfil = async (req, res, next) => {
+	try {
+	} catch (error) {
+		next(error);
+	}
+};
+
 module.exports = {
 	registrarUsuario,
 	comprobarUsuarioExiste,
@@ -351,5 +358,6 @@ module.exports = {
 	obtenerUsuarios,
 	seguirUsuario,
 	dejarSeguirUsuario,
-	obtenerNombresTls
+	obtenerNombresTls,
+	editarFotoPerfil,
 };

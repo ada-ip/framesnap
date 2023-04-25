@@ -19,6 +19,10 @@ const subirImagenAS3 = async (req, res, next) => {
 		const imagen = req.file;
 		let imagenBuffer = imagen.buffer;
 
+		if (imagen.mimetype === "image/png") {
+			imagenBuffer = await sharp(imagen.buffer).toFormat("jpeg").toBuffer();
+		}
+
 		if (imagen.size > TAMANYO_MUY_GRANDE) {
 			imagenBuffer = await sharp(imagen.buffer).rotate().resize({ width: 1200 }).jpeg({ quality: 50 }).toBuffer();
 		} else if (imagen.size > TAMANYO_GRANDE) {
@@ -34,11 +38,13 @@ const subirImagenAS3 = async (req, res, next) => {
 			}
 		}
 
+		const nombreImagenJPG = imagen.originalname.replace(/\.[a-z]+$/i, ".jpg");
+
 		const params = {
 			Bucket: process.env.AWS_BUCKET_NAME,
-			Key: `images/${Date.now().toString()}-${imagen.originalname}`,
+			Key: `images/${Date.now().toString()}-${nombreImagenJPG}`,
 			Body: imagenBuffer,
-			ContentType: imagen.mimetype,
+			ContentType: "image/jpeg",
 		};
 
 		s3.upload(params, (error, data) => {

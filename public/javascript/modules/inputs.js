@@ -63,7 +63,7 @@ function imagenValida(imagen) {
 	if (!imagen) {
 		return false;
 	}
-	const formatosValidos = ["image/jpeg", "image/jpg"];
+	const formatosValidos = ["image/jpeg", "image/jpg", "image/png"];
 	if (!formatosValidos.includes(imagen.type)) {
 		return false;
 	} else {
@@ -129,5 +129,5 @@ export {
 	nombreTLValido,
 	fechaValida,
 	comprobarValidezFechas,
-	tagValido
+	tagValido,
 };

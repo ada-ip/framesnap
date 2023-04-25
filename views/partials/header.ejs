@@ -15,14 +15,16 @@
 							method="GET"
 							class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3"
 							role="search"
-							autocomplete="off">
+							autocomplete="off"
+						>
 							<input
 								id="buscar"
 								type="search"
 								class="form-control"
 								placeholder="Buscar..."
 								aria-label="Buscar"
-								name="q" />
+								name="q"
+							/>
 							<ul id="autocompletar-busqueda" class="dropdown-menu text-small"></ul>
 						</form>
 					</li>
@@ -38,13 +40,15 @@
 							href="#"
 							class="d-block link-dark text-decoration-none dropdown-toggle"
 							data-bs-toggle="dropdown"
-							aria-expanded="false">
+							aria-expanded="false"
+						>
 							<img
 								src="<%= usuarioLogeado.signedUrlUsuario %>"
 								alt="foto de perfil de <%= usuarioLogeado.nombre %>"
 								width="40"
 								height="40"
-								class="rounded-circle foto-perfil-nav" />
+								class="rounded-circle foto-perfil-nav"
+							/>
 						</a>
 						<ul class="dropdown-menu text-small">
 							<li>
@@ -57,7 +61,8 @@
 								<form
 									action="/api/v1/usuarios/<%= usuarioLogeado._id %>/desconectar"
 									method="post"
-									class="dropdown-item">
+									class="dropdown-item"
+								>
 									<input type="submit" class="btn btn-primary" name="desconectarse" value="Desconectarse" />
 								</form>
 							</li>

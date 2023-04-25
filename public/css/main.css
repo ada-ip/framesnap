@@ -40,6 +40,25 @@ img.conf-icon {
 	width: 16px;
 }
 
+/******************************* Perfil *******************************/
+
+.contenedor-foto-perfil {
+	display: inline-block;
+	position: relative;
+}
+
+img.foto-perfil-icon {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 20px;
+	z-index: 1;
+}
+
+#editarFotoPerfil {
+	text-align: left;
+}
+
 /******************************* Modales *******************************/
 
 .modal-open {
