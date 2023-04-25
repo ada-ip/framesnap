@@ -234,7 +234,7 @@
 										<%= usuario.tlElegido %>
 									</button>
 									<% if(usuario.tlElegido !== "Timeline") { %>
-									<i class="fa-solid fa-gear" title="Configuración timeline"></i>
+									<img class="conf-icon" src="images/gear-solid.svg" alt="Configurar timeline" />
 									<% } %>
 									<ul class="dropdown-menu">
 										<% for(let tl of usuario.tls) { %> <% if(tl.nombre !== usuario.tlElegido) { %>
@@ -243,11 +243,9 @@
 												class="dropdown-item d-flex justify-content-between align-items-center"
 												href="/<% if (tl.nombre !== 'Timeline') { %>?timeline=<%= tl.nombre %><% } %>"
 											>
-												<span><%= tl.nombre %></span> <% if(tl.nombre !== "Timeline") { %><i
-													class="fa-solid fa-gear"
-													title="Configuración timeline"
-												></i
-												><% } %>
+												<span><%= tl.nombre %></span> <% if(tl.nombre !== "Timeline") { %>
+												<img class="conf-icon" src="images/gear-solid.svg" alt="Configurar timeline" /><%
+												} %>
 											</a>
 										</li>
 										<% } %> <% } %> <% if(usuario.tls.length > 1) { %>
@@ -361,7 +359,6 @@
 			integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N"
 			crossorigin="anonymous"
 		></script>
-		<script src="https://kit.fontawesome.com/7c77332aa3.js" crossorigin="anonymous"></script>
 		<script src="/javascript/menu.js" type="module" crossorigin="anonymous"></script>
 		<script src="/javascript/index.js" type="module" crossorigin="anonymous"></script>
 		<script src="/javascript/post.js" type="module" crossorigin="anonymous"></script>

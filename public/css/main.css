@@ -36,6 +36,10 @@ nav {
 	cursor: pointer;
 }
 
+img.conf-icon {
+	width: 16px;
+}
+
 /******************************* Modales *******************************/
 
 .modal-open {

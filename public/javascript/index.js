@@ -138,13 +138,11 @@ btnCerrarModal.addEventListener("click", (e) => {
 	setTimeout(resetearModalTl, 500, e.target.parentElement.nextElementSibling);
 });
 
-const btnsConfigTls = document.querySelectorAll("#timelines i.fa-gear");
+const btnsConfigTls = document.querySelectorAll("#timelines img.conf-icon");
 
 btnsConfigTls.forEach((btn) =>
 	btn.addEventListener("click", (e) => {
 		e.preventDefault();
-
-		console.log("hola");
 
 		formTimeline.firstElementChild.firstElementChild.textContent = "Modificar timeline";
 		formTimeline.lastElementChild.lastElementChild.value = "Guardar";
