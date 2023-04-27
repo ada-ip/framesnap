@@ -33,25 +33,25 @@ const conectarse = async (req, res, next) => {
 			return res.render("iniciarSesion", {
 				error: "usuario",
 				mensaje: "El usuario no está registrado",
-				datos: [nombre, passw]
+				datos: [nombre, passw],
 			});
 		}
 
 		const passwValida = await usuario.compararPassw(passw);
 
 		if (!passwValida) {
-			return res.render("IniciarSesion", {
+			res.render("IniciarSesion", {
 				error: "contrasenya",
 				mensaje: "La contraseña es incorrecta",
-				datos: [nombre, passw]
+				datos: [nombre, passw],
 			});
+		} else {
+			req.session.idUsuario = usuario._id;
+			req.session.usuario = usuario.nombre;
+			req.session.fotoPerfil = usuario.fotoPerfil;
+
+			res.redirect("/");
 		}
-
-		req.session.idUsuario = usuario._id;
-		req.session.usuario = usuario.nombre;
-		req.session.fotoPerfil = usuario.fotoPerfil;
-
-		res.redirect("/");
 	} catch (error) {
 		next(error);
 	}
@@ -60,5 +60,5 @@ const conectarse = async (req, res, next) => {
 module.exports = {
 	devolverIniciarSesion,
 	devolverRegistrarse,
-	conectarse
+	conectarse,
 };
