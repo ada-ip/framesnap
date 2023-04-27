@@ -40,7 +40,7 @@ const conectarse = async (req, res, next) => {
 		const passwValida = await usuario.compararPassw(passw);
 
 		if (!passwValida) {
-			res.render("IniciarSesion", {
+			res.render("iniciarSesion", {
 				error: "contrasenya",
 				mensaje: "La contraseña es incorrecta",
 				datos: [nombre, passw],
