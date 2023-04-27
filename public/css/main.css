@@ -21,6 +21,7 @@ nav {
 .foto-perfil-nav {
 	padding: 0.2rem;
 	background-color: rgb(200, 200, 200);
+	object-fit: cover;
 }
 
 .cont-timeline {

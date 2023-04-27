@@ -342,8 +342,9 @@ const obtenerNombresTls = async (req, res, next) => {
 	}
 };
 
-const editarFotoPerfil = async (req, res, next) => {
+const confirmarFotoPerfil = async (req, res, next) => {
 	try {
+		res.redirect(`/usuarios/${req.session.usuario}`);
 	} catch (error) {
 		next(error);
 	}
@@ -359,5 +360,5 @@ module.exports = {
 	seguirUsuario,
 	dejarSeguirUsuario,
 	obtenerNombresTls,
-	editarFotoPerfil,
+	confirmarFotoPerfil,
 };

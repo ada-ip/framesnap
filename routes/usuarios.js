@@ -10,7 +10,7 @@ const {
 	obtenerUsuarios,
 	seguirUsuario,
 	dejarSeguirUsuario,
-	editarFotoPerfil,
+	confirmarFotoPerfil,
 } = require("../controllers/usuarios");
 
 const { cargarImagen, subirFotoPerfilAS3 } = require("../middleware/multer");
@@ -25,6 +25,6 @@ router.route("/api/v1/usuarios/:usuario/seguir").patch(seguirUsuario);
 router.route("/api/v1/usuarios/:usuario/validez").get(comprobarUsuarioExiste);
 router
 	.route("/api/v1/usuarios/:usuario/subirfotoperfil")
-	.post(cargarImagen.single("imagenElegida"), subirFotoPerfilAS3, editarFotoPerfil);
+	.post(cargarImagen.single("imagenElegida"), subirFotoPerfilAS3, confirmarFotoPerfil);
 
 module.exports = router;

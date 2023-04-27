@@ -143,8 +143,8 @@
 						<img
 							src="<%= usuario.signedUrlUsuario %>"
 							alt="foto de perfil de <%= usuario.nombre %>"
-							width="80"
-							height="80"
+							width="100"
+							height="100"
 							class="rounded-circle foto-perfil-nav"
 							loading="lazy"
 						/>
@@ -167,7 +167,7 @@
 						>
 							<div class="modal-dialog">
 								<form
-									action="/api/v1/usuarios/<%= usuarioLogeado._id %>/editarfotoperfil"
+									action="/api/v1/usuarios/<%= usuarioLogeado._id %>/subirfotoperfil"
 									method="post"
 									enctype="multipart/form-data"
 									class="modal-content"
