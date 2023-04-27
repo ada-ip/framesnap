@@ -1,19 +1,22 @@
 <header>
-	<nav class="px-3 py-2 border-bottom fixed-top">
+	<nav class="px-3 py-1 border-bottom fixed-top">
 		<div class="container">
-			<div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start fiex">
-				<a href="/" class="d-flex align-items-center my-2 my-lg-0 me-lg-auto text-decoration-none">
+			<div class="d-flex flex-wrap align-items-center justify-content-between">
+				<!-- LOGO DE LA PÁGINA -->
+				<a href="/" class="d-flex align-items-center my-0 me-auto text-decoration-none">
 					<svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap">
 						<use xlink:href="#bootstrap" />
 					</svg>
 				</a>
 
-				<ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
+				<!-- OPCIONES DE NAVEGACIÓN -->
+				<ul class="nav my-2 d-flex justify-content-center align-items-center my-0 text-small">
 					<li>
+						<!-- BÚSQUEDA DE USUARIOS Y POSTS -->
 						<form
 							action="/usuarios"
 							method="GET"
-							class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3"
+							class="col-12 col-lg-auto mb-lg-0 me-lg-3"
 							role="search"
 							autocomplete="off"
 						>
@@ -25,9 +28,11 @@
 								aria-label="Buscar"
 								name="q"
 							/>
+							<!-- SUGERENCIAS DE USUARIOS AL BUSCAR -->
 							<ul id="autocompletar-busqueda" class="dropdown-menu text-small"></ul>
 						</form>
 					</li>
+					<!-- NOTIFICACIONES -->
 					<li>
 						<a href="#" class="nav-link">
 							<svg class="bi d-block mx-auto mb-1" width="24" height="24">
@@ -35,6 +40,7 @@
 							</svg>
 						</a>
 					</li>
+					<!-- MENÚ DE USUARIO -->
 					<li class="dropdown text-end">
 						<a
 							href="#"
@@ -42,22 +48,25 @@
 							data-bs-toggle="dropdown"
 							aria-expanded="false"
 						>
+							<!-- FOTO DE PERFIL DE USUARIO -->
 							<img
 								src="<%= usuarioLogeado.signedUrlUsuario %>"
 								alt="foto de perfil de <%= usuarioLogeado.nombre %>"
-								width="40"
-								height="40"
+								width="50"
+								height="50"
 								class="rounded-circle foto-perfil-nav"
 							/>
 						</a>
 						<ul class="dropdown-menu text-small">
 							<li>
+								<!-- LINK AL PERFIL DE USUARIO -->
 								<a class="dropdown-item" href="/usuarios/<%= usuarioLogeado.nombre %>">Perfil</a>
 							</li>
 							<li><a class="dropdown-item" href="#">Settings</a></li>
 							<li><a class="dropdown-item" href="#">Profile</a></li>
 							<li><hr class="dropdown-divider" /></li>
 							<li>
+								<!-- FORMULARIO PARA CERRAR LA SESIÓN -->
 								<form
 									action="/api/v1/usuarios/<%= usuarioLogeado._id %>/desconectar"
 									method="post"
