@@ -38,7 +38,7 @@ const subirImagenAS3 = async (req, res, next) => {
 			}
 		}
 
-		const nombreImagenJPG = imagen.originalname.replace(/\.[a-z]+$/i, ".jpg");
+		const nombreImagenJPG = imagen.originalname.replace(/\.[a-z]+$/i, ".jpg").replace(/[^a-zA-Z0-9\-_.]/g, "_");
 
 		const params = {
 			Bucket: process.env.AWS_BUCKET_NAME,

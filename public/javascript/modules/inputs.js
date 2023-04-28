@@ -55,7 +55,7 @@ function correoValido(correo) {
 }
 
 function contrasenyaValida(pass) {
-	let regex = /^[a-z0-9@$!%*#?&,;\:\-\_]{6,}$/;
+	let regex = /^[a-zA-Z0-9@$!%*#?&,;\:\-\_]{6,}$/;
 	return regex.test(pass);
 }
 
