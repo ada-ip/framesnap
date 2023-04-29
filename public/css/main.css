@@ -10,6 +10,11 @@ aside h2 {
 	font-size: 1.4rem;
 }
 
+.cont-text-cabecera-post > span,
+.card-body > div {
+	font-size: 0.95rem;
+}
+
 /********************************************** Lay-out **********************************************/
 
 /******************************* Navbar *******************************/
@@ -48,14 +53,33 @@ body {
 
 aside {
 	height: min-content;
-	position: sticky;
-	top: 6.5rem;
 }
 
 aside #usuarios-recomendados {
 	background-color: #fff;
 	border: 1px solid #ddd;
-	position: sticky;
+	padding-block: 1rem;
+}
+
+aside #usuarios-recomendados > .container-fluid > div {
+	overflow: hidden;
+	max-height: 88px;
+}
+
+@media screen and (min-width: 768px) {
+	aside {
+		position: sticky;
+		top: 6.5rem;
+	}
+
+	aside #usuarios-recomendados {
+		padding-block: 1.5rem;
+	}
+
+	aside #usuarios-recomendados > .container-fluid > div {
+		overflow: initial;
+		max-height: none;
+	}
 }
 
 aside a {
@@ -65,11 +89,30 @@ aside a {
 
 /******************* Contenido principal *******************/
 
+.contenedor-timeline {
+	max-width: 500px;
+}
+
 #btn-subir-imagen {
-	align-self: flex-end;
 	display: grid;
 	place-items: center;
 	padding-block: 0.7rem;
+	position: fixed;
+	right: 2rem;
+	bottom: 2rem;
+	z-index: 1;
+}
+
+@media screen and (max-width: 767px) {
+	.contenedor-timeline {
+		margin-inline: auto;
+		margin-top: -3rem;
+	}
+
+	#btn-subir-imagen {
+		right: 1rem;
+		bottom: 1rem;
+	}
 }
 
 #timelines {
@@ -88,7 +131,7 @@ aside a {
 	position: absolute;
 	top: 50%;
 	transform: translateY(-50%);
-	right: 0.25rem;
+	right: 0.4rem;
 }
 
 #timelines button.dropdown-toggle.w-100::after {
@@ -117,13 +160,27 @@ aside a {
 	background-color: inherit;
 }
 
-.cont-timeline {
-	margin-inline: auto;
-	width: 600px;
+.contenedor-posts {
+	padding-inline: 0;
+}
+
+.cont-text-cabecera-post {
+	position: relative;
+	top: -0.2em;
+}
+
+.cont-text-cabecera-post a {
+	text-decoration: none;
+}
+
+.vr {
+	height: 1.5em;
 }
 
 .post-img {
+	border-radius: 0;
 	object-fit: cover;
+	max-height: 620px;
 }
 
 .img-fav {

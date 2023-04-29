@@ -1,16 +1,20 @@
 <div class="col">
 	<div class="card shadow-sm">
-		<div class="card-title">
-			<img
-				src="<%= post.signedUrlAutor %>"
-				alt="foto de perfil de <%= post.autor.nombre %>"
-				width="40"
-				height="40"
-				class="rounded-circle foto-perfil-nav"
-				loading="lazy" />
-			<div>
+		<div class="card-title pt-2 px-2 d-flex align-items-center gap-2">
+			<a href="/usuarios/<%= post.autor.nombre %>"
+				><img
+					src="<%= post.signedUrlAutor %>"
+					alt="foto de perfil de <%= post.autor.nombre %>"
+					width="60"
+					height="60"
+					class="rounded-circle foto-perfil-nav"
+					loading="lazy"
+			/></a>
+
+			<div class="cont-text-cabecera-post d-flex flex-wrap align-items-center gap-2">
 				<a href="/usuarios/<%= post.autor.nombre %>"><%= post.autor.nombre %></a>
-				<p>
+				<div class="vr mx-1"></div>
+				<span>
 					<% const fecha = new Date(); const fechaPost = new Date(post.fecha); if (fecha - fechaPost < 1000 * 60) {%>
 					Hace <%= Math.round((fecha - fechaPost) / 1000) %> segundo<% if(Math.round((fecha - fechaPost) / 1000) !== 1)
 					{ %>s<% } %> <% } else if(fecha - fechaPost < 1000 * 60 * 60) { %> Hace <%= Math.floor((fecha - fechaPost) /
@@ -19,19 +23,20 @@
 					hora<% if(Math.floor((fecha - fechaPost) / (1000 * 60 * 60)) !== 1) { %>s<% } %> <% } else if(fecha -
 					fechaPost < 1000 * 60 * 60 * 24 * 2) { %> Hace 1 día <% } else { %> <%= fechaPost.getDate() %>/<%=
 					fechaPost.getMonth() + 1 %>/<%= fechaPost.getFullYear() %> <% } %>
-				</p>
+				</span>
 			</div>
 		</div>
 		<img
 			src="<%= post.signedUrlPost %>"
 			alt=""
 			width="100%"
-			class="bd-placeholder-img card-img-top post-img"
+			class="bd-placeholder-img card-img-top post-img mt-1"
 			preserveAspectRatio="xMidYMid slice"
-			loading="lazy" />
+			loading="lazy"
+		/>
 		<div class="card-body" id="post<%= post._id %>">
-			<div>
-				<p><%= post.numFavs %> favorito<% if(post.numFavs !== 1) { %>s<% } %></p>
+			<div class="d-flex justify-content-between align-items-center mb-4">
+				<span><%= post.numFavs %> favorito<% if(post.numFavs !== 1) { %>s<% } %></span>
 				<img
 					src="<% if(post.esFavorito) { 
 								%>/images/fav.png<% 
@@ -40,12 +45,12 @@
 							} %>"
 					alt="haz click para des/favoritear el post"
 					class="img-fav"
-					width="30"
-					height="30" />
+					width="24"
+					height="24"
+				/>
 			</div>
 
-			<p class="card-text"><%= post.texto %></p>
-			<div>Añadir comentarios</div>
+			<p class="card-text mb-2"><%= post.texto %></p>
 		</div>
 	</div>
 </div>
