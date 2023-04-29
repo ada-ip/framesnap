@@ -105,20 +105,21 @@
 					</div>
 				</aside>
 
-				<div class="col-md-8">
-					<div class="album py-5 bg-body-tertiary cont-timeline">
-						<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#subirPostModal">
-							+
-						</button>
-
-						<div
-							class="modal fade"
-							id="subirPostModal"
-							tabindex="-1"
-							aria-labelledby="subirPostModal"
-							aria-hidden="true"
-							data-bs-backdrop="static"
+				<!-- TIMELINE -->
+				<div class="col-12 col-md-8">
+					<div class="album pb-5 bg-body-tertiary cont-timeline d-flex flex-column">
+						<!-- BOTÓN PARA CREAR UN POST/SUBIR IMAGEN -->
+						<button
+							id="btn-subir-imagen"
+							type="button"
+							class="btn btn-primary"
+							data-bs-toggle="modal"
+							data-bs-target="#crearPostModal"
 						>
+							<img src="/images/plus-solid.png" alt="Subir imagen" width="14" />
+						</button>
+						<!-- MODAL PARA SUBIR LA IMAGEN -->
+						<div class="modal fade" id="crearPostModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
 							<div class="modal-dialog">
 								<form
 									action="/api/v1/posts"
@@ -128,12 +129,12 @@
 									id="form-subir-foto"
 								>
 									<div class="modal-header">
-										<h1 class="modal-title fs-5" id="subirPostModalLabel">Subir post</h1>
+										<h1 class="modal-title fs-5" id="crearPostModalLabel">Subir post</h1>
 										<button
 											type="button"
 											class="btn-close"
 											data-bs-dismiss="modal"
-											aria-label="Close"
+											aria-label="Cerrar"
 										></button>
 									</div>
 									<div class="modal-body">
@@ -166,11 +167,12 @@
 							</div>
 						</div>
 
-						<div id="timelines">
+						<!-- SELECCIÓN DE TIMELINES -->
+						<div id="timelines" class="mt-3">
 							<form action="" method="post" class="dropdown">
-								<div class="dropdown">
+								<div class="dropdown d-flex justify-content-between">
 									<button
-										class="btn btn-primary dropdown-toggle"
+										class="btn dropdown-toggle <% if(usuario.tlElegido === 'Timeline'){ %>w-100<% } %>"
 										type="button"
 										data-bs-toggle="dropdown"
 										aria-expanded="false"
@@ -178,7 +180,12 @@
 										<%= usuario.tlElegido %>
 									</button>
 									<% if(usuario.tlElegido !== "Timeline") { %>
-									<img class="conf-icon" src="images/gear-solid.svg" alt="Configurar timeline" />
+									<img
+										id="conf-icon-principal"
+										class="conf-icon"
+										src="images/gear-solid.svg"
+										alt="Configurar timeline"
+									/>
 									<% } %>
 									<ul class="dropdown-menu">
 										<% for(let tl of usuario.tls) { %> <% if(tl.nombre !== usuario.tlElegido) { %>
