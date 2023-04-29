@@ -46,9 +46,16 @@ body {
 
 /******************** Contenido lateral ********************/
 
+aside {
+	height: min-content;
+	position: sticky;
+	top: 6rem;
+}
+
 aside #usuarios-recomendados {
 	background-color: #fff;
 	border: 1px solid #ddd;
+	position: sticky;
 }
 
 aside a {
