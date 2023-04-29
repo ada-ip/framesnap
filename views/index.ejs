@@ -61,19 +61,36 @@
 			</symbol>
 		</svg>
 
+		<!-- MENÚ DE NAVEGACIÓN -->
 		<%- include("./partials/header.ejs", {usuarioLogeado: usuario}); %>
 
+		<!-- CONTENIDO PRINCIPAL -->
 		<main class="main">
 			<div class="row g-5">
-				<div class="col-md-4">
-					<div class="p-5 mb-4 bg-body-tertiary rounded-3">
-						<div class="container-fluid py-5">
-							<h1 class="display-5 fw-bold">Custom jumbotron</h1>
-							<p class="col-md-8 fs-4">
-								Using a series of utilities, you can create this jumbotron, just like the one in previous versions
-								of Bootstrap. Check out the examples below for how you can remix and restyle it to your liking.
-							</p>
-							<button class="btn btn-primary btn-lg" type="button">Example button</button>
+				<!-- CONTENIDO LATERAL -->
+				<aside class="col-12 col-md-4">
+					<!-- USUARIOS RECOMENDADOS -->
+					<div id="usuarios-recomendados" class="py-4 px-3 mb-4 rounded-3">
+						<div class="container-fluid">
+							<h2>A quién seguir</h2>
+							<div class="d-flex flex-wrap justify-content-center justify-content-md-start gap-3 mt-4">
+								<% if(usuariosRecomendados.length === 0) { %> Vaya, parece que hay poco movimiento. <% } else {
+								for(let usuario of usuariosRecomendados) { %>
+								<div class="d-flex flex-column align-items-center gap-1">
+									<a href="/usuarios/<%= usuario.nombre %>">
+										<img
+											src="<%= usuario.signedUrlUsuario %>"
+											alt="foto de perfil de <%= usuario.nombre %>"
+											width="60"
+											height="60"
+											class="rounded-circle foto-perfil-nav"
+											loading="lazy"
+										/>
+									</a>
+									<a href="/usuarios/<%= usuario.nombre %>"><%= usuario.nombre %></a>
+								</div>
+								<% } } %>
+							</div>
 						</div>
 					</div>
 					<div class="p-5 mb-4 bg-body-tertiary rounded-3">
@@ -86,7 +103,7 @@
 							<button class="btn btn-primary btn-lg" type="button">Example button</button>
 						</div>
 					</div>
-				</div>
+				</aside>
 
 				<div class="col-md-8">
 					<div class="album py-5 bg-body-tertiary cont-timeline">

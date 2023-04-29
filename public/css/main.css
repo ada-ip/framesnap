@@ -4,6 +4,12 @@
 	--body-bg: 248, 249, 250;
 }
 
+/********************************************** Tipografía **********************************************/
+
+aside h2 {
+	font-size: 1.4rem;
+}
+
 /********************************************** Lay-out **********************************************/
 
 /******************************* Navbar *******************************/
@@ -20,6 +26,12 @@ input[type="search"] {
 	padding-block: 0.6em;
 }
 
+.foto-perfil-nav {
+	padding: 0.2rem;
+	background-color: rgb(200, 200, 200);
+	object-fit: cover;
+}
+
 /******************************* Index *******************************/
 
 body {
@@ -27,16 +39,24 @@ body {
 }
 
 .main {
-	margin-top: 3rem;
+	margin-top: 6rem;
 	margin-inline: auto;
 	width: min(90%, 1200px);
 }
 
-.foto-perfil-nav {
-	padding: 0.2rem;
-	background-color: rgb(200, 200, 200);
-	object-fit: cover;
+/******************** Contenido lateral ********************/
+
+aside #usuarios-recomendados {
+	background-color: #fff;
+	border: 1px solid #ddd;
 }
+
+aside a {
+	text-decoration: none;
+	color: inherit;
+}
+
+/******************* Contenido principal *******************/
 
 .cont-timeline {
 	margin-inline: auto;

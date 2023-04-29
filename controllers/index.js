@@ -2,7 +2,12 @@ const User = require("../models/User");
 const Post = require("../models/Post");
 const { anyadirSignedUrlsPosts, anyadirSignedUrlsUsuario } = require("../utils/aws");
 const { comprobarFavs } = require("../utils/outliers");
-const { construirFiltroTl, ordenarNumSeguidoresPorFecha, ordenarNumFavsPorFecha } = require("../utils/metodosConsultas");
+const {
+	construirFiltroTl,
+	ordenarNumSeguidoresPorFecha,
+	ordenarNumFavsPorFecha,
+	eliminarSugerenciasSeguidos,
+} = require("../utils/metodosConsultas");
 
 const devolverIndex = async (req, res, next) => {
 	if (!req.session.idUsuario) {
@@ -24,7 +29,7 @@ const devolverIndex = async (req, res, next) => {
 			} else {
 				const tl = await User.findOne({ _id: req.session.idUsuario }).select({
 					_id: 0,
-					tls: { $elemMatch: { nombre: req.query.timeline } }
+					tls: { $elemMatch: { nombre: req.query.timeline } },
 				});
 
 				const filtro = construirFiltroTl(tl.tls[0]);
@@ -49,9 +54,23 @@ const devolverIndex = async (req, res, next) => {
 
 			const postsConFavsYUrls = await comprobarFavs(postsConSignedUrls, req);
 
+			const usuariosRecomendados = await Post.aggregate()
+				.match({
+					"autor.nombre": { $ne: req.session.usuario },
+					fecha: { $gte: new Date(Date.now() - 1000 * 60 * 60 * 24 * 30) },
+				})
+				.group({ _id: "$autor.nombre", totalNumFavs: { $sum: "$numFavs" }, fotoPerfil: { $first: "$autor.fotoPerfil" } })
+				.project({ _id: 0, nombre: "$_id", totalNumFavs: 1, fotoPerfil: 1 })
+				.sort("-totalNumFavs");
+
+			const usuariosRecomendadosNoSeguidos = await eliminarSugerenciasSeguidos(usuariosRecomendados, req.session.idUsuario);
+
+			const usuariosRecomendadosSignedUrls = anyadirSignedUrlsUsuario(usuariosRecomendadosNoSeguidos, req);
+
 			res.render("index", {
 				usuario: { ...usuarioConSignedUrls[0], tlElegido: req.query.timeline || "Timeline" },
-				posts: postsConFavsYUrls
+				posts: postsConFavsYUrls,
+				usuariosRecomendados: usuariosRecomendadosSignedUrls,
 			});
 		} catch (error) {
 			next(error);

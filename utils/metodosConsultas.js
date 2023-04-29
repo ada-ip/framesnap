@@ -30,7 +30,7 @@ const anyadirSeguidor = async (usuarioASeguir, usuarioLogeado, sesion) => {
 		usuarioASeguir.seguidores.push({
 			id: usuarioLogeado._id,
 			nombre: usuarioLogeado.nombre,
-			fotoPerfil: usuarioLogeado.fotoPerfil
+			fotoPerfil: usuarioLogeado.fotoPerfil,
 		});
 		usuarioASeguir.numSeguidores++;
 		await usuarioASeguir.save({ session: sesion });
@@ -43,7 +43,7 @@ const anyadirSeguidor = async (usuarioASeguir, usuarioLogeado, sesion) => {
 			const nuevoUsuarioParams = {
 				usuario: { id: usuarioASeguir._id, nombre: usuarioASeguir.nombre, fotoPerfil: usuarioASeguir.fotoPerfil },
 				doc: (usuarioOutlier[0]?.doc ?? 0) + 1,
-				seguidores: [{ id: usuarioLogeado._id, nombre: usuarioLogeado.nombre, fotoPerfil: usuarioLogeado.fotoPerfil }]
+				seguidores: [{ id: usuarioLogeado._id, nombre: usuarioLogeado.nombre, fotoPerfil: usuarioLogeado.fotoPerfil }],
 			};
 
 			const nuevoUsuarioOutlier = new Follower(nuevoUsuarioParams);
@@ -56,7 +56,7 @@ const anyadirSeguidor = async (usuarioASeguir, usuarioLogeado, sesion) => {
 			usuarioOutlier[0].seguidores.push({
 				id: usuarioLogeado._id,
 				nombre: usuarioLogeado.nombre,
-				fotoPerfil: usuarioLogeado.fotoPerfil
+				fotoPerfil: usuarioLogeado.fotoPerfil,
 			});
 
 			await usuarioOutlier.save({ session: sesion });
@@ -72,7 +72,7 @@ const anyadirSeguido = async (usuarioASeguir, usuarioLogeado, sesion) => {
 		usuarioLogeado.seguidos.push({
 			id: usuarioASeguir._id,
 			nombre: usuarioASeguir.nombre,
-			fotoPerfil: usuarioASeguir.fotoPerfil
+			fotoPerfil: usuarioASeguir.fotoPerfil,
 		});
 		usuarioLogeado.numSeguidos++;
 		await usuarioLogeado.save({ session: sesion });
@@ -85,7 +85,7 @@ const anyadirSeguido = async (usuarioASeguir, usuarioLogeado, sesion) => {
 			const nuevoUsuarioParams = {
 				usuario: { id: usuarioLogeado._id, nombre: usuarioLogeado.nombre, fotoPerfil: usuarioLogeado.fotoPerfil },
 				doc: (usuarioOutlier[0]?.doc ?? 0) + 1,
-				seguidos: [{ id: usuarioASeguir._id, nombre: usuarioASeguir.nombre, fotoPerfil: usuarioASeguir.fotoPerfil }]
+				seguidos: [{ id: usuarioASeguir._id, nombre: usuarioASeguir.nombre, fotoPerfil: usuarioASeguir.fotoPerfil }],
 			};
 
 			const nuevoUsuarioOutlier = new Follow(nuevoUsuarioParams);
@@ -98,7 +98,7 @@ const anyadirSeguido = async (usuarioASeguir, usuarioLogeado, sesion) => {
 			usuarioOutlier[0].seguidos.push({
 				id: usuarioASeguir._id,
 				nombre: usuarioASeguir.nombre,
-				fotoPerfil: usuarioASeguir.fotoPerfil
+				fotoPerfil: usuarioASeguir.fotoPerfil,
 			});
 
 			await usuarioOutlier.save({ session: sesion });
@@ -119,9 +119,9 @@ const quitarSeguidor = async (usuarioADejarDeSeguir, usuarioLogeado, sesion) => 
 			{
 				$pull: {
 					seguidores: {
-						id: usuarioLogeado._id
-					}
-				}
+						id: usuarioLogeado._id,
+					},
+				},
 			},
 			{ session: sesion }
 		);
@@ -142,7 +142,7 @@ const quitarSeguido = async (usuarioADejarDeSeguir, usuarioLogeado, sesion) => {
 		const usuarioOutlier = await Follow.findOneAndUpdate(
 			{
 				"usuario.id": usuarioLogeado._id,
-				"seguidos.id": usuarioADejarDeSeguir._id
+				"seguidos.id": usuarioADejarDeSeguir._id,
 			},
 			{ $pull: { seguidos: { id: usuarioADejarDeSeguir._id } } },
 			{ session: sesion }
@@ -162,7 +162,7 @@ const formatearFechaTl = (fecha) => {
 			1: "dia",
 			7: "semana",
 			30: "mes",
-			180: "smes"
+			180: "smes",
 		};
 		fechaFormateada.opcion = tiempo[`${fecha.$gte / (24 * 60 * 60 * 1000)}`];
 	} else {
@@ -175,13 +175,13 @@ const formatearFechaTl = (fecha) => {
 
 const construirFiltroTl = (tl) => {
 	const filtro = {
-		$or: []
+		$or: [],
 	};
 	if (tl.config.filtro.autor.length > 0) {
 		filtroAutor = {
 			"autor.id": {
-				$in: []
-			}
+				$in: [],
+			},
 		};
 		for (let autor of tl.config.filtro.autor) {
 			filtroAutor["autor.id"].$in.push(autor);
@@ -191,8 +191,8 @@ const construirFiltroTl = (tl) => {
 	if (tl.config.filtro.tags.length > 0) {
 		filtroTags = {
 			tags: {
-				$in: []
-			}
+				$in: [],
+			},
 		};
 		for (let tag of tl.config.filtro.tags) {
 			filtroTags.tags.$in.push(tag);
@@ -201,7 +201,7 @@ const construirFiltroTl = (tl) => {
 	}
 	if (typeof tl.config.filtro.fecha.$gte === "number") {
 		filtro.fecha = {
-			$gte: new Date(Date.now() - tl.config.filtro.fecha.$gte).toISOString()
+			$gte: new Date(Date.now() - tl.config.filtro.fecha.$gte).toISOString(),
 		};
 	} else {
 		filtro.fecha = tl.config.filtro.fecha;
@@ -234,6 +234,27 @@ const ordenarNumFavsPorFecha = (posts, asc = true) => {
 	});
 };
 
+const eliminarSugerenciasSeguidos = async (usuarios, usuarioLogeado) => {
+	const seguidos = await User.findById(usuarioLogeado).select("-_id seguidos outlierSeguidos");
+	const seguidosOutlier = [];
+	if (seguidos.outlierSeguidos) {
+		const masSeguidos = await Follow.find({ "usuario.id": usuarioLogeado }).select("-_id seguidos");
+		masSeguidos.forEach((doc) => seguidosOutlier.push(...doc.seguidos));
+	}
+
+	return usuarios.reduce((arrayUsuarios, usuario) => {
+		let i = seguidos.seguidos.findIndex((seguido) => seguido.nombre === usuario.nombre);
+		let iOutlier = -1;
+		if (seguidosOutlier.length > 0) {
+			iOutlier = seguidosOutlier.seguidos.findIndex((seguido) => seguido.nombre === usuario.nombre);
+		}
+
+		if (i === -1 && iOutlier === -1) arrayUsuarios.push(usuario);
+
+		return arrayUsuarios;
+	}, []);
+};
+
 module.exports = {
 	sumarNumPosts,
 	eliminarDuplicados,
@@ -244,5 +265,6 @@ module.exports = {
 	formatearFechaTl,
 	construirFiltroTl,
 	ordenarNumSeguidoresPorFecha,
-	ordenarNumFavsPorFecha
+	ordenarNumFavsPorFecha,
+	eliminarSugerenciasSeguidos,
 };
