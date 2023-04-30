@@ -1,25 +1,39 @@
 <header>
-	<nav class="px-3 py-1 border-bottom fixed-top">
-		<div class="container">
-			<div class="d-flex flex-wrap align-items-center justify-content-between">
-				<!-- LOGO DE LA PÁGINA -->
-				<a href="/" class="d-flex align-items-center my-0 me-auto text-decoration-none">
-					<svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap">
-						<use xlink:href="#bootstrap" />
-					</svg>
-				</a>
-
-				<!-- OPCIONES DE NAVEGACIÓN -->
-				<ul class="nav my-2 d-flex justify-content-center align-items-center my-0 text-small">
-					<li>
-						<!-- BÚSQUEDA DE USUARIOS Y POSTS -->
-						<form
-							action="/usuarios"
-							method="GET"
-							class="col-12 col-lg-auto mb-lg-0 me-lg-3"
-							role="search"
-							autocomplete="off"
-						>
+	<!-- MENÚ DE NAVEGACIÓN -->
+	<nav class="navbar navbar-expand-sm px-3 py-1 border-bottom fixed-top">
+		<div class="d-flex flex-wrap align-items-center justify-content-between w-100">
+			<!-- LOGO DE LA MARCA -->
+			<a href="/" class="d-flex align-items-center my-0 me-auto text-decoration-none">
+				<svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap">
+					<use xlink:href="#bootstrap" />
+				</svg>
+			</a>
+			<!-- BOTÓN MENÚ HAMBURGUESA -->
+			<button
+				class="navbar-toggler my-2"
+				type="button"
+				data-bs-toggle="collapse"
+				data-bs-target="#menuColaps"
+				aria-controls="menuColaps"
+				aria-expanded="false"
+				aria-label="Abrir menú de navegación"
+			>
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<!-- OPCIONES DE NAVEGACIÓN -->
+			<div class="collapse navbar-collapse" id="menuColaps">
+				<ul class="nav my-2 d-flex justify-content-end align-items-center my-0 text-small gap-3">
+					<!-- OPCIÓN QUE SÓLO SE MUESTRA EN MÓVIL -->
+					<li class="nav-link-mobile">
+						<a class="nav-link" href="">Perfil</a>
+					</li>
+					<!-- OPCIÓN QUE SÓLO SE MUESTRA EN MÓVIL -->
+					<li class="nav-link-mobile">
+						<a class="nav-link" href="">Notificaciones</a>
+					</li>
+					<!-- BÚSQUEDA DE USUARIOS/IMÁGENES -->
+					<li class="nav-busqueda">
+						<form action="/usuarios" method="GET" class="col-12 col-lg-auto mb-lg-0" role="search" autocomplete="off">
 							<input
 								id="buscar"
 								type="search"
@@ -28,27 +42,19 @@
 								aria-label="Buscar"
 								name="q"
 							/>
-							<!-- SUGERENCIAS DE USUARIOS AL BUSCAR -->
+
 							<ul id="autocompletar-busqueda" class="dropdown-menu text-small"></ul>
 						</form>
 					</li>
-					<!-- NOTIFICACIONES -->
-					<li>
-						<a href="#" class="nav-link">
-							<svg class="bi d-block mx-auto mb-1" width="24" height="24">
-								<use xlink:href="#notifications" />
-							</svg>
-						</a>
-					</li>
-					<!-- MENÚ DE USUARIO -->
-					<li class="dropdown text-end">
+
+					<!-- OPCIÓN QUE SÓLO SE MUESTRA EN TABLET/ORDENADOR -->
+					<li class="dropdown text-end nav-link-desktop">
 						<a
 							href="#"
 							class="d-block link-dark text-decoration-none dropdown-toggle"
 							data-bs-toggle="dropdown"
 							aria-expanded="false"
 						>
-							<!-- FOTO DE PERFIL DE USUARIO -->
 							<img
 								src="<%= usuarioLogeado.signedUrlUsuario %>"
 								alt="foto de perfil de <%= usuarioLogeado.nombre %>"
@@ -59,14 +65,11 @@
 						</a>
 						<ul class="dropdown-menu text-small">
 							<li>
-								<!-- LINK AL PERFIL DE USUARIO -->
 								<a class="dropdown-item" href="/usuarios/<%= usuarioLogeado.nombre %>">Perfil</a>
 							</li>
-							<li><a class="dropdown-item" href="#">Settings</a></li>
-							<li><a class="dropdown-item" href="#">Profile</a></li>
+							<li><a class="dropdown-item" href="#">Notificaciones</a></li>
 							<li><hr class="dropdown-divider" /></li>
 							<li>
-								<!-- FORMULARIO PARA CERRAR LA SESIÓN -->
 								<form
 									action="/api/v1/usuarios/<%= usuarioLogeado._id %>/desconectar"
 									method="post"
@@ -76,6 +79,12 @@
 								</form>
 							</li>
 						</ul>
+					</li>
+					<!-- OPCIÓN QUE SÓLO SE MUESTRA EN MÓVIL -->
+					<li class="nav-link-mobile">
+						<form action="/api/v1/usuarios/<%= usuarioLogeado._id %>/desconectar" method="post" class="dropdown-item">
+							<input type="submit" class="btn btn-primary" name="desconectarse" value="Desconectarse" />
+						</form>
 					</li>
 				</ul>
 			</div>

@@ -37,6 +37,45 @@ input[type="search"] {
 	object-fit: cover;
 }
 
+.nav-link-mobile > a {
+	padding: 0;
+	color: #000;
+}
+
+@media screen and (min-width: 576px) {
+	/* .navbar-expand-sm .navbar-collapse {
+		display: none !important;
+	} */
+
+	.navbar.px-3 {
+		padding-inline: 110px !important;
+	}
+
+	.navbar-collapse {
+		display: flex;
+		justify-content: flex-end;
+	}
+
+	.nav-link-mobile {
+		display: none !important;
+	}
+}
+
+@media screen and (max-width: 576px) {
+	.nav-link-desktop {
+		display: none !important;
+	}
+
+	.collapse:not(.show) {
+		display: none !important;
+	}
+
+	.nav-link-mobile,
+	.nav-busqueda {
+		width: 100%;
+	}
+}
+
 /******************************* Index *******************************/
 
 body {
@@ -66,6 +105,12 @@ aside #usuarios-recomendados > .container-fluid > div {
 	max-height: 88px;
 }
 
+@media screen and (max-width: 767px) {
+	aside {
+		margin-top: 1.5rem !important;
+	}
+}
+
 @media screen and (min-width: 768px) {
 	aside {
 		position: sticky;
@@ -90,7 +135,7 @@ aside a {
 /******************* Contenido principal *******************/
 
 .contenedor-timeline {
-	max-width: 500px;
+	max-width: 470px;
 }
 
 #btn-subir-imagen {
@@ -180,7 +225,19 @@ aside a {
 .post-img {
 	border-radius: 0;
 	object-fit: cover;
-	max-height: 620px;
+	max-height: 420px;
+}
+
+@media screen and (min-width: 350px) {
+	.post-img {
+		max-height: 520px;
+	}
+}
+
+@media screen and (min-width: 440px) {
+	.post-img {
+		max-height: 620px;
+	}
 }
 
 .img-fav {
