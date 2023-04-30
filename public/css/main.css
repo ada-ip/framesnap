@@ -85,7 +85,7 @@ body {
 .main {
 	margin-top: 6.5rem;
 	margin-inline: auto;
-	width: min(90%, 1200px);
+	width: min(95%, 1200px);
 }
 
 /******************** Contenido lateral ********************/
