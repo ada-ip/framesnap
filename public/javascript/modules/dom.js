@@ -8,8 +8,9 @@ function crearElemAutocompletar(elementos) {
 		texto += "</li>";
 	});
 
-	texto += "<li><input type='submit' value='Buscar usuarios'></li>";
-	texto += "<li><input formaction='/posts' type='submit' value='Buscar por tags'></li>";
+	texto += "<hr class='dropdown-divider' />";
+	texto += "<li><input class='dropdown-item' type='submit' value='Buscar usuarios'></li>";
+	texto += "<li><input class='dropdown-item' formaction='/posts' type='submit' value='Buscar posts'></li>";
 
 	console.log(texto);
 	return texto;
@@ -159,5 +160,5 @@ export {
 	crearNuevoInputUsuario,
 	crearNuevoInputTags,
 	rellenarModalConfigTl,
-	resetearModalTl
+	resetearModalTl,
 };

@@ -22,14 +22,14 @@
 			</button>
 			<!-- OPCIONES DE NAVEGACIÓN -->
 			<div class="collapse navbar-collapse" id="menuColaps">
-				<ul class="nav my-2 d-flex justify-content-end align-items-center my-0 text-small gap-3">
+				<ul class="nav my-2 d-flex flex-column flex-sm-row justify-content-end align-items-center my-0 text-small gap-3">
 					<!-- OPCIÓN QUE SÓLO SE MUESTRA EN MÓVIL -->
 					<li class="nav-link-mobile">
-						<a class="nav-link" href="">Perfil</a>
+						<a class="nav-link" href="/usuarios/<%= usuarioLogeado.nombre %>">Perfil</a>
 					</li>
 					<!-- OPCIÓN QUE SÓLO SE MUESTRA EN MÓVIL -->
 					<li class="nav-link-mobile">
-						<a class="nav-link" href="">Notificaciones</a>
+						<a class="nav-link" href="#">Notificaciones</a>
 					</li>
 					<!-- BÚSQUEDA DE USUARIOS/IMÁGENES -->
 					<li class="nav-busqueda">
@@ -75,7 +75,12 @@
 									method="post"
 									class="dropdown-item"
 								>
-									<input type="submit" class="btn btn-primary" name="desconectarse" value="Desconectarse" />
+									<input
+										type="submit"
+										class="btn btn-outline-primary"
+										name="desconectarse"
+										value="Desconectarse"
+									/>
 								</form>
 							</li>
 						</ul>
@@ -83,7 +88,7 @@
 					<!-- OPCIÓN QUE SÓLO SE MUESTRA EN MÓVIL -->
 					<li class="nav-link-mobile">
 						<form action="/api/v1/usuarios/<%= usuarioLogeado._id %>/desconectar" method="post" class="dropdown-item">
-							<input type="submit" class="btn btn-primary" name="desconectarse" value="Desconectarse" />
+							<input type="submit" class="btn btn-outline-primary" name="desconectarse" value="Desconectarse" />
 						</form>
 					</li>
 				</ul>

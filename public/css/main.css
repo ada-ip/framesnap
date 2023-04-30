@@ -43,10 +43,6 @@ input[type="search"] {
 }
 
 @media screen and (min-width: 576px) {
-	/* .navbar-expand-sm .navbar-collapse {
-		display: none !important;
-	} */
-
 	.navbar.px-3 {
 		padding-inline: 110px !important;
 	}
@@ -72,7 +68,11 @@ input[type="search"] {
 
 	.nav-link-mobile,
 	.nav-busqueda {
-		width: 100%;
+		width: 60%;
+	}
+
+	.navbar-collapse > ul.nav > li:not(.nav-busqueda) {
+		text-align: center;
 	}
 }
 
