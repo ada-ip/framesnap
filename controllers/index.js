@@ -14,7 +14,9 @@ const devolverIndex = async (req, res, next) => {
 		res.redirect("/iniciar-sesion");
 	} else {
 		try {
-			const usuario = await User.findById(req.session.idUsuario).select("_id nombre fotoPerfil seguidos tls");
+			const usuario = await User.findById(req.session.idUsuario).select(
+				"_id nombre fotoPerfil seguidos outlierSeguidos tls"
+			);
 
 			if (!usuario) {
 				return res.status(404).end();
@@ -27,7 +29,7 @@ const devolverIndex = async (req, res, next) => {
 			if (!req.query.timeline) {
 				posts = await usuario.obtenerPostsTimeline();
 			} else {
-				const tl = await User.findOne({ _id: req.session.idUsuario }).select({
+				const tl = await User.findById(req.session.idUsuario).select({
 					_id: 0,
 					tls: { $elemMatch: { nombre: req.query.timeline } },
 				});

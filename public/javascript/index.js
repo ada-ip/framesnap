@@ -151,8 +151,6 @@ btnsConfigTls.forEach((btn) =>
 
 		let url = "/api/v1/tls/" + e.target.previousElementSibling.textContent;
 
-		console.log(url);
-
 		fetch(url)
 			.then((response) => {
 				if (!response.ok) {

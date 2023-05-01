@@ -1,6 +1,8 @@
 const Post = require("../models/Post");
+const User = require("../models/User");
 const Fav = require("../models/Fav");
 const { anyadirSignedUrlsPosts, anyadirSignedUrlsUsuario } = require("../utils/aws");
+const { comprobarFavs } = require("../utils/outliers");
 const LIMITE_ELEMENTOS = 1000;
 
 const crearPost = async (req, res, next) => {
@@ -20,11 +22,11 @@ const crearPost = async (req, res, next) => {
 			autor: {
 				id: req.session.idUsuario,
 				nombre: req.session.usuario,
-				fotoPerfil: req.session.fotoPerfil
+				fotoPerfil: req.session.fotoPerfil,
 			},
 			favs: [],
 			comentarios: [],
-			tags: tags
+			tags: tags,
 		};
 
 		try {
@@ -74,7 +76,7 @@ const favoritearPost = async (req, res, next) => {
 				const nuevoFav = {
 					idPost: idPost,
 					doc: (postOutlier[0]?.doc ?? 0) + 1,
-					favs: [usuarioLogeado]
+					favs: [usuarioLogeado],
 				};
 
 				const nuevoPostOutlier = new Fav(nuevoFav);
@@ -109,9 +111,9 @@ const desfavoritearPost = async (req, res, next) => {
 				{
 					$pull: {
 						favs: {
-							nombre: req.session.usuario
-						}
-					}
+							nombre: req.session.usuario,
+						},
+					},
 				}
 			);
 
@@ -126,4 +128,54 @@ const desfavoritearPost = async (req, res, next) => {
 	}
 };
 
-module.exports = { crearPost, obtenerPosts, favoritearPost, desfavoritearPost };
+const obtenerPostsTimeline = async (req, res, next) => {
+	if (!req.session.idUsuario) {
+		res.redirect("/iniciar-sesion");
+	} else {
+		try {
+			const usuario = await User.findById(req.session.idUsuario).select("_id seguidos outlierSeguidos tls");
+
+			if (!usuario) {
+				return res.status(404).end();
+			}
+
+			let posts = [];
+
+			if (!req.query.timeline) {
+				posts = await usuario.obtenerPostsTimeline(req.query.datoPost);
+			} else {
+				const tl = await User.findOne({ _id: req.session.idUsuario }).select({
+					_id: 0,
+					tls: { $elemMatch: { nombre: req.query.timeline } },
+				});
+
+				const filtro = construirFiltroTl(tl.tls[0]);
+
+				let orden = tl.tls[0].config.orden;
+
+				if (filtro.$or.length !== 0) {
+					posts = await Post.find(filtro)
+						.populate({ path: "autor.id", select: "numSeguidores" })
+						.select("-favs -outlierComentarios -tags")
+						.sort(orden)
+						.limit(15);
+
+					if (orden === "autor.id.numSeguidores") ordenarNumSeguidoresPorFecha(posts);
+					if (orden === "-autor.id.numSeguidores") ordenarNumSeguidoresPorFecha(posts, false);
+					if (orden === "numFavs") ordenarNumFavsPorFecha(posts);
+					if (orden === "-numFavs") ordenarNumFavsPorFecha(posts, false);
+				}
+			}
+
+			const postsConSignedUrls = anyadirSignedUrlsPosts(posts, req);
+
+			const postsConFavsYUrls = await comprobarFavs(postsConSignedUrls, req);
+
+			res.status(200).json(postsConFavsYUrls);
+		} catch (error) {
+			next(error);
+		}
+	}
+};
+
+module.exports = { crearPost, obtenerPosts, favoritearPost, desfavoritearPost, obtenerPostsTimeline };

@@ -14,7 +14,7 @@ const UserSchema = new mongoose.Schema({
 		maxLength: [30, "El nombre no puede tener más de 30 caracteres"],
 		unique: [true, "el nombre ya existe"],
 		lowercase: true,
-		match: [/^[a-z0-9]+$/i, "El nombre tiene que ser alfanumérico"]
+		match: [/^[a-z0-9]+$/i, "El nombre tiene que ser alfanumérico"],
 	},
 	correo: {
 		type: String,
@@ -22,33 +22,33 @@ const UserSchema = new mongoose.Schema({
 		trim: true,
 		unique: [true, "el correo ya existe"],
 		lowercase: true,
-		match: [/^[a-z0-9]([a-z0-9]|\.(?!\.))*@[a-z0-9]+(\.[a-z]+)+$/i, "El nombre tiene que ser alfanumérico"]
+		match: [/^[a-z0-9]([a-z0-9]|\.(?!\.))*@[a-z0-9]+(\.[a-z]+)+$/i, "El nombre tiene que ser alfanumérico"],
 	},
 	contrasenya: {
 		type: String,
-		required: true
+		required: true,
 	},
 	fotoPerfil: {
 		type: String,
-		required: true
+		required: true,
 	},
 	seguidos: [DenormUserSchema],
 	outlierSeguidos: {
 		type: Boolean,
-		default: false
+		default: false,
 	},
 	numSeguidos: {
 		type: Number,
-		default: 0
+		default: 0,
 	},
 	seguidores: [DenormUserSchema],
 	outlierSeguidores: {
 		type: Boolean,
-		default: false
+		default: false,
 	},
 	numSeguidores: {
 		type: Number,
-		default: 0
+		default: 0,
 	},
 	tls: {
 		type: [TlSchema],
@@ -57,9 +57,9 @@ const UserSchema = new mongoose.Schema({
 			validator: function (tls) {
 				return tls.length > 0;
 			},
-			message: "Hay que incluir al menos un TL para el usuario"
-		}
-	}
+			message: "Hay que incluir al menos un TL para el usuario",
+		},
+	},
 });
 
 UserSchema.pre("save", async function (next) {
@@ -89,7 +89,7 @@ UserSchema.methods.compararPassw = async function (inputPassw) {
 	return await bcrypt.compare(inputPassw, this.contrasenya);
 };
 
-UserSchema.methods.obtenerPostsTimeline = async function () {
+UserSchema.methods.obtenerPostsTimeline = async function (datoPost = new Date()) {
 	const usuariosSeguidos = [this._id];
 	this.seguidos.forEach((us) => usuariosSeguidos.push(us.id));
 
@@ -100,10 +100,10 @@ UserSchema.methods.obtenerPostsTimeline = async function () {
 		});
 	}
 
-	const postsUsuarios = await Post.find({ "autor.id": { $in: usuariosSeguidos } })
+	const postsUsuarios = await Post.find({ "autor.id": { $in: usuariosSeguidos }, fecha: { $lt: datoPost } })
 		.select("-favs -outlierComentarios -tags")
 		.sort("-fecha")
-		.limit(15);
+		.limit(10);
 
 	return postsUsuarios;
 };

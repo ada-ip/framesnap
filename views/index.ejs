@@ -166,9 +166,7 @@
 										type="button"
 										data-bs-toggle="dropdown"
 										aria-expanded="false"
-									>
-										<%= usuario.tlElegido %>
-									</button>
+									><%= usuario.tlElegido %></button>
 									<% if(usuario.tlElegido !== "Timeline") { %>
 									<img
 										id="conf-icon-principal"
@@ -284,10 +282,14 @@
 						</div>
 
 						<!-- POSTS -->
-						<div class="container mt-2 contenedor-posts">
+						<div id="posts" class="container mt-2 contenedor-posts">
 							<div class="row row-cols-1 g-3">
 								<% if(posts.length > 0) { %> <% for(let post of posts) { %> <%- include("./partials/post.ejs",
-								{post: post}); %> <% } %> <% } else { %>
+								{post: post}); %> <% } %>
+								<div class="col">
+									<button id="cargarPosts" type="button" class="btn btn-primary w-100">Más posts</button>
+								</div>
+								<% } else { %>
 								<div class="col">Parece que todavía no hay nada aquí</div>
 								<% } %>
 							</div>
@@ -301,7 +303,6 @@
 			integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N"
 			crossorigin="anonymous"
 		></script>
-		<script src="/javascript/bootstrap.js" type="module" crossorigin="anonymous"></script>
 		<script src="/javascript/menu.js" type="module" crossorigin="anonymous"></script>
 		<script src="/javascript/index.js" type="module" crossorigin="anonymous"></script>
 		<script src="/javascript/post.js" type="module" crossorigin="anonymous"></script>

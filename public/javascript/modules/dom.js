@@ -1,4 +1,5 @@
 import { validarTag, autocompletarUsuarioTL } from "./listeners.js";
+import { calcularFechaPost } from "./fechas.js";
 
 function crearElemAutocompletar(elementos) {
 	let texto = "";
@@ -154,6 +155,60 @@ function resetearModalTl(modalBody) {
 	}
 }
 
+function anyadirPosts(posts, btnCargar) {
+	posts.forEach((post) => {
+		const div = document.createElement("div");
+		div.classList.add("col");
+		div.innerHTML = `<div class="card shadow-sm" data-fecha="${post.fecha}">
+							<div class="card-title pt-2 px-2 d-flex align-items-center gap-2">
+								<a href="/usuarios/${post.autor.nombre}"
+									><img
+										src="${post.signedUrlAutor}"
+										alt="foto de perfil de ${post.autor.nombre}"
+										width="60"
+										height="60"
+										class="rounded-circle foto-perfil-nav"
+										loading="lazy"
+								/></a>
+
+								<div class="cont-text-cabecera-post d-flex flex-wrap align-items-center gap-2">
+									<a href="/usuarios/${post.autor.nombre}">${post.autor.nombre}</a>
+									<div class="vr mx-1"></div>
+									<span>
+									</span>
+								</div>
+							</div>
+							<img
+								src="${post.signedUrlPost}"
+								alt=""
+								width="100%"
+								class="bd-placeholder-img card-img-top post-img mt-1"
+								preserveAspectRatio="xMidYMid slice"
+								loading="lazy"
+							/>
+							<div class="card-body" id="post${post._id}">
+								<div class="d-flex justify-content-between align-items-center mb-4">
+									<span>${post.numFavs} favorito${post.numFavs !== 1 ? "s" : ""}</span>
+									<img
+										src="${post.esFavorito ? "/images/fav.png" : "/images/no-fav.png"}"
+										alt="haz click para des/favoritear el post"
+										class="img-fav"
+										width="24"
+										height="24"
+									/>
+								</div>
+
+								<p class="card-text mb-2">${post.texto}</p>
+							</div>
+						</div>`;
+
+		const elemFechaPost = div.firstElementChild.firstElementChild.lastElementChild.lastElementChild;
+		elemFechaPost.textContent = calcularFechaPost(new Date(), new Date(post.fecha));
+
+		btnCargar.parentElement.insertAdjacentElement("beforebegin", div);
+	});
+}
+
 export {
 	crearElemAutocompletar,
 	crearAutocompletarUsuariosTL,
@@ -161,4 +216,5 @@ export {
 	crearNuevoInputTags,
 	rellenarModalConfigTl,
 	resetearModalTl,
+	anyadirPosts,
 };
