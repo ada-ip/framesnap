@@ -3,6 +3,7 @@ const User = require("../models/User");
 const Fav = require("../models/Fav");
 const { anyadirSignedUrlsPosts, anyadirSignedUrlsUsuario } = require("../utils/aws");
 const { comprobarFavs } = require("../utils/outliers");
+const { construirFiltroTl, ordenarNumSeguidoresPorFecha, ordenarNumFavsPorFecha } = require("../utils/metodosConsultas");
 const LIMITE_ELEMENTOS = 1000;
 
 const crearPost = async (req, res, next) => {
@@ -39,7 +40,7 @@ const crearPost = async (req, res, next) => {
 	}
 };
 
-const obtenerPosts = async (req, res, next) => {
+const obtenerPostsPorTag = async (req, res, next) => {
 	const tag = req.query.q;
 
 	try {
@@ -142,32 +143,109 @@ const obtenerPostsTimeline = async (req, res, next) => {
 			let posts = [];
 
 			if (!req.query.timeline) {
-				posts = await usuario.obtenerPostsTimeline(req.query.datoPost);
+				posts = await usuario.obtenerPostsTimeline(req.query.fechaPost);
 			} else {
-				const tl = await User.findOne({ _id: req.session.idUsuario }).select({
+				const { fechaPost, datoPost, ordenTl, timeline } = req.query;
+
+				const tl = await User.findById(req.session.idUsuario).select({
 					_id: 0,
-					tls: { $elemMatch: { nombre: req.query.timeline } },
+					tls: { $elemMatch: { nombre: timeline } },
 				});
 
 				const filtro = construirFiltroTl(tl.tls[0]);
 
+				const filtroSeguidores = {};
+
+				switch (ordenTl) {
+					case "-fecha":
+						filtro.fecha.$lt = new Date(fechaPost);
+						break;
+					case "fecha":
+						filtro.fecha.$gt = new Date(fechaPost);
+						break;
+					case "-numFavs":
+					case "numFavs":
+						filtro.numFavs = parseInt(datoPost);
+						break;
+					case "-numSeguidores":
+					case "numSeguidores":
+						filtroSeguidores["datosAutor.numSeguidores"] = parseInt(datoPost);
+				}
+
 				let orden = tl.tls[0].config.orden;
+				if (orden !== "fecha" && orden !== "-fecha") orden += " -fecha";
 
 				if (filtro.$or.length !== 0) {
-					posts = await Post.find(filtro)
-						.populate({ path: "autor.id", select: "numSeguidores" })
-						.select("-favs -outlierComentarios -tags")
-						.sort(orden)
-						.limit(15);
+					if (tl.tls[0].config.orden === "numSeguidores" || tl.tls[0].config.orden === "-numSeguidores") {
+						posts = await Post.aggregate()
+							.match({ ...filtro, fecha: { $lt: new Date(fechaPost) } })
+							.lookup({ from: "users", localField: "autor.id", foreignField: "_id", as: "datosAutor" })
+							.unwind("$datosAutor")
+							.match(filtroSeguidores)
+							.project({
+								_id: 1,
+								imagen: 1,
+								texto: 1,
+								autor: 1,
+								outlierFavs: 1,
+								numFavs: 1,
+								comentarios: 1,
+								fecha: 1,
+								numSeguidores: "$datosAutor.numSeguidores",
+							})
+							.sort(orden)
+							.limit(10);
 
-					if (orden === "autor.id.numSeguidores") ordenarNumSeguidoresPorFecha(posts);
-					if (orden === "-autor.id.numSeguidores") ordenarNumSeguidoresPorFecha(posts, false);
-					if (orden === "numFavs") ordenarNumFavsPorFecha(posts);
-					if (orden === "-numFavs") ordenarNumFavsPorFecha(posts, false);
+						if (posts.length < 10) {
+							if (ordenTl === "-numSeguidores")
+								filtroSeguidores["datosAutor.numSeguidores"] = { $lt: parseInt(datoPost) };
+							else filtroSeguidores["datosAutor.numSeguidores"] = { $gt: parseInt(datoPost) };
+
+							const postsOtrosSeguidores = await Post.aggregate()
+								.match(filtro)
+								.lookup({ from: "users", localField: "autor.id", foreignField: "_id", as: "datosAutor" })
+								.unwind("$datosAutor")
+								.match(filtroSeguidores)
+								.project({
+									_id: 1,
+									imagen: 1,
+									texto: 1,
+									autor: 1,
+									outlierFavs: 1,
+									numFavs: 1,
+									comentarios: 1,
+									fecha: 1,
+									numSeguidores: "$datosAutor.numSeguidores",
+								})
+								.sort(orden)
+								.limit(10);
+
+							posts.push(...postsOtrosSeguidores);
+						}
+					} else if (tl.tls[0].config.orden === "numFavs" || tl.tls[0].config.orden === "-numFavs") {
+						posts = await Post.find({ ...filtro, fecha: { $lt: new Date(fechaPost) } })
+							.select("-favs -outlierComentarios -tags")
+							.sort(orden)
+							.limit(10);
+
+						if (posts.length < 10) {
+							if (ordenTl === "-numFavs") filtro.numFavs = { $lt: parseInt(datoPost) };
+							else filtro.numFavs = { $gt: parseInt(datoPost) };
+
+							const postsOtrosFavoritos = await Post.find(filtro)
+								.select("-favs -outlierComentarios -tags")
+								.sort(orden)
+								.limit(10);
+
+							posts.push(...postsOtrosFavoritos);
+						}
+					} else {
+						posts = await Post.find(filtro).select("-favs -outlierComentarios -tags").sort(orden).limit(10);
+					}
 				}
 			}
 
-			const postsConSignedUrls = anyadirSignedUrlsPosts(posts, req);
+			const postsConSignedUrls = anyadirSignedUrlsPosts(posts.slice(0, 10), req);
 
 			const postsConFavsYUrls = await comprobarFavs(postsConSignedUrls, req);
 
@@ -178,4 +256,4 @@ const obtenerPostsTimeline = async (req, res, next) => {
 	}
 };
 
-module.exports = { crearPost, obtenerPosts, favoritearPost, desfavoritearPost, obtenerPostsTimeline };
+module.exports = { crearPost, obtenerPostsPorTag, favoritearPost, desfavoritearPost, obtenerPostsTimeline };

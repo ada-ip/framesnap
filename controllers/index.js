@@ -2,12 +2,7 @@ const User = require("../models/User");
 const Post = require("../models/Post");
 const { anyadirSignedUrlsPosts, anyadirSignedUrlsUsuario } = require("../utils/aws");
 const { comprobarFavs } = require("../utils/outliers");
-const {
-	construirFiltroTl,
-	ordenarNumSeguidoresPorFecha,
-	ordenarNumFavsPorFecha,
-	eliminarSugerenciasSeguidos,
-} = require("../utils/metodosConsultas");
+const { construirFiltroTl, eliminarSugerenciasSeguidos } = require("../utils/metodosConsultas");
 
 const devolverIndex = async (req, res, next) => {
 	if (!req.session.idUsuario) {
@@ -25,6 +20,7 @@ const devolverIndex = async (req, res, next) => {
 			const usuarioConSignedUrls = anyadirSignedUrlsUsuario([usuario.toObject()], req);
 
 			let posts = [];
+			let orden = "-fecha";
 
 			if (!req.query.timeline) {
 				posts = await usuario.obtenerPostsTimeline();
@@ -36,19 +32,32 @@ const devolverIndex = async (req, res, next) => {
 
 				const filtro = construirFiltroTl(tl.tls[0]);
 
-				let orden = tl.tls[0].config.orden;
+				orden = tl.tls[0].config.orden;
+				if (orden !== "fecha" && orden !== "-fecha") orden += " -fecha";
 
-				if (filtro.$or.length !== 0) {
-					posts = await Post.find(filtro)
-						.populate({ path: "autor.id", select: "numSeguidores" })
-						.select("-favs -outlierComentarios -tags")
+				if (
+					filtro.$or.length !== 0 &&
+					(tl.tls[0].config.orden === "-numSeguidores" || tl.tls[0].config.orden === "numSeguidores")
+				) {
+					posts = await Post.aggregate()
+						.match(filtro)
+						.lookup({ from: "users", localField: "autor.id", foreignField: "_id", as: "datosAutor" })
+						.unwind("$datosAutor")
+						.project({
+							_id: 1,
+							imagen: 1,
+							texto: 1,
+							autor: 1,
+							outlierFavs: 1,
+							numFavs: 1,
+							comentarios: 1,
+							fecha: 1,
+							numSeguidores: "$datosAutor.numSeguidores",
+						})
 						.sort(orden)
-						.limit(15);
-
-					if (orden === "autor.id.numSeguidores") ordenarNumSeguidoresPorFecha(posts);
-					if (orden === "-autor.id.numSeguidores") ordenarNumSeguidoresPorFecha(posts, false);
-					if (orden === "numFavs") ordenarNumFavsPorFecha(posts);
-					if (orden === "-numFavs") ordenarNumFavsPorFecha(posts, false);
+						.limit(10);
+				} else {
+					posts = await Post.find(filtro).select("-favs -outlierComentarios -tags").sort(orden).limit(10);
 				}
 			}
 
@@ -70,7 +79,11 @@ const devolverIndex = async (req, res, next) => {
 			const usuariosRecomendadosSignedUrls = anyadirSignedUrlsUsuario(usuariosRecomendadosNoSeguidos, req);
 
 			res.render("index", {
-				usuario: { ...usuarioConSignedUrls[0], tlElegido: req.query.timeline || "Timeline" },
+				usuario: {
+					...usuarioConSignedUrls[0],
+					tlElegido: req.query.timeline || "Timeline",
+					ordenTl: orden.substring(0, orden.includes(" ") ? orden.indexOf(" ") : orden.length),
+				},
 				posts: postsConFavsYUrls,
 				usuariosRecomendados: usuariosRecomendadosSignedUrls,
 			});

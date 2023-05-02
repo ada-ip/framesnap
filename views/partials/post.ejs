@@ -1,5 +1,9 @@
 <div class="col">
-	<div class="card shadow-sm" data-fecha="<%= new Date(post.fecha).toISOString() %>">
+	<div
+		class="card shadow-sm"
+		data-fecha="<%= new Date(post.fecha).toISOString() %>"
+		data-seguidores="<% if(post.numSeguidores != null) { %><%= post.numSeguidores %><% } %>"
+	>
 		<div class="card-title pt-2 px-2 d-flex align-items-center gap-2">
 			<a href="/usuarios/<%= post.autor.nombre %>"
 				><img

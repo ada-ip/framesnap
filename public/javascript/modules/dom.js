@@ -159,7 +159,7 @@ function anyadirPosts(posts, btnCargar) {
 	posts.forEach((post) => {
 		const div = document.createElement("div");
 		div.classList.add("col");
-		div.innerHTML = `<div class="card shadow-sm" data-fecha="${post.fecha}">
+		div.innerHTML = `<div class="card shadow-sm" data-fecha="${post.fecha}" >
 							<div class="card-title pt-2 px-2 d-flex align-items-center gap-2">
 								<a href="/usuarios/${post.autor.nombre}"
 									><img
@@ -201,6 +201,8 @@ function anyadirPosts(posts, btnCargar) {
 								<p class="card-text mb-2">${post.texto}</p>
 							</div>
 						</div>`;
+
+		if (post.numSeguidores != null) div.firstElementChild.dataset.seguidores = post.numSeguidores;
 
 		const elemFechaPost = div.firstElementChild.firstElementChild.lastElementChild.lastElementChild;
 		elemFechaPost.textContent = calcularFechaPost(new Date(), new Date(post.fecha));

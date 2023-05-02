@@ -7,18 +7,33 @@ favImgs.forEach((img) => anyadirEventoFavoritear(img));
 const btnCargarPosts = document.getElementById("cargarPosts");
 if (btnCargarPosts) {
 	btnCargarPosts.addEventListener("click", (e) => {
-		let timeline = document.getElementById("timelines").firstElementChild.firstElementChild.firstElementChild.textContent;
-		let datoUltimoPost = "";
-		if (timeline === "Timeline") {
-			datoUltimoPost =
-				document.getElementById("posts").firstElementChild.lastElementChild.previousElementSibling.firstElementChild
-					.dataset.fecha;
+		let timeline = document.getElementById("timelines").firstElementChild.firstElementChild.firstElementChild;
+
+		const ultimoPost =
+			document.getElementById("posts").firstElementChild.lastElementChild.previousElementSibling.firstElementChild;
+		const datosUltimoPost = {
+			fecha: ultimoPost.dataset.fecha,
+		};
+
+		if (timeline.textContent.trim() !== "Timeline") {
+			datosUltimoPost.orden = timeline.dataset.orden;
+			if (datosUltimoPost.orden === "numFavs" || datosUltimoPost.orden === "-numFavs") {
+				const elemNumFavs = ultimoPost.lastElementChild.firstElementChild.firstElementChild;
+				datosUltimoPost.dato = elemNumFavs.textContent.substring(0, elemNumFavs.textContent.indexOf(" "));
+			} else if (datosUltimoPost.orden === "numSeguidores" || datosUltimoPost.orden === "-numSeguidores") {
+				datosUltimoPost.dato = ultimoPost.dataset.seguidores;
+			}
 		}
 
-		let url = "/api/v1/posts/?datoPost=" + datoUltimoPost;
-		if (timeline !== "Timeline") url += "&timeline=" + timeline;
-
-		console.log(url);
+		let url = "/api/v1/posts/?fechaPost=" + datosUltimoPost.fecha;
+		if (timeline.textContent.trim() !== "Timeline")
+			url +=
+				"&datoPost=" +
+				datosUltimoPost.dato +
+				"&ordenTl=" +
+				datosUltimoPost.orden +
+				"&timeline=" +
+				timeline.textContent.trim();
 
 		fetch(url)
 			.then((response) => {
@@ -28,8 +43,13 @@ if (btnCargarPosts) {
 				return response.json();
 			})
 			.then((posts) => {
-				anyadirPosts(posts, e.target);
-				document.querySelectorAll(".img-fav").forEach((img) => anyadirEventoFavoritear(img));
+				if (posts.length === 0) {
+					e.target.textContent = "Parece que no hay más posts";
+					e.target.disabled = true;
+				} else {
+					anyadirPosts(posts, e.target);
+					document.querySelectorAll(".img-fav").forEach((img) => anyadirEventoFavoritear(img));
+				}
 			})
 			.catch((error) => {
 				console.log(error);

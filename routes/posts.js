@@ -3,9 +3,15 @@ const router = express.Router();
 
 const { cargarImagen, subirImagenAS3 } = require("../middleware/multer");
 
-const { crearPost, obtenerPosts, favoritearPost, desfavoritearPost, obtenerPostsTimeline } = require("../controllers/posts");
+const {
+	crearPost,
+	obtenerPostsPorTag,
+	favoritearPost,
+	desfavoritearPost,
+	obtenerPostsTimeline,
+} = require("../controllers/posts");
 
-router.route("/posts").get(obtenerPosts);
+router.route("/posts").get(obtenerPostsPorTag);
 router.route("/api/v1/posts").post(cargarImagen.single("imagenASubir"), subirImagenAS3, crearPost).get(obtenerPostsTimeline);
 router.route("/api/v1/posts/:idPost/desfav").patch(desfavoritearPost);
 router.route("/api/v1/posts/:idPost/fav").patch(favoritearPost);

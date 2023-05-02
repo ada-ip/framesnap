@@ -201,37 +201,15 @@ const construirFiltroTl = (tl) => {
 	}
 	if (typeof tl.config.filtro.fecha.$gte === "number") {
 		filtro.fecha = {
-			$gte: new Date(Date.now() - tl.config.filtro.fecha.$gte).toISOString(),
+			$gte: new Date(Date.now() - tl.config.filtro.fecha.$gte),
 		};
 	} else {
-		filtro.fecha = tl.config.filtro.fecha;
+		filtro.fecha = {
+			$gte: new Date(tl.config.filtro.fecha.$gte),
+		};
 	}
 
 	return filtro;
-};
-
-const ordenarNumSeguidoresPorFecha = (posts, asc = true) => {
-	let orden = asc ? 1 : -1;
-
-	posts.sort((post1, post2) => {
-		if (post1.autor.id.numSeguidores === post2.autor.id.numSeguidores) {
-			return post2.fecha - post1.fecha;
-		} else {
-			return (post1.autor.id.numSeguidores - post2.autor.id.numSeguidores) * orden;
-		}
-	});
-};
-
-const ordenarNumFavsPorFecha = (posts, asc = true) => {
-	let orden = asc ? 1 : -1;
-
-	posts.sort((post1, post2) => {
-		if (post1.numFavs === post2.numFavs) {
-			return post2.fecha - post1.fecha;
-		} else {
-			return (post1.numFavs - post2.numFavs) * orden;
-		}
-	});
 };
 
 const eliminarSugerenciasSeguidos = async (usuarios, usuarioLogeado) => {
@@ -264,7 +242,5 @@ module.exports = {
 	quitarSeguido,
 	formatearFechaTl,
 	construirFiltroTl,
-	ordenarNumSeguidoresPorFecha,
-	ordenarNumFavsPorFecha,
 	eliminarSugerenciasSeguidos,
 };

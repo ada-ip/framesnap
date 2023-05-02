@@ -19,7 +19,7 @@ const anyadirSignedUrlsPosts = (posts, req) =>
 			signedUrlPost = s3.getSignedUrl("getObject", {
 				Bucket: process.env.AWS_BUCKET_NAME,
 				Key: claveImagen,
-				Expires: 600
+				Expires: 900,
 			});
 
 			req.session.signedUrls = (req.session.signedUrls || []).concat([{ imagen: claveImagen, signedUrl: signedUrlPost }]);
@@ -37,13 +37,13 @@ const anyadirSignedUrlsPosts = (posts, req) =>
 			signedUrlAutor = s3.getSignedUrl("getObject", {
 				Bucket: process.env.AWS_BUCKET_NAME,
 				Key: claveImagen,
-				Expires: 600
+				Expires: 900,
 			});
 
 			req.session.signedUrls = (req.session.signedUrls || []).concat([{ imagen: claveImagen, signedUrl: signedUrlAutor }]);
 		}
 
-		return { ...post.toObject(), signedUrlPost, signedUrlAutor };
+		return { ...(post.toObject ? post.toObject() : post), signedUrlPost, signedUrlAutor };
 	});
 
 const anyadirSignedUrlsUsuario = (usuarios, req, mongooseObj = false) =>
@@ -62,11 +62,11 @@ const anyadirSignedUrlsUsuario = (usuarios, req, mongooseObj = false) =>
 			signedUrlUsuario = s3.getSignedUrl("getObject", {
 				Bucket: process.env.AWS_BUCKET_NAME,
 				Key: claveImagen,
-				Expires: 600
+				Expires: 900,
 			});
 
 			req.session.signedUrls = (req.session.signedUrls || []).concat([
-				{ imagen: claveImagen, signedUrl: signedUrlUsuario }
+				{ imagen: claveImagen, signedUrl: signedUrlUsuario },
 			]);
 		}
 
@@ -85,7 +85,7 @@ const subirImagenPredeterminada = async (nombreUsuario) => {
 		Bucket: process.env.AWS_BUCKET_NAME,
 		Key: `profileImages/${nombreUsuario}.jpg`,
 		Body: fileContent,
-		ContentType: "image/jpeg"
+		ContentType: "image/jpeg",
 	};
 	const resultado = await s3.upload(imagenASubir).promise();
 	return resultado.Location;

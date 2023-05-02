@@ -166,7 +166,10 @@
 										type="button"
 										data-bs-toggle="dropdown"
 										aria-expanded="false"
-									><%= usuario.tlElegido %></button>
+										data-orden="<%= usuario.ordenTl %>"
+									>
+										<%= usuario.tlElegido %>
+									</button>
 									<% if(usuario.tlElegido !== "Timeline") { %>
 									<img
 										id="conf-icon-principal"
@@ -266,8 +269,8 @@
 													<option value="fecha">Más antiguo</option>
 													<option value="-numFavs">Mayor número de favoritos</option>
 													<option value="numFavs">Menor número de favoritos</option>
-													<option value="-autor.id.numSeguidores">Mayor número de seguidores</option>
-													<option value="autor.id.numSeguidores">Menor número de seguidores</option>
+													<option value="-numSeguidores">Mayor número de seguidores</option>
+													<option value="numSeguidores">Menor número de seguidores</option>
 												</select>
 											</div>
 										</div>
