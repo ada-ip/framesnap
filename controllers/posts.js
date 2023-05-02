@@ -3,7 +3,7 @@ const User = require("../models/User");
 const Fav = require("../models/Fav");
 const { anyadirSignedUrlsPosts, anyadirSignedUrlsUsuario } = require("../utils/aws");
 const { comprobarFavs } = require("../utils/outliers");
-const { construirFiltroTl, ordenarNumSeguidoresPorFecha, ordenarNumFavsPorFecha } = require("../utils/metodosConsultas");
+const { construirFiltroTl, obtenerMasPostsPorNumSeguidores, obtenerMasPostsPorNumFavs } = require("../utils/metodosConsultas");
 const LIMITE_ELEMENTOS = 1000;
 
 const crearPost = async (req, res, next) => {
@@ -177,68 +177,9 @@ const obtenerPostsTimeline = async (req, res, next) => {
 
 				if (filtro.$or.length !== 0) {
 					if (tl.tls[0].config.orden === "numSeguidores" || tl.tls[0].config.orden === "-numSeguidores") {
-						posts = await Post.aggregate()
-							.match({ ...filtro, fecha: { $lt: new Date(fechaPost) } })
-							.lookup({ from: "users", localField: "autor.id", foreignField: "_id", as: "datosAutor" })
-							.unwind("$datosAutor")
-							.match(filtroSeguidores)
-							.project({
-								_id: 1,
-								imagen: 1,
-								texto: 1,
-								autor: 1,
-								outlierFavs: 1,
-								numFavs: 1,
-								comentarios: 1,
-								fecha: 1,
-								numSeguidores: "$datosAutor.numSeguidores",
-							})
-							.sort(orden)
-							.limit(10);
-
-						if (posts.length < 10) {
-							if (ordenTl === "-numSeguidores")
-								filtroSeguidores["datosAutor.numSeguidores"] = { $lt: parseInt(datoPost) };
-							else filtroSeguidores["datosAutor.numSeguidores"] = { $gt: parseInt(datoPost) };
-
-							const postsOtrosSeguidores = await Post.aggregate()
-								.match(filtro)
-								.lookup({ from: "users", localField: "autor.id", foreignField: "_id", as: "datosAutor" })
-								.unwind("$datosAutor")
-								.match(filtroSeguidores)
-								.project({
-									_id: 1,
-									imagen: 1,
-									texto: 1,
-									autor: 1,
-									outlierFavs: 1,
-									numFavs: 1,
-									comentarios: 1,
-									fecha: 1,
-									numSeguidores: "$datosAutor.numSeguidores",
-								})
-								.sort(orden)
-								.limit(10);
-
-							posts.push(...postsOtrosSeguidores);
-						}
+						posts = await obtenerMasPostsPorNumSeguidores(filtro, fechaPost, filtroSeguidores, orden, datoPost);
 					} else if (tl.tls[0].config.orden === "numFavs" || tl.tls[0].config.orden === "-numFavs") {
-						posts = await Post.find({ ...filtro, fecha: { $lt: new Date(fechaPost) } })
-							.select("-favs -outlierComentarios -tags")
-							.sort(orden)
-							.limit(10);
-
-						if (posts.length < 10) {
-							if (ordenTl === "-numFavs") filtro.numFavs = { $lt: parseInt(datoPost) };
-							else filtro.numFavs = { $gt: parseInt(datoPost) };
-
-							const postsOtrosFavoritos = await Post.find(filtro)
-								.select("-favs -outlierComentarios -tags")
-								.sort(orden)
-								.limit(10);
-
-							posts.push(...postsOtrosFavoritos);
-						}
+						posts = await obtenerMasPostsPorNumFavs(filtro, fechaPost, orden, datoPost);
 					} else {
 						posts = await Post.find(filtro).select("-favs -outlierComentarios -tags").sort(orden).limit(10);
 					}

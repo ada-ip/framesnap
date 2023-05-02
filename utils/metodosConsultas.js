@@ -1,5 +1,6 @@
 const LIMITE_ELEMENTOS = 1000;
 const User = require("../models/User");
+const Post = require("../models/Post");
 const Follower = require("../models/Follower");
 const Follow = require("../models/Follow");
 
@@ -233,6 +234,73 @@ const eliminarSugerenciasSeguidos = async (usuarios, usuarioLogeado) => {
 	}, []);
 };
 
+const obtenerMasPostsPorNumSeguidores = async (filtro, fechaPost, filtroSeguidores, orden, datoPost) => {
+	const posts = await Post.aggregate()
+		.match({ ...filtro, fecha: { $lt: new Date(fechaPost) } })
+		.lookup({ from: "users", localField: "autor.id", foreignField: "_id", as: "datosAutor" })
+		.unwind("$datosAutor")
+		.match(filtroSeguidores)
+		.project({
+			_id: 1,
+			imagen: 1,
+			texto: 1,
+			autor: 1,
+			outlierFavs: 1,
+			numFavs: 1,
+			comentarios: 1,
+			fecha: 1,
+			numSeguidores: "$datosAutor.numSeguidores",
+		})
+		.sort(orden)
+		.limit(10);
+
+	if (posts.length < 10) {
+		if (orden.substring(0, orden.indexOf(" ")) === "-numSeguidores")
+			filtroSeguidores["datosAutor.numSeguidores"] = { $lt: parseInt(datoPost) };
+		else filtroSeguidores["datosAutor.numSeguidores"] = { $gt: parseInt(datoPost) };
+
+		const postsOtrosSeguidores = await Post.aggregate()
+			.match(filtro)
+			.lookup({ from: "users", localField: "autor.id", foreignField: "_id", as: "datosAutor" })
+			.unwind("$datosAutor")
+			.match(filtroSeguidores)
+			.project({
+				_id: 1,
+				imagen: 1,
+				texto: 1,
+				autor: 1,
+				outlierFavs: 1,
+				numFavs: 1,
+				comentarios: 1,
+				fecha: 1,
+				numSeguidores: "$datosAutor.numSeguidores",
+			})
+			.sort(orden)
+			.limit(10);
+
+		posts.push(...postsOtrosSeguidores);
+	}
+
+	return posts;
+};
+
+const obtenerMasPostsPorNumFavs = async (filtro, fechaPost, orden, datoPost) => {
+	const posts = await Post.find({ ...filtro, fecha: { $lt: new Date(fechaPost) } })
+		.select("-favs -outlierComentarios -tags")
+		.sort(orden)
+		.limit(10);
+
+	if (posts.length < 10) {
+		if (orden.substring(0, orden.indexOf(" ")) === "-numFavs") filtro.numFavs = { $lt: parseInt(datoPost) };
+		else filtro.numFavs = { $gt: parseInt(datoPost) };
+
+		const postsOtrosFavoritos = await Post.find(filtro).select("-favs -outlierComentarios -tags").sort(orden).limit(10);
+
+		posts.push(...postsOtrosFavoritos);
+	}
+	return posts;
+};
+
 module.exports = {
 	sumarNumPosts,
 	eliminarDuplicados,
@@ -243,4 +311,6 @@ module.exports = {
 	formatearFechaTl,
 	construirFiltroTl,
 	eliminarSugerenciasSeguidos,
+	obtenerMasPostsPorNumSeguidores,
+	obtenerMasPostsPorNumFavs,
 };
