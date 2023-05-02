@@ -18,16 +18,7 @@
 			<div class="cont-text-cabecera-post d-flex flex-wrap align-items-center gap-2">
 				<a href="/usuarios/<%= post.autor.nombre %>"><%= post.autor.nombre %></a>
 				<div class="vr mx-1"></div>
-				<span>
-					<% const fecha = new Date(); const fechaPost = new Date(post.fecha); if (fecha - fechaPost < 1000 * 60) {%>
-					Hace <%= Math.round((fecha - fechaPost) / 1000) %> segundo<% if(Math.round((fecha - fechaPost) / 1000) !== 1)
-					{ %>s<% } %> <% } else if(fecha - fechaPost < 1000 * 60 * 60) { %> Hace <%= Math.floor((fecha - fechaPost) /
-					(1000 * 60))%> minuto<% if(Math.floor((fecha - fechaPost) / (1000 * 60)) !== 1) { %>s<% } %> <% } else
-					if(fecha - fechaPost < 1000 * 60 * 60 * 24) { %> Hace <%= Math.floor((fecha - fechaPost) / (1000 * 60 * 60))%>
-					hora<% if(Math.floor((fecha - fechaPost) / (1000 * 60 * 60)) !== 1) { %>s<% } %> <% } else if(fecha -
-					fechaPost < 1000 * 60 * 60 * 24 * 2) { %> Hace 1 día <% } else { %> <%= fechaPost.getDate() %>/<%=
-					fechaPost.getMonth() + 1 %>/<%= fechaPost.getFullYear() %> <% } %>
-				</span>
+				<span class="span-fecha-post" data-fecha="<%= new Date(post.fecha).toISOString() %>"></span>
 			</div>
 		</div>
 		<img

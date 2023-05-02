@@ -138,7 +138,7 @@ const obtenerNombresUsuarios = async (req, res, next) => {
 				.unwind("$seguidos")
 				.match({ nombre: req.session.usuario, "seguidos.nombre": regex })
 				.project({ _id: 0, nombre: "$seguidos.nombre" })
-				.limit(10);
+				.limit(5);
 
 			usuarios.push(...usuariosSeguidos);
 
@@ -146,7 +146,7 @@ const obtenerNombresUsuarios = async (req, res, next) => {
 				.unwind("$seguidos")
 				.match({ "usuario.nombre": req.session.usuario, "seguidos.nombre": regex })
 				.project({ _id: 0, nombre: "$seguidos.nombre" })
-				.limit(10);
+				.limit(5);
 
 			usuarios.push(...usuariosSeguidosOutlier);
 		}
@@ -154,7 +154,7 @@ const obtenerNombresUsuarios = async (req, res, next) => {
 		const otrosUsuarios = await User.find({ $and: [{ nombre: regex }, { nombre: { $ne: req.session.usuario } }] })
 			.select("-_id nombre numSeguidores")
 			.sort("-numSeguidores")
-			.limit(10);
+			.limit(7);
 
 		usuarios.push(...otrosUsuarios);
 
