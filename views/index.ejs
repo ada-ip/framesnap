@@ -157,131 +157,143 @@
 							</div>
 						</div>
 
-						<!-- SELECCIÓN DE TIMELINES -->
-						<div id="timelines">
-							<form action="" method="post" class="dropdown">
-								<div class="dropdown d-flex justify-content-between">
-									<button
-										class="btn dropdown-toggle <% if(usuario.tlElegido === 'Timeline'){ %>w-100<% } %>"
-										type="button"
-										data-bs-toggle="dropdown"
-										aria-expanded="false"
-										data-orden="<%= usuario.ordenTl %>"
-									>
-										<%= usuario.tlElegido %>
-									</button>
-									<% if(usuario.tlElegido !== "Timeline") { %>
-									<img
-										id="conf-icon-principal"
-										class="conf-icon"
-										src="images/gear-solid.svg"
-										alt="Configurar timeline"
-									/>
-									<% } %>
-									<ul class="dropdown-menu">
-										<% for(let tl of usuario.tls) { %> <% if(tl.nombre !== usuario.tlElegido) { %>
-										<li>
-											<a
-												class="dropdown-item d-flex justify-content-between align-items-center"
-												href="/<% if (tl.nombre !== 'Timeline') { %>?timeline=<%= tl.nombre %><% } %>"
-											>
-												<span><%= tl.nombre %></span> <% if(tl.nombre !== "Timeline") { %>
-												<img class="conf-icon" src="images/gear-solid.svg" alt="Configurar timeline" /><%
-												} %>
-											</a>
-										</li>
-										<% } %> <% } %> <% if(usuario.tls.length > 1) { %>
-										<li><hr class="dropdown-divider" /></li>
+						<div class="contenedor-menu-timeline">
+							<!-- SELECCIÓN DE TIMELINES -->
+							<div id="timelines">
+								<form action="" method="post" class="dropdown">
+									<div class="dropdown d-flex justify-content-between">
+										<button
+											class="btn dropdown-toggle <% if(usuario.tlElegido === 'Timeline'){ %>w-100<% } %>"
+											type="button"
+											data-bs-toggle="dropdown"
+											aria-expanded="false"
+											data-orden="<%= usuario.ordenTl %>"
+										>
+											<%= usuario.tlElegido %>
+										</button>
+										<% if(usuario.tlElegido !== "Timeline") { %>
+										<img
+											id="conf-icon-principal"
+											class="conf-icon"
+											src="images/gear-solid.svg"
+											alt="Configurar timeline"
+										/>
 										<% } %>
-										<li>
-											<a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#tlsModal" href="#"
-												>Nuevo Timeline</a
-											>
-										</li>
-									</ul>
-								</div>
-							</form>
-							<div
-								class="modal fade"
-								id="tlsModal"
-								tabindex="-1"
-								aria-labelledby="crearTLModal"
-								aria-hidden="true"
-								data-bs-backdrop="static"
-							>
-								<div class="modal-dialog">
-									<form id="form-timeline" action="/api/v1/tls" method="POST" class="modal-content">
-										<div class="modal-header">
-											<h1 class="modal-title fs-5" id="crearTLModalLabel">Crear nuevo timeline</h1>
-											<button
-												type="button"
-												class="btn-close"
-												data-bs-dismiss="modal"
-												aria-label="Close"
-											></button>
-										</div>
-										<div class="modal-body">
-											<div class="mb-3">
-												<label for="nombreTl" class="col-form-label">Nombre:</label>
-												<input
-													type="text"
-													class="form-control"
-													id="nombreTl"
-													name="nombreTl"
-													data-value=""
-												/>
+										<ul class="dropdown-menu">
+											<% for(let tl of usuario.tls) { %> <% if(tl.nombre !== usuario.tlElegido) { %>
+											<li>
+												<a
+													class="dropdown-item d-flex justify-content-between align-items-center"
+													href="/<% if (tl.nombre !== 'Timeline') { %>?timeline=<%= tl.nombre %><% } %>"
+												>
+													<span><%= tl.nombre %></span> <% if(tl.nombre !== "Timeline") { %>
+													<img
+														class="conf-icon"
+														src="images/gear-solid.svg"
+														alt="Configurar timeline"
+													/><% } %>
+												</a>
+											</li>
+											<% } %> <% } %> <% if(usuario.tls.length > 1) { %>
+											<li><hr class="dropdown-divider" /></li>
+											<% } %>
+											<li>
+												<a
+													class="dropdown-item"
+													data-bs-toggle="modal"
+													data-bs-target="#tlsModal"
+													href="#"
+													>Nuevo Timeline</a
+												>
+											</li>
+										</ul>
+									</div>
+								</form>
+								<div
+									class="modal fade"
+									id="tlsModal"
+									tabindex="-1"
+									aria-labelledby="crearTLModal"
+									aria-hidden="true"
+									data-bs-backdrop="static"
+								>
+									<div class="modal-dialog">
+										<form id="form-timeline" action="/api/v1/tls" method="POST" class="modal-content">
+											<div class="modal-header">
+												<h1 class="modal-title fs-5" id="crearTLModalLabel">Crear nuevo timeline</h1>
+												<button
+													type="button"
+													class="btn-close"
+													data-bs-dismiss="modal"
+													aria-label="Close"
+												></button>
 											</div>
-											<div class="row mb-3">
-												<div class="column col-6">
-													<label for="usuariosTl" class="col-form-label">Añadir usuarios:</label>
-													<input type="text" class="form-control" name="usuariosTl[]" />
-													<ul class="dropdown-menu text-small autocompletar-tl-ul"></ul>
+											<div class="modal-body">
+												<div class="mb-3">
+													<label for="nombreTl" class="col-form-label">Nombre:</label>
+													<input
+														type="text"
+														class="form-control"
+														id="nombreTl"
+														name="nombreTl"
+														data-value=""
+													/>
 												</div>
-												<div class="column col-6">
-													<label for="tagsTl" class="col-form-label">Añadir tags:</label>
-													<input type="text" class="form-control" name="tagsTl[]" />
+												<div class="row mb-3">
+													<div class="column col-6">
+														<label for="usuariosTl" class="col-form-label">Añadir usuarios:</label>
+														<input type="text" class="form-control" name="usuariosTl[]" />
+														<ul class="dropdown-menu text-small autocompletar-tl-ul"></ul>
+													</div>
+													<div class="column col-6">
+														<label for="tagsTl" class="col-form-label">Añadir tags:</label>
+														<input type="text" class="form-control" name="tagsTl[]" />
+													</div>
+												</div>
+												<div class="mb-3">
+													<label for="fechaTl" class="col-form-label">Fecha de subida:</label>
+													<select class="form-select input-valido" id="fechaTl" name="fechaTl">
+														<option value="dia" selected>Hoy</option>
+														<option value="semana">Esta semana</option>
+														<option value="mes">Este mes</option>
+														<option value="smes">Desde hace 6 meses</option>
+														<option value="elegir">Elegir fecha</option>
+													</select>
+												</div>
+												<div class="row mb-3 ocultar" id="rango-fechas-tl">
+													<div class="column col-6">
+														<label for="desdeTl" class="col-form-label">Desde:</label>
+														<input type="date" class="form-control" id="desdeTl" name="desdeTl" />
+													</div>
+													<div class="column col-6">
+														<label for="hastaTl" class="col-form-label">Hasta:</label>
+														<input type="date" class="form-control" id="hastaTl" name="hastaTl" />
+													</div>
+												</div>
+												<div class="mb-3">
+													<label for="ordenTl" class="col-form-label">Orden:</label>
+													<select class="form-select input-valido" id="ordenTl" name="ordenTl">
+														<option value="-fecha" selected>Más reciente</option>
+														<option value="fecha">Más antiguo</option>
+														<option value="-numFavs">Mayor número de favoritos</option>
+														<option value="numFavs">Menor número de favoritos</option>
+														<option value="-numSeguidores">Mayor número de seguidores</option>
+														<option value="numSeguidores">Menor número de seguidores</option>
+													</select>
 												</div>
 											</div>
-											<div class="mb-3">
-												<label for="fechaTl" class="col-form-label">Fecha de subida:</label>
-												<select class="form-select input-valido" id="fechaTl" name="fechaTl">
-													<option value="dia" selected>Hoy</option>
-													<option value="semana">Esta semana</option>
-													<option value="mes">Este mes</option>
-													<option value="smes">Desde hace 6 meses</option>
-													<option value="elegir">Elegir fecha</option>
-												</select>
+											<div class="modal-footer">
+												<input type="hidden" name="metodo" value="post" />
+												<input type="hidden" name="anteriorNombre" value="Timeline" />
+												<input type="submit" class="btn btn-primary" value="Crear" />
 											</div>
-											<div class="row mb-3 ocultar" id="rango-fechas-tl">
-												<div class="column col-6">
-													<label for="desdeTl" class="col-form-label">Desde:</label>
-													<input type="date" class="form-control" id="desdeTl" name="desdeTl" />
-												</div>
-												<div class="column col-6">
-													<label for="hastaTl" class="col-form-label">Hasta:</label>
-													<input type="date" class="form-control" id="hastaTl" name="hastaTl" />
-												</div>
-											</div>
-											<div class="mb-3">
-												<label for="ordenTl" class="col-form-label">Orden:</label>
-												<select class="form-select input-valido" id="ordenTl" name="ordenTl">
-													<option value="-fecha" selected>Más reciente</option>
-													<option value="fecha">Más antiguo</option>
-													<option value="-numFavs">Mayor número de favoritos</option>
-													<option value="numFavs">Menor número de favoritos</option>
-													<option value="-numSeguidores">Mayor número de seguidores</option>
-													<option value="numSeguidores">Menor número de seguidores</option>
-												</select>
-											</div>
-										</div>
-										<div class="modal-footer">
-											<input type="hidden" name="metodo" value="post" />
-											<input type="hidden" name="anteriorNombre" value="Timeline" />
-											<input type="submit" class="btn btn-primary" value="Crear" />
-										</div>
-									</form>
+										</form>
+									</div>
 								</div>
 							</div>
+							<button id="recargar-pagina" type="button" class="btn btn-primary">
+								<img src="/images/rotate-right-solid.png" alt="Recargar la página" width="15" />
+							</button>
 						</div>
 
 						<!-- POSTS -->

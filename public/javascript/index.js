@@ -174,3 +174,14 @@ spansFechaPosts.forEach((span) => {
 	span.textContent = calcularFechaPost(new Date(), new Date(span.dataset.fecha));
 	delete span.dataset.fecha;
 });
+
+window.addEventListener("touchmove", (e) => {
+	if (window.pageYOffset === 0 && e.changedTouches[0].clientY < e.touches[0].clientY) {
+		location.reload();
+	}
+});
+
+const btnRecargarPagina = document.getElementById("recargar-pagina");
+btnRecargarPagina.addEventListener("click", (e) => {
+	location.reload();
+});

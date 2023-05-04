@@ -161,11 +161,23 @@ aside a {
 	}
 }
 
+.contenedor-menu-timeline {
+	display: flex;
+	justify-content: space-between;
+}
+
 #timelines {
 	background-color: #fff;
 	border: 1px solid rgba(0, 0, 0, 0.175);
 	border-radius: 0.375rem;
+	width: 90%;
 }
+
+/* @media screen and (max-width: 576px) {
+	#timelines {
+		width: 100%;
+	}
+} */
 
 #timelines button.dropdown-toggle {
 	width: 94%;
@@ -204,6 +216,16 @@ aside a {
 #timelines a.dropdown-item:active {
 	color: inherit;
 	background-color: inherit;
+}
+
+#recargar-pagina {
+	display: grid;
+	place-items: center;
+}
+
+#recargar-pagina img {
+	position: relative;
+	top: 0.05rem;
 }
 
 .contenedor-posts {
