@@ -67,7 +67,7 @@ function imagenValida(imagen) {
 	if (!formatosValidos.includes(imagen.type)) {
 		return false;
 	} else {
-		return true;
+		return imagen.size <= 10000000;
 	}
 }
 

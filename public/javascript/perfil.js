@@ -30,7 +30,7 @@ const inputImagen = document.getElementById("imagenElegida");
 const formImagen = document.getElementById("form-editar-foto-perfil");
 
 inputImagen.addEventListener("change", (e) => {
-	let mensajeError = "La imagen tiene que tener uno de los siguientes formatos: jpg, jpeg, png";
+	let mensajeError = "La imagen no puede superar los 10MB y tiene que tener uno de los siguientes formatos: jpg, jpeg, png";
 	comprobarValidez(inputImagen, imagenValida, mensajeError, true);
 });
 

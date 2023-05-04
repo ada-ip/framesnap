@@ -18,10 +18,10 @@ const LIMITE_ELEMENTOS = 1000;
 const registrarUsuario = async (req, res, next) => {
 	try {
 		const usuario = {
-			nombre: req.body.nombre,
+			nombre: req.body.nombre.toLowerCase(),
 			correo: req.body.correo,
 			contrasenya: req.body.passw1,
-			fotoPerfil: await subirImagenPredeterminada(req.body.nombre),
+			fotoPerfil: await subirImagenPredeterminada(req.body.nombre.toLowerCase()),
 			tls: [
 				{
 					nombre: "Timeline",
