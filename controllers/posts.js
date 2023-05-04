@@ -141,12 +141,12 @@ const obtenerPostsTimeline = async (req, res, next) => {
 			}
 
 			let posts = [];
+			const { fecha, dato, ordenTl, timeline } = req.body;
+			console.log(req.body);
 
-			if (!req.query.timeline) {
-				posts = await usuario.obtenerPostsTimeline(req.query.fechaPost);
+			if (timeline === "Timeline") {
+				posts = await usuario.obtenerPostsTimeline(fecha);
 			} else {
-				const { fechaPost, datoPost, ordenTl, timeline } = req.query;
-
 				const tl = await User.findById(req.session.idUsuario).select({
 					_id: 0,
 					tls: { $elemMatch: { nombre: timeline } },
@@ -158,18 +158,18 @@ const obtenerPostsTimeline = async (req, res, next) => {
 
 				switch (ordenTl) {
 					case "-fecha":
-						filtro.fecha.$lt = new Date(fechaPost);
+						filtro.fecha.$lt = new Date(fecha);
 						break;
 					case "fecha":
-						filtro.fecha.$gt = new Date(fechaPost);
+						filtro.fecha.$gt = new Date(fecha);
 						break;
 					case "-numFavs":
 					case "numFavs":
-						filtro.numFavs = parseInt(datoPost);
+						filtro.numFavs = parseInt(dato);
 						break;
 					case "-numSeguidores":
 					case "numSeguidores":
-						filtroSeguidores["datosAutor.numSeguidores"] = parseInt(datoPost);
+						filtroSeguidores["datosAutor.numSeguidores"] = parseInt(dato);
 				}
 
 				let orden = tl.tls[0].config.orden;
@@ -177,9 +177,9 @@ const obtenerPostsTimeline = async (req, res, next) => {
 
 				if (filtro.$or.length !== 0) {
 					if (tl.tls[0].config.orden === "numSeguidores" || tl.tls[0].config.orden === "-numSeguidores") {
-						posts = await obtenerMasPostsPorNumSeguidores(filtro, fechaPost, filtroSeguidores, orden, datoPost);
+						posts = await obtenerMasPostsPorNumSeguidores(filtro, fecha, filtroSeguidores, orden, dato);
 					} else if (tl.tls[0].config.orden === "numFavs" || tl.tls[0].config.orden === "-numFavs") {
-						posts = await obtenerMasPostsPorNumFavs(filtro, fechaPost, orden, datoPost);
+						posts = await obtenerMasPostsPorNumFavs(filtro, fecha, orden, dato);
 					} else {
 						posts = await Post.find(filtro).select("-favs -outlierComentarios -tags").sort(orden).limit(10);
 					}

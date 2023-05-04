@@ -13,29 +13,26 @@ if (btnCargarPosts) {
 			document.getElementById("posts").firstElementChild.lastElementChild.previousElementSibling.firstElementChild;
 		const datosUltimoPost = {
 			fecha: ultimoPost.dataset.fecha,
+			timeline: timeline.textContent.trim(),
 		};
 
-		if (timeline.textContent.trim() !== "Timeline") {
-			datosUltimoPost.orden = timeline.dataset.orden;
-			if (datosUltimoPost.orden === "numFavs" || datosUltimoPost.orden === "-numFavs") {
+		if (datosUltimoPost.timeline !== "Timeline") {
+			datosUltimoPost.ordenTl = timeline.dataset.orden;
+			if (datosUltimoPost.ordenTl === "numFavs" || datosUltimoPost.ordenTl === "-numFavs") {
 				const elemNumFavs = ultimoPost.lastElementChild.firstElementChild.firstElementChild;
 				datosUltimoPost.dato = elemNumFavs.textContent.substring(0, elemNumFavs.textContent.indexOf(" "));
-			} else if (datosUltimoPost.orden === "numSeguidores" || datosUltimoPost.orden === "-numSeguidores") {
+			} else if (datosUltimoPost.ordenTl === "numSeguidores" || datosUltimoPost.ordenTl === "-numSeguidores") {
 				datosUltimoPost.dato = ultimoPost.dataset.seguidores;
 			}
 		}
 
-		let url = "/api/v1/posts/?fechaPost=" + datosUltimoPost.fecha;
-		if (timeline.textContent.trim() !== "Timeline")
-			url +=
-				"&datoPost=" +
-				datosUltimoPost.dato +
-				"&ordenTl=" +
-				datosUltimoPost.orden +
-				"&timeline=" +
-				timeline.textContent.trim();
+		let url = "/api/v1/posts/cargarmasposts";
 
-		fetch(url)
+		fetch(url, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(datosUltimoPost),
+		})
 			.then((response) => {
 				if (!response.ok) {
 					throw new Error(`Error status: ${response.status}`);
