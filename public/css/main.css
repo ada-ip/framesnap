@@ -164,6 +164,7 @@ aside a {
 .contenedor-menu-timeline {
 	display: flex;
 	justify-content: space-between;
+	gap: 0.4rem;
 }
 
 #timelines {
@@ -226,6 +227,11 @@ aside a {
 #recargar-pagina img {
 	position: relative;
 	top: 0.05rem;
+}
+
+.contenedor-no-posts {
+	background-color: #fff;
+	border: 1px solid #ddd;
 }
 
 .contenedor-posts {

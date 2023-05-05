@@ -142,7 +142,6 @@ const obtenerPostsTimeline = async (req, res, next) => {
 
 			let posts = [];
 			const { fecha, dato, ordenTl, timeline } = req.body;
-			console.log(req.body);
 
 			if (timeline === "Timeline") {
 				posts = await usuario.obtenerPostsTimeline(fecha);

@@ -162,6 +162,7 @@
 							<div id="timelines">
 								<form action="" method="post" class="dropdown">
 									<div class="dropdown d-flex justify-content-between">
+										<!-- TIMELINE ACTUAL -->
 										<button
 											class="btn dropdown-toggle <% if(usuario.tlElegido === 'Timeline'){ %>w-100<% } %>"
 											type="button"
@@ -179,6 +180,7 @@
 											alt="Configurar timeline"
 										/>
 										<% } %>
+										<!-- RESTO DE TIMELINES -->
 										<ul class="dropdown-menu">
 											<% for(let tl of usuario.tls) { %> <% if(tl.nombre !== usuario.tlElegido) { %>
 											<li>
@@ -197,6 +199,7 @@
 											<% } %> <% } %> <% if(usuario.tls.length > 1) { %>
 											<li><hr class="dropdown-divider" /></li>
 											<% } %>
+											<!-- BOTÓN DE CREAR UN NUEVO TIMELINE -->
 											<li>
 												<a
 													class="dropdown-item"
@@ -209,6 +212,7 @@
 										</ul>
 									</div>
 								</form>
+								<!-- MODAL PARA CREAR UN NUEVO TIMELINE -->
 								<div
 									class="modal fade"
 									id="tlsModal"
@@ -291,6 +295,7 @@
 									</div>
 								</div>
 							</div>
+							<!-- BOTÓN DE RECARGA DE LA PÁGINA -->
 							<button id="recargar-pagina" type="button" class="btn btn-primary">
 								<img src="/images/rotate-right-solid.png" alt="Recargar la página" width="15" />
 							</button>
@@ -298,14 +303,17 @@
 
 						<!-- POSTS -->
 						<div id="posts" class="container mt-2 contenedor-posts">
-							<div class="row row-cols-1 g-3">
+							<div class="row g-3 <% if(posts.length > 0) { %>row-cols-1<% } %>">
 								<% if(posts.length > 0) { %> <% for(let post of posts) { %> <%- include("./partials/post.ejs",
 								{post: post}); %> <% } %>
 								<div class="col">
 									<button id="cargarPosts" type="button" class="btn btn-primary w-100">Más posts</button>
 								</div>
 								<% } else { %>
-								<div class="col">Parece que todavía no hay nada aquí</div>
+								<div class="col contenedor-no-posts mx-2 p-4 rounded-3 text-center">
+									<p>Parece que todavía no hay nada por aquí.</p>
+									<p class="mb-0">¡Prueba a seguir a uno de los usuarios recomendados o sube alguna foto!</p>
+								</div>
 								<% } %>
 							</div>
 						</div>
