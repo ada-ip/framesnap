@@ -167,22 +167,25 @@ const obtenerNombresUsuarios = async (req, res, next) => {
 
 const obtenerUsuarios = async (req, res, next) => {
 	const usuario = req.query.q;
+	const skip = req.query.skip ? parseInt(req.query.skip) : 0;
 	try {
 		const usuarios = [];
 
-		const usuarioEncontrado = await User.findOne({
-			$and: [{ nombre: usuario }, { nombre: { $ne: req.session.usuario } }],
-		}).select("_id nombre fotoPerfil numSeguidos numSeguidores");
+		if (skip === 0) {
+			const usuarioEncontrado = await User.findOne({
+				$and: [{ nombre: usuario }, { nombre: { $ne: req.session.usuario } }],
+			}).select("_id nombre fotoPerfil numSeguidos numSeguidores");
 
-		if (usuarioEncontrado) {
-			const postsUsuarioEncontrado = await Post.countDocuments({
-				$and: [{ "autor.nombre": usuario }, { "autor.nombre": { $ne: req.session.usuario } }],
-			});
-			const usuarioConSignedUrl = anyadirSignedUrlsUsuario(
-				[{ ...usuarioEncontrado.toObject(), numPosts: postsUsuarioEncontrado }],
-				req
-			);
-			usuarios.push(usuarioConSignedUrl[0]);
+			if (usuarioEncontrado) {
+				const postsUsuarioEncontrado = await Post.countDocuments({
+					$and: [{ "autor.nombre": usuario }, { "autor.nombre": { $ne: req.session.usuario } }],
+				});
+				const usuarioConSignedUrl = anyadirSignedUrlsUsuario(
+					[{ ...usuarioEncontrado.toObject(), numPosts: postsUsuarioEncontrado }],
+					req
+				);
+				usuarios.push(usuarioConSignedUrl[0]);
+			}
 		}
 
 		const regex = new RegExp(`^${usuario}`, "i");
@@ -213,7 +216,10 @@ const obtenerUsuarios = async (req, res, next) => {
 					fotoPerfil: "$datosSeguidos.fotoPerfil",
 					numSeguidos: "$datosSeguidos.numSeguidos",
 					numSeguidores: "$datosSeguidos.numSeguidores",
-				});
+				})
+				.sort("nombre")
+				.skip(skip)
+				.limit(15);
 
 			if (usuariosSeguidos.length > 0) {
 				const usuariosConSignedUrl = anyadirSignedUrlsUsuario(sumarNumPosts(usuariosSeguidos, postsUsuarios), req);
@@ -236,7 +242,10 @@ const obtenerUsuarios = async (req, res, next) => {
 					fotoPerfil: "$datosSeguidos.fotoPerfil",
 					numSeguidos: "$datosSeguidos.numSeguidos",
 					numSeguidores: "$datosSeguidos.numSeguidores",
-				});
+				})
+				.sort("nombre")
+				.skip(skip)
+				.limit(15);
 
 			if (usuariosSeguidosOutlier.length > 0) {
 				const usuariosConSignedUrl = anyadirSignedUrlsUsuario(sumarNumPosts(usuariosSeguidosOutlier, postsUsuarios), req);
@@ -244,21 +253,27 @@ const obtenerUsuarios = async (req, res, next) => {
 			}
 		}
 
-		const otrosUsuarios = await User.find({ $and: [{ nombre: regex }, { nombre: { $ne: req.session.usuario } }] }).select(
-			"_id nombre fotoPerfil numSeguidos numSeguidores"
-		);
+		const otrosUsuarios = await User.find({ $and: [{ nombre: regex }, { nombre: { $ne: req.session.usuario } }] })
+			.select("_id nombre fotoPerfil numSeguidos numSeguidores")
+			.sort("nombre")
+			.skip(skip)
+			.limit(15);
 
 		if (otrosUsuarios.length > 0) {
 			const usuariosConSignedUrl = anyadirSignedUrlsUsuario(sumarNumPosts(otrosUsuarios, postsUsuarios, true), req);
 			usuarios.push(...usuariosConSignedUrl);
 		}
 
-		const usuarioLogeado = anyadirSignedUrlsUsuario(
-			[{ _id: req.session.idUsuario, nombre: req.session.usuario, fotoPerfil: req.session.fotoPerfil }],
-			req
-		);
+		if (skip === 0) {
+			const usuarioLogeado = anyadirSignedUrlsUsuario(
+				[{ _id: req.session.idUsuario, nombre: req.session.usuario, fotoPerfil: req.session.fotoPerfil }],
+				req
+			);
 
-		res.render("busquedaUsuarios", { usuarios: eliminarDuplicados(usuarios), usuarioLogeado: usuarioLogeado[0] });
+			res.render("busquedaUsuarios", { usuarios: eliminarDuplicados(usuarios), usuarioLogeado: usuarioLogeado[0] });
+		} else {
+			res.status(200).json({ usuarios: eliminarDuplicados(usuarios) });
+		}
 	} catch (error) {
 		next(error);
 	}

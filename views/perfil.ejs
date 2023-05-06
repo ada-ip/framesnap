@@ -70,7 +70,7 @@
 			<!-- CABECERA DEL USUARIO -->
 			<div class="container mt-5 px-0 cabecera-usuario" style="max-width: 500px">
 				<div
-					class="caja-blanca p-5 text-center rounded-3 d-flex flex-wrap flex-sm-nowrap justify-content-around gap-sm-5"
+					class="caja-blanca shadow-sm p-5 text-center rounded-3 d-flex flex-wrap flex-sm-nowrap justify-content-around gap-sm-5"
 				>
 					<div class="contenedor-foto-perfil mb-3 mb-sm-0">
 						<!-- FOTO DE PERFIL -->
@@ -148,6 +148,7 @@
 						</div>
 					</div>
 
+					<!-- DATOS SOBRE EL USUARIO -->
 					<div class="contenedor-num-perfil">
 						<div class="d-flex flex-wrap justify-content-around gap-3">
 							<p class="mb-0 d-flex flex-column align-items-center">
@@ -165,6 +166,7 @@
 							</p>
 						</div>
 
+						<!-- BOTÓN PARA SEGUIR/DEJAR DE SEGUIR AL USUARIO -->
 						<% if(usuarioLogeado._id != usuario._id) { %>
 						<button type="button" id="btn-seguir" class="btn btn-primary mt-3">
 							<% if(usuarioLogeado.esSeguidor) { %>Dejar de seguir<% } else { %>Seguir<% } %>
@@ -174,6 +176,7 @@
 				</div>
 			</div>
 
+			<!-- POSTS DEL USUARIO -->
 			<div class="album pt-3 pb-5 bg-body-tertiary cont-timeline">
 				<div class="container px-0" style="max-width: 480px">
 					<div
@@ -182,6 +185,7 @@
 					>
 						<% if(postsUsuario.length > 0) { %> <% for(let post of postsUsuario) { %> <%-
 						include("./partials/post.ejs", {post: post}); %> <% } %>
+						<!-- BOTÓN PARA CARGAR MÁS POSTS -->
 						<div class="col">
 							<button id="cargarPostsUsuario" type="button" class="btn btn-primary w-100">Más posts</button>
 						</div>

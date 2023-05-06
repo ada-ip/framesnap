@@ -89,6 +89,10 @@ body {
 	position: relative;
 }
 
+a {
+	text-decoration: none;
+}
+
 /******************** Contenido lateral ********************/
 
 aside {
