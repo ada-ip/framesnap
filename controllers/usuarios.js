@@ -75,7 +75,8 @@ const devolverPerfilUsuario = async (req, res, next) => {
 		}
 		const postsUsuario = await Post.find({ "autor.nombre": usuario })
 			.select("_id imagen texto numFavs autor comentarios fecha")
-			.sort("-fecha");
+			.sort("-fecha")
+			.limit(10);
 
 		const postsConSignedUrls = anyadirSignedUrlsPosts(postsUsuario, req);
 		const postsConFavsYUrls = await comprobarFavs(postsConSignedUrls, req);

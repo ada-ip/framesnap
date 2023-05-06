@@ -176,12 +176,21 @@
 
 			<div class="album pt-3 pb-5 bg-body-tertiary cont-timeline">
 				<div class="container px-0" style="max-width: 480px">
-					<div class="row row-cols-1 g-3">
+					<div
+						class="row g-3 <% if(postsUsuario.length > 0) { %>row-cols-1<% } %>"
+						data-usuario="<%= usuario.nombre %>"
+					>
 						<% if(postsUsuario.length > 0) { %> <% for(let post of postsUsuario) { %> <%-
-						include("./partials/post.ejs", {post: post}); %> <% } %> <% } else { %>
-						<div>
-							Parece que <% if(usuarioLogeado != usuario._id) { %><%= usuario.nombre %><% } %> todavía no ha<%
-							if(usuarioLogeado == usuario._id) { %>s<% } %> subido nada
+						include("./partials/post.ejs", {post: post}); %> <% } %>
+						<div class="col">
+							<button id="cargarPostsUsuario" type="button" class="btn btn-primary w-100">Más posts</button>
+						</div>
+						<% } else { %>
+						<div class="col caja-blanca mx-2 p-4 rounded-3 text-center">
+							<p class="mb-0">
+								Parece que <% if(usuarioLogeado._id != usuario._id) { %><%= usuario.nombre %><% } %> todavía no
+								ha<% if(usuarioLogeado._id == usuario._id) { %>s<% } %> subido nada.
+							</p>
 						</div>
 						<% } %>
 					</div>

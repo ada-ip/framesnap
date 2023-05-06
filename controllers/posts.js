@@ -196,4 +196,22 @@ const obtenerPostsTimeline = async (req, res, next) => {
 	}
 };
 
-module.exports = { crearPost, obtenerPostsPorTag, favoritearPost, desfavoritearPost, obtenerPostsTimeline };
+const obtenerPostsUsuario = async (req, res, next) => {
+	const { usuario } = req.params;
+	const { fechaPost } = req.body;
+
+	try {
+		const postsUsuario = await Post.find({ "autor.nombre": usuario, fecha: { $lt: fechaPost } })
+			.select("_id imagen texto numFavs autor comentarios fecha")
+			.sort("-fecha");
+
+		const postsConSignedUrls = anyadirSignedUrlsPosts(postsUsuario, req);
+		const postsConFavsYUrls = await comprobarFavs(postsConSignedUrls, req);
+
+		res.status(200).json(postsConFavsYUrls);
+	} catch (error) {
+		next(error);
+	}
+};
+
+module.exports = { crearPost, obtenerPostsPorTag, favoritearPost, desfavoritearPost, obtenerPostsTimeline, obtenerPostsUsuario };

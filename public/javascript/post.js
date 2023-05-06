@@ -61,6 +61,41 @@ if (btnCargarPosts) {
 	});
 }
 
+const btnCargarPostsUsuario = document.getElementById("cargarPostsUsuario");
+if (btnCargarPostsUsuario) {
+	btnCargarPostsUsuario.addEventListener("click", (e) => {
+		const datosUltimoPost = {
+			fechaPost: e.target.parentElement.previousElementSibling.firstElementChild.dataset.fecha,
+		};
+
+		let url = "/api/v1/posts/" + e.target.parentElement.parentElement.dataset.usuario + "/cargarmasposts";
+
+		fetch(url, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(datosUltimoPost),
+		})
+			.then((response) => {
+				if (!response.ok) {
+					throw new Error(`Error status: ${response.status}`);
+				}
+				return response.json();
+			})
+			.then((posts) => {
+				if (posts.length === 0) {
+					e.target.textContent = "Parece que no hay más posts";
+					e.target.disabled = true;
+				} else {
+					anyadirPosts(posts, e.target);
+					document.querySelectorAll(".img-fav").forEach((img) => anyadirEventoFavoritear(img));
+				}
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	});
+}
+
 function anyadirEventoFavoritear(img) {
 	img.addEventListener("click", (e) => {
 		const idPost = e.target.parentElement.parentElement.id.replace("post", "");
