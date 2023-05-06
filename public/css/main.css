@@ -96,8 +96,6 @@ aside {
 }
 
 aside #usuarios-recomendados {
-	background-color: #fff;
-	border: 1px solid #ddd;
 	padding-block: 1rem;
 }
 
@@ -229,7 +227,7 @@ aside a {
 	top: 0.05rem;
 }
 
-.contenedor-no-posts {
+.caja-blanca {
 	background-color: #fff;
 	border: 1px solid #ddd;
 }
@@ -278,6 +276,12 @@ img.conf-icon {
 }
 
 /******************************* Perfil *******************************/
+
+@media screen and (min-width: 575px) {
+	.cabecera-usuario {
+		padding-inline: 0.6rem !important;
+	}
+}
 
 .contenedor-foto-perfil {
 	display: inline-block;
