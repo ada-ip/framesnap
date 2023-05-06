@@ -301,6 +301,27 @@ const obtenerMasPostsPorNumFavs = async (filtro, fechaPost, orden, datoPost) => 
 	return posts;
 };
 
+const esSeguidor = async (usuarios, req) => {
+	const resultado = await Promise.all(
+		usuarios.map(async (usuario) => {
+			const esSeguidor = await User.findOne({ nombre: usuario.nombre, "seguidores.id": req.session.idUsuario }).select(
+				"nombre"
+			);
+			const esSeguidorOutlier = await Follower.findOne({
+				"usuario.nombre": usuario.nombre,
+				"seguidores.id": req.session.idUsuario,
+			}).select("nombre");
+
+			return {
+				...(usuario.toObject ? usuario.toObject() : usuario),
+				esSeguidor: esSeguidor || esSeguidorOutlier ? true : false,
+			};
+		})
+	);
+
+	return resultado;
+};
+
 module.exports = {
 	sumarNumPosts,
 	eliminarDuplicados,
@@ -313,4 +334,5 @@ module.exports = {
 	eliminarSugerenciasSeguidos,
 	obtenerMasPostsPorNumSeguidores,
 	obtenerMasPostsPorNumFavs,
+	esSeguidor,
 };

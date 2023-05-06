@@ -76,7 +76,9 @@
 						<div class="col">
 							<div class="card shadow-sm">
 								<a href="/usuarios/<%= usuario.nombre %>">
-									<div class="card-body d-flex flex-wrap flex-sm-nowrap justify-content-center gap-sm-5">
+									<div
+										class="card-body tarjeta-usuario d-flex flex-wrap flex-sm-nowrap justify-content-center justify-content-sm-between gap-sm-5"
+									>
 										<div class="contenedor-foto-perfil mb-3 mb-sm-0">
 											<!-- FOTO DE PERFIL -->
 											<img
@@ -93,7 +95,7 @@
 										<!-- DATOS SOBRE EL USUARIO -->
 										<div class="d-flex flex-wrap justify-content-around align-items-center gap-4">
 											<p class="mb-0 d-flex flex-column align-items-center">
-												<span id="num-seguidores"><%= usuario.numSeguidores %></span>
+												<span><%= usuario.numSeguidores %></span>
 												<span>seguidores</span>
 											</p>
 											<p class="mb-0 d-flex flex-column align-items-center">
@@ -104,7 +106,9 @@
 												<span>post<% if(usuario.numPosts !== 1) { %>s<% } %></span>
 											</p>
 											<!-- BOTÓN PARA SEGUIR/DEJAR DE SEGUIR AL USUARIO -->
-											<button type="button" id="btn-seguir" class="btn btn-primary">Seguir</button>
+											<button type="button" class="btn btn-primary btn-seguir">
+												<% if(usuario.esSeguidor) { %>Dejar de seguir<% } else { %>Seguir<% } %>
+											</button>
 										</div>
 									</div>
 								</a>

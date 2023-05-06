@@ -12,6 +12,7 @@ const {
 	anyadirSeguido,
 	quitarSeguidor,
 	quitarSeguido,
+	esSeguidor,
 } = require("../utils/metodosConsultas");
 const LIMITE_ELEMENTOS = 1000;
 
@@ -264,15 +265,20 @@ const obtenerUsuarios = async (req, res, next) => {
 			usuarios.push(...usuariosConSignedUrl);
 		}
 
+		const usuariosConEsSeguidor = await esSeguidor(usuarios, req);
+
 		if (skip === 0) {
 			const usuarioLogeado = anyadirSignedUrlsUsuario(
 				[{ _id: req.session.idUsuario, nombre: req.session.usuario, fotoPerfil: req.session.fotoPerfil }],
 				req
 			);
 
-			res.render("busquedaUsuarios", { usuarios: eliminarDuplicados(usuarios), usuarioLogeado: usuarioLogeado[0] });
+			res.render("busquedaUsuarios", {
+				usuarios: eliminarDuplicados(usuariosConEsSeguidor),
+				usuarioLogeado: usuarioLogeado[0],
+			});
 		} else {
-			res.status(200).json({ usuarios: eliminarDuplicados(usuarios) });
+			res.status(200).json({ usuarios: eliminarDuplicados(usuariosConEsSeguidor) });
 		}
 	} catch (error) {
 		next(error);

@@ -309,6 +309,12 @@ img.foto-perfil-icon {
 	text-align: left;
 }
 
+/******************************* Búsqueda usuarios *******************************/
+
+.tarjeta-usuario {
+	padding-inline: 2.5rem;
+}
+
 /******************************* Modales *******************************/
 
 .modal-open {
