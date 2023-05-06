@@ -1,4 +1,11 @@
 import { anyadirPosts } from "./modules/dom.js";
+import { calcularFechaPost } from "./modules/fechas.js";
+
+const spansFechaPosts = document.querySelectorAll(".span-fecha-post");
+spansFechaPosts.forEach((span) => {
+	span.textContent = calcularFechaPost(new Date(), new Date(span.dataset.fecha));
+	delete span.dataset.fecha;
+});
 
 const favImgs = document.querySelectorAll(".img-fav");
 

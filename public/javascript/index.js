@@ -9,7 +9,6 @@ import {
 } from "./modules/inputs.js";
 import { rellenarModalConfigTl, resetearModalTl } from "./modules/dom.js";
 import { validarTag, autocompletarUsuarioTL } from "./modules/listeners.js";
-import { calcularFechaPost } from "./modules/fechas.js";
 
 const inputImagen = document.getElementById("imagenASubir");
 const inputTexto = document.getElementById("texto");
@@ -168,12 +167,6 @@ btnsConfigTls.forEach((btn) =>
 			.catch((error) => {});
 	})
 );
-
-const spansFechaPosts = document.querySelectorAll(".span-fecha-post");
-spansFechaPosts.forEach((span) => {
-	span.textContent = calcularFechaPost(new Date(), new Date(span.dataset.fecha));
-	delete span.dataset.fecha;
-});
 
 window.addEventListener("touchmove", (e) => {
 	if (window.pageYOffset === 0 && e.changedTouches[0].clientY < e.touches[0].clientY) {

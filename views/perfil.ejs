@@ -72,7 +72,7 @@
 				<div
 					class="caja-blanca p-5 text-center rounded-3 d-flex flex-wrap flex-sm-nowrap justify-content-around gap-sm-5"
 				>
-					<div class="contenedor-foto-perfil">
+					<div class="contenedor-foto-perfil mb-3 mb-sm-0">
 						<!-- FOTO DE PERFIL -->
 						<img
 							src="<%= usuario.signedUrlUsuario %>"
@@ -95,7 +95,7 @@
 							data-bs-target="#editarFotoPerfil"
 						/>
 						<% } %>
-						<p class="mt-2 mb-4"><%= usuario.nombre %></p>
+						<p class="mt-2 mb-0"><%= usuario.nombre %></p>
 						<!-- MODAL PARA SUBIR UNA NUEVA FOTO DE PERFIL -->
 						<div
 							class="modal fade"
@@ -148,7 +148,7 @@
 						</div>
 					</div>
 
-					<div>
+					<div class="contenedor-num-perfil">
 						<div class="d-flex flex-wrap justify-content-around gap-3">
 							<p class="mb-0 d-flex flex-column align-items-center">
 								<span id="num-seguidores"><%= usuario.numSeguidores %></span> <span>seguidores</span>

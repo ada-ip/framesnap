@@ -283,8 +283,13 @@ img.conf-icon {
 	}
 }
 
+.contenedor-num-perfil,
 .contenedor-foto-perfil {
-	display: inline-block;
+	display: grid;
+	place-items: center;
+}
+
+.contenedor-foto-perfil {
 	position: relative;
 }
 
