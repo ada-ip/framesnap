@@ -72,7 +72,8 @@ const devolverPerfilUsuario = async (req, res, next) => {
 
 		let usuarioConSignedUrl = [];
 		if (datosUsuario) {
-			usuarioConSignedUrl = anyadirSignedUrlsUsuario([datosUsuario.toObject()], req);
+			const usuarioConEsSeguidor = await esSeguidor([datosUsuario], req);
+			usuarioConSignedUrl = anyadirSignedUrlsUsuario(usuarioConEsSeguidor, req);
 		}
 		const postsUsuario = await Post.find({ "autor.nombre": usuario })
 			.select("_id imagen texto numFavs autor comentarios fecha")
@@ -90,14 +91,11 @@ const devolverPerfilUsuario = async (req, res, next) => {
 			req
 		);
 
-		const esSeguidor = await User.findOne({ nombre: usuario, "seguidores.id": req.session.idUsuario });
-		const esSeguidorOutlier = await Follower.findOne({ "usuario.nombre": usuario, "seguidores.id": req.session.idUsuario });
-
 		res.render("perfil", {
 			usuario: usuarioConSignedUrl[0],
 			postsUsuario: postsConFavsYUrls,
 			tlsUsuario: timelines,
-			usuarioLogeado: { ...usuarioLogeado[0], esSeguidor: esSeguidor || esSeguidorOutlier ? true : false },
+			usuarioLogeado: { ...usuarioLogeado[0] },
 		});
 	} catch (error) {
 		next(error);
