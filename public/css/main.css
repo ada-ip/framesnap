@@ -300,8 +300,9 @@ img.conf-icon {
 img.foto-perfil-icon {
 	position: absolute;
 	top: 0;
-	right: 0;
+	left: 50%;
 	width: 20px;
+	transform: translateX(30px);
 	z-index: 1;
 }
 
