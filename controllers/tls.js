@@ -55,7 +55,7 @@ const crearTl = async (req, res, next) => {
 		}
 
 		if (metodo === "post") {
-			const usuario = await User.updateOne(
+			await User.updateOne(
 				{ _id: req.session.idUsuario },
 				{
 					$push: {
@@ -64,7 +64,7 @@ const crearTl = async (req, res, next) => {
 				}
 			);
 		} else if (req.body.anteriorNombre) {
-			const tl = await User.updateOne(
+			await User.updateOne(
 				{ _id: req.session.idUsuario, "tls.nombre": req.body.anteriorNombre },
 				{
 					$set: {

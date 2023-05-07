@@ -32,12 +32,14 @@ function crearNuevoInputUsuario(elemAutocompletar) {
 	nuevoInput.type = "text";
 	nuevoInput.name = "usuariosTl[]";
 	nuevoInput.classList.add("form-control");
+	nuevoInput.classList.add("mt-2");
 	autocompletarUsuarioTL(nuevoInput);
 	contenedorUsuarios.append(nuevoInput);
 
 	const nuevaUl = document.createElement("ul");
 	nuevaUl.classList.add("dropdown-menu");
 	nuevaUl.classList.add("text-small");
+	nuevaUl.classList.add("autocompletar-tl-ul");
 	contenedorUsuarios.append(nuevaUl);
 }
 
@@ -48,6 +50,7 @@ function crearNuevoInputTags(ultimoTag) {
 	nuevoInput.type = "text";
 	nuevoInput.name = "tagsTl[]";
 	nuevoInput.classList.add("form-control");
+	nuevoInput.classList.add("mt-2");
 	nuevoInput.addEventListener("change", validarTag);
 	contenedorTags.append(nuevoInput);
 }

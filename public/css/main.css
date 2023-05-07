@@ -231,6 +231,10 @@ aside a {
 	top: 0.05rem;
 }
 
+#form-timeline .autocompletar-tl-ul {
+	width: auto !important;
+}
+
 .caja-blanca {
 	background-color: #fff;
 	border: 1px solid #ddd;

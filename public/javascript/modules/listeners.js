@@ -14,6 +14,7 @@ function validarTag(e) {
 			e.target.nextElementSibling.classList.contains("form-control") ||
 			e.target.previousElementSibling.classList.contains("form-control")
 		) {
+			if (e.target.parentElement.children[1] === e.target) e.target.nextElementSibling.classList.remove("mt-2");
 			e.target.remove();
 		}
 	}
@@ -30,6 +31,8 @@ function autocompletarUsuarioTL(input) {
 				}
 				autocompletar.classList.remove("mostrar");
 				if (autocompletar.nextElementSibling) {
+					if (e.target.parentElement.children[1] === e.target)
+						autocompletar.nextElementSibling.classList.remove("mt-2");
 					e.target.remove();
 					autocompletar.remove();
 				}
@@ -44,18 +47,27 @@ function autocompletarUsuarioTL(input) {
 						return response.json();
 					})
 					.then((usuarios) => {
+						console.log(usuarios);
 						const usuariosNoRepetidos = usuarios.filter((usuario) => {
 							const elems = e.target.parentElement.children;
 							for (let i = 0; i < elems.length; i++) {
-								if (elems[i].classList.contains("form-control") && elems[i].value === usuario.nombre)
+								if (
+									elems[i].classList.contains("form-control") &&
+									elems[i].value === usuario.nombre &&
+									elems[i].value !== e.target.value
+								)
 									return false;
 							}
 							return true;
 						});
 
 						autocompletar.innerHTML = crearAutocompletarUsuariosTL(usuariosNoRepetidos);
-						autocompletar.classList.add("mostrar");
-						anyadirListenersElemsAutocompletar();
+						if (autocompletar.children.length > 0) {
+							autocompletar.classList.add("mostrar");
+							anyadirListenersElemsAutocompletar();
+						} else {
+							autocompletar.classList.remove("mostrar");
+						}
 					})
 					.catch((error) => {});
 			}
