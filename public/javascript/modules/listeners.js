@@ -4,11 +4,11 @@ import { tagValido } from "./inputs.js";
 import { debounce } from "./debounce.js";
 
 function validarTag(e) {
-	let mensajeError = "El tag no puede tener espacios";
+	let mensajeError = "El tag sólo puede tener caracteres alfanuméricos";
 	comprobarValidez(e.target, tagValido, mensajeError);
 
 	if (e.target.classList.contains("input-valido") && e.target.value.trim() !== "") {
-		crearNuevoInputTags(e.target);
+		if (!e.target.nextElementSibling) crearNuevoInputTags(e.target);
 	} else if (e.target.classList.contains("input-valido")) {
 		if (
 			e.target.nextElementSibling.classList.contains("form-control") ||
@@ -16,6 +16,8 @@ function validarTag(e) {
 		) {
 			if (e.target.parentElement.children[1] === e.target) e.target.nextElementSibling.classList.remove("mt-2");
 			e.target.remove();
+		} else {
+			e.target.classList.remove("input-valido");
 		}
 	}
 }
@@ -24,6 +26,11 @@ function autocompletarUsuarioTL(input) {
 	input.addEventListener(
 		"input",
 		debounce((e) => {
+			const error = document.querySelector("#contUsuariosTl .error-input");
+			if (error) {
+				error.remove();
+				e.target.classList.remove("input-no-valido");
+			}
 			const autocompletar = e.target.nextElementSibling;
 			if (e.target.value.trim().length < 2) {
 				for (let elem of autocompletar.children) {
@@ -31,6 +38,7 @@ function autocompletarUsuarioTL(input) {
 				}
 				autocompletar.classList.remove("mostrar");
 				if (autocompletar.nextElementSibling) {
+					console.log("hola");
 					if (e.target.parentElement.children[1] === e.target)
 						autocompletar.nextElementSibling.classList.remove("mt-2");
 					e.target.remove();

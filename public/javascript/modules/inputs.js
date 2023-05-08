@@ -116,6 +116,16 @@ function borrarMensajeError(input) {
 	}
 }
 
+function comprobarUsuariosTl(inputs) {
+	let inputsValidos = true;
+	for (let i = 0; i < inputs.length; i++) {
+		if (!(inputs[i].classList.contains("input-valido") || inputs[i].value === "")) {
+			inputsValidos = false;
+		}
+	}
+	return inputsValidos;
+}
+
 export {
 	comprobarValidez,
 	comprobarContrasenyas,
@@ -130,4 +140,5 @@ export {
 	fechaValida,
 	comprobarValidezFechas,
 	tagValido,
+	comprobarUsuariosTl,
 };

@@ -244,14 +244,19 @@
 													/>
 												</div>
 												<div class="row mb-3">
-													<div class="column col-6">
+													<div id="contUsuariosTl" class="column col-6">
 														<label for="usuariosTl" class="col-form-label">Añadir usuarios:</label>
-														<input type="text" class="form-control" name="usuariosTl[]" />
+														<input
+															type="text"
+															class="form-control"
+															id="usuariosTl"
+															name="usuariosTl[]"
+														/>
 														<ul class="dropdown-menu text-small autocompletar-tl-ul"></ul>
 													</div>
 													<div class="column col-6">
 														<label for="tagsTl" class="col-form-label">Añadir tags:</label>
-														<input type="text" class="form-control" name="tagsTl[]" />
+														<input type="text" class="form-control" id="tagsTl" name="tagsTl[]" />
 													</div>
 												</div>
 												<div class="mb-3">
@@ -311,8 +316,12 @@
 								</div>
 								<% } else { %>
 								<div class="col caja-blanca mx-2 p-4 rounded-3 text-center">
-									<p>Parece que todavía no hay nada por aquí.</p>
+									<p class="<% if(usuario.tlElegido !== 'Timeline') { %>mb-0<% } %>">
+										Parece que todavía no hay nada por aquí.
+									</p>
+									<% if(usuario.tlElegido === 'Timeline') { %>
 									<p class="mb-0">¡Prueba a seguir a uno de los usuarios recomendados o sube alguna foto!</p>
+									<% } %>
 								</div>
 								<% } %>
 							</div>

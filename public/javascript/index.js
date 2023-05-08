@@ -6,6 +6,7 @@ import {
 	crearMensajeError,
 	fechaValida,
 	comprobarValidezFechas,
+	comprobarUsuariosTl,
 } from "./modules/inputs.js";
 import { rellenarModalConfigTl, resetearModalTl } from "./modules/dom.js";
 import { validarTag, autocompletarUsuarioTL } from "./modules/listeners.js";
@@ -111,17 +112,27 @@ inputFechaHasta.addEventListener("change", (e) => {
 formTimeline.addEventListener("submit", (e) => {
 	e.preventDefault();
 
-	if (comprobarInputs([inputNombreTL, inputFechaTL, inputFechaDesde, inputFechaHasta, inputOrdenTL])) {
+	const usuarios = document.getElementsByName("usuariosTl[]");
+
+	if (
+		comprobarInputs([inputNombreTL, inputFechaTL, inputFechaDesde, inputFechaHasta, inputOrdenTL]) &&
+		comprobarUsuariosTl(usuarios)
+	) {
 		e.target.submit();
 	} else {
-		if (
+		if (!comprobarUsuariosTl(usuarios)) {
+			let mensajeError = "Todos los usuarios tienen que ser válidos";
+			comprobarValidez(usuarios[usuarios.length - 1], (valor) => false, mensajeError);
+		} else if (
 			inputNombreTL.classList.contains("input-valido") &&
 			(inputFechaTL.value !== "elegir" ||
 				inputFechaDesde.classList.contains("input-valido") ||
 				inputFechaHasta.classList.contains("input-valido"))
 		) {
 			e.target.submit();
-		} else if (inputFechaTL.value === "elegir" && inputFechaDesde.value === "" && inputFechaHasta.value === "") {
+		}
+
+		if (inputFechaTL.value === "elegir" && inputFechaDesde.value === "" && inputFechaHasta.value === "") {
 			let mensajeError = "Tienes que rellenar una de las dos fechas";
 			comprobarValidez(inputFechaDesde, (valor) => valor != "", mensajeError);
 			mensajeError = "Tienes que rellenar una de las dos fechas";

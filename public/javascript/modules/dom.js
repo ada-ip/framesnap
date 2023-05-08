@@ -156,6 +156,15 @@ function resetearModalTl(modalBody) {
 	for (let option of orden) {
 		if (option.value === "-fecha") option.selected = true;
 	}
+
+	const elemsAutocompletar = document.querySelectorAll(".autocompletar-tl-ul");
+	elemsAutocompletar.forEach((elem) => {
+		for (let child of elem.children) {
+			child.remove();
+		}
+
+		elem.classList.remove("mostrar");
+	});
 }
 
 function anyadirPosts(posts, btnCargar) {
