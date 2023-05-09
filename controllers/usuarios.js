@@ -19,10 +19,10 @@ const {
 const registrarUsuario = async (req, res, next) => {
 	try {
 		const usuario = {
-			nombre: req.body.nombre.toLowerCase(),
+			nombre: req.body.nombre,
 			correo: req.body.correo,
 			contrasenya: req.body.passw1,
-			fotoPerfil: await subirImagenPredeterminada(req.body.nombre.toLowerCase()),
+			fotoPerfil: await subirImagenPredeterminada(req.body.nombre.toLowerCase().trim()),
 			tls: [
 				{
 					nombre: "Timeline",

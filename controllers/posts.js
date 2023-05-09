@@ -46,7 +46,9 @@ const obtenerPostsPorTag = async (req, res, next) => {
 	try {
 		const posts = await Post.find({ tags: tag, fecha: { $gt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) } })
 			.select("_id imagen texto autor numFavs comentarios fecha")
-			.sort("-numFavs -fecha");
+			.sort("-numFavs -fecha")
+			.skip(0)
+			.limit(10);
 
 		const postsConSignedUrl = anyadirSignedUrlsPosts(posts, req);
 
