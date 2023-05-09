@@ -1,5 +1,5 @@
 const User = require("../models/User");
-const { formatearFechaTl } = require("../utils/metodosConsultas");
+const { formatearFechaTl } = require("../utils/consultas");
 
 const esTlRepetido = async (req, res, next) => {
 	const { nombreTl } = req.params;

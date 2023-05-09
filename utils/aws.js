@@ -19,7 +19,8 @@ const path = require("path");
 /**
  * Pide y añade a un conjunto de posts, las URLs públicas temporales de sus imágenes y de las imágenes de perfil de sus creadores.
  *
- * @param {Array.<Object>} posts	Un array de posts que tienen como mínimo las siguientes propiedades:
+ * @param {Array.<Object>} posts	Un array de posts (resultado de una consulta a la colección posts de la base de datos) que tienen
+ * 									como mínimo las siguientes propiedades:
  * 									- imagen: la URL privada de la imagen del post en el bucket de S3.
  * 									- autor: Un objeto que representa el autor del post con al menos la siguiente propiedad:
  *                                  		- fotoPerfil: la URL privada de la imagen de perfil del autor en el bucket de S3.
@@ -85,7 +86,8 @@ const anyadirSignedUrlsPosts = (posts, req) =>
 /**
  * Pide y añade a un conjunto de usuarios, las URLs públicas temporales de sus imágenes de perfil.
  *
- * @param {Array.<Object>} usuarios		Un array de usuarios que tienen como mínimo la siguiente propiedad:
+ * @param {Array.<Object>} usuarios		Un array de usuarios (resultado de una consulta a la colección users de la base de datos)
+ * 										que tienen como mínimo la siguiente propiedad:
  * 										- fotoPerfil: la URL privada de la imagen de perfil del usuario en el bucket de S3.
  * @param {Request} req					Un objeto Request de Express que representa la petición enviada por el cliente.
  * @param {Boolean} mongooseObj			Un booleano que indica si los objetos usuario pasados como parámetros son objetos

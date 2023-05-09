@@ -4,7 +4,7 @@ const Post = require("../models/Post");
 const Follower = require("../models/Follower");
 const Follow = require("../models/Follow");
 const { anyadirSignedUrlsPosts, anyadirSignedUrlsUsuario, subirImagenPredeterminada } = require("../utils/aws");
-const { comprobarFavs } = require("../utils/outliers");
+const { comprobarFavs } = require("../utils/consultas");
 const {
 	sumarNumPosts,
 	eliminarDuplicados,
@@ -14,7 +14,7 @@ const {
 	quitarSeguido,
 	esSeguidor,
 	buscarUsuariosPorNombre,
-} = require("../utils/metodosConsultas");
+} = require("../utils/consultas");
 
 const registrarUsuario = async (req, res, next) => {
 	try {
@@ -81,7 +81,7 @@ const devolverPerfilUsuario = async (req, res, next) => {
 			.limit(10);
 
 		const postsConSignedUrls = anyadirSignedUrlsPosts(postsUsuario, req);
-		const postsConFavsYUrls = await comprobarFavs(postsConSignedUrls, req);
+		const postsConFavsYUrls = await comprobarFavs(postsConSignedUrls, req.session.idUsuario);
 
 		let timelines = await User.countDocuments({ "tls.config.filtro.autor": datosUsuario._id });
 		timelines += datosUsuario.numSeguidores;

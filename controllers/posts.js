@@ -2,8 +2,12 @@ const Post = require("../models/Post");
 const User = require("../models/User");
 const Fav = require("../models/Fav");
 const { anyadirSignedUrlsPosts, anyadirSignedUrlsUsuario } = require("../utils/aws");
-const { comprobarFavs } = require("../utils/outliers");
-const { construirFiltroTl, obtenerMasPostsPorNumSeguidores, obtenerMasPostsPorNumFavs } = require("../utils/metodosConsultas");
+const {
+	construirFiltroTl,
+	obtenerMasPostsPorNumSeguidores,
+	obtenerMasPostsPorNumFavs,
+	comprobarFavs,
+} = require("../utils/consultas");
 const LIMITE_ELEMENTOS = 1000;
 
 const crearPost = async (req, res, next) => {
@@ -189,7 +193,7 @@ const obtenerPostsTimeline = async (req, res, next) => {
 
 			const postsConSignedUrls = anyadirSignedUrlsPosts(posts.slice(0, 10), req);
 
-			const postsConFavsYUrls = await comprobarFavs(postsConSignedUrls, req);
+			const postsConFavsYUrls = await comprobarFavs(postsConSignedUrls, req.session.idUsuario);
 
 			res.status(200).json(postsConFavsYUrls);
 		} catch (error) {
@@ -208,7 +212,7 @@ const obtenerPostsUsuario = async (req, res, next) => {
 			.sort("-fecha");
 
 		const postsConSignedUrls = anyadirSignedUrlsPosts(postsUsuario, req);
-		const postsConFavsYUrls = await comprobarFavs(postsConSignedUrls, req);
+		const postsConFavsYUrls = await comprobarFavs(postsConSignedUrls, req.session.idUsuario);
 
 		res.status(200).json(postsConFavsYUrls);
 	} catch (error) {

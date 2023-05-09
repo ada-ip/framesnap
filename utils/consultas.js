@@ -1,19 +1,45 @@
-const LIMITE_ELEMENTOS = 1000;
+/**
+ * Funciones auxiliares para realizar consultas a la base de datos o para procesar el resultado de las consultas a la base de datos.
+ *
+ * Este módulo contiene funciones auxiliares para poder gestionar los usuarios/posts que tengan información almacenada
+ * en las colecciones auxiliares además de en las colecciones principales, como por ejemplo, funciones para seguir/dejar de seguir
+ * a un usuario que puede o no tener muchos seguidores, o una función para comprobar si un usuario ha favoriteado un post.
+ * También contiene funciones auxiliares para la realización de consultas como, por ejemplo, funciones para crear los filtros
+ * necesarios por los que consultar.
+ *
+ * Funciones:
+ * - sumarNumPosts: Añade a un conjunto de objetos usuario el número de posts que ha creado cada usuario en la aplicación.
+ */
+
+// Se importan los módulos y los modelos de Mongoose necesarios para las funciones
 const User = require("../models/User");
 const Post = require("../models/Post");
 const Follower = require("../models/Follower");
 const Follow = require("../models/Follow");
 const { anyadirSignedUrlsUsuario } = require("./aws");
+const LIMITE_ELEMENTOS = 1000; // El límite de elementos que va a contener un campo array de un documento de la base de datos
 
-const sumarNumPosts = (usuarios, posts, mongooseObj = false) =>
+/**
+ * Añade a un conjunto de objetos usuario el número de posts que ha creado cada usuario en la aplicación.
+ *
+ * @param {Array.<Object>} usuarios		Un array de objetos usuario (resultado de una consulta a la colección users de la base de datos)
+ * 										que tiene que tener como mínimo la siguiente propiedad:
+ * 										- nombre: El nombre del usuario.
+ * @param {Array.<Object>} posts		Un array de objetos post (resultado de una consulta a la colección posts de la base de datos)
+ * 										que tiene que tener como mínimo la siguiente propiedad:
+ * 										- nombreAutor: El nombre del usuario que ha creado el post.
+ * @returns {Array.<Object>}			Los objetos usuario originales con la propiedad de numPosts (número de posts) añadida
+ */
+const sumarNumPosts = (usuarios, posts) =>
 	usuarios.map((usuario) => {
-		let usuarioEncontrado = posts.find((post) => post.nombre === usuario.nombre);
+		// Se busca el nombre de cada usuario en el array de posts
+		let usuarioEncontrado = posts.find((post) => post.nombreAutor === usuario.nombre);
+		// Si se encuentra el usuario se añade el nº de posts que corresponda
 		if (usuarioEncontrado) {
-			if (mongooseObj) return { ...usuario.toObject(), numPosts: usuarioEncontrado.numPosts };
-			else return { ...usuario, numPosts: usuarioEncontrado.numPosts };
+			return { ...(usuario.toObject ? usuario.toObject() : usuario), numPosts: usuarioEncontrado.numPosts };
 		} else {
-			if (mongooseObj) return { ...usuario.toObject(), numPosts: 0 };
-			else return { ...usuario, numPosts: 0 };
+			// Si no se encuentra el nº de posts es 0
+			return { ...(usuario.toObject ? usuario.toObject() : usuario), numPosts: 0 };
 		}
 	});
 
@@ -154,6 +180,30 @@ const quitarSeguido = async (usuarioADejarDeSeguir, usuarioLogeado, sesion) => {
 	}
 	usuarioLogeado.numSeguidos--;
 	await usuarioLogeado.save({ session: sesion });
+};
+
+/**
+ * Comprueba si un usuario ha favoriteado o no los posts de un conjunto de posts
+ * @param {Array.<Object>} posts	Un array de posts que tienen que tener como mínimo la siguiente propiedad:
+ * 									- _id
+ * @param {*} req
+ * @returns
+ */
+const comprobarFavs = async (posts, idUsuario) => {
+	const resultado = posts.map(async (post) => {
+		const esFavorito = await Post.findOne({ _id: post._id, "favs.id": idUsuario });
+		let esFavoritoOutlier;
+		if (post.outlierFavs && !esFavorito) {
+			esFavoritoOutlier = await Fav.findOne({ idPost: post._id, "favs.id": idUsuario });
+		}
+		if (esFavorito || esFavoritoOutlier) {
+			return { ...post, esFavorito: true };
+		} else {
+			return { ...post, esFavorito: false };
+		}
+	});
+
+	return await Promise.all(resultado);
 };
 
 const formatearFechaTl = (fecha) => {
@@ -335,7 +385,7 @@ const buscarUsuariosPorNombre = async (usuario, req, skip) => {
 		.group({ _id: "$autor.nombre", numPosts: { $sum: 1 } })
 		.project({
 			_id: 0,
-			nombre: "$_id",
+			nombreAutor: "$_id",
 			numPosts: 1,
 		});
 
@@ -351,7 +401,7 @@ const buscarUsuariosPorNombre = async (usuario, req, skip) => {
 		.limit(15);
 
 	if (otrosUsuarios.length > 0) {
-		const usuariosConSignedUrl = anyadirSignedUrlsUsuario(sumarNumPosts(otrosUsuarios, postsUsuarios, true), req);
+		const usuariosConSignedUrl = anyadirSignedUrlsUsuario(sumarNumPosts(otrosUsuarios, postsUsuarios), req);
 		usuarios.push(...usuariosConSignedUrl);
 	}
 
@@ -421,6 +471,7 @@ module.exports = {
 	anyadirSeguido,
 	quitarSeguidor,
 	quitarSeguido,
+	comprobarFavs,
 	formatearFechaTl,
 	construirFiltroTl,
 	eliminarSugerenciasSeguidos,

@@ -1,8 +1,7 @@
 const User = require("../models/User");
 const Post = require("../models/Post");
 const { anyadirSignedUrlsPosts, anyadirSignedUrlsUsuario } = require("../utils/aws");
-const { comprobarFavs } = require("../utils/outliers");
-const { construirFiltroTl, eliminarSugerenciasSeguidos } = require("../utils/metodosConsultas");
+const { construirFiltroTl, eliminarSugerenciasSeguidos, comprobarFavs } = require("../utils/consultas");
 
 const devolverIndex = async (req, res, next) => {
 	if (!req.session.idUsuario) {
@@ -63,7 +62,7 @@ const devolverIndex = async (req, res, next) => {
 
 			const postsConSignedUrls = anyadirSignedUrlsPosts(posts, req);
 
-			const postsConFavsYUrls = await comprobarFavs(postsConSignedUrls, req);
+			const postsConFavsYUrls = await comprobarFavs(postsConSignedUrls, req.session.idUsuario);
 
 			const usuariosRecomendados = await Post.aggregate()
 				.match({
