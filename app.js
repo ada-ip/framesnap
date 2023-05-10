@@ -64,8 +64,8 @@ app.use("/", routerPosts);
 app.use("/api/v1/tls/", routerTls);
 
 // Se utilizan los middleware de control de errores
-// app.use(error404);
-// app.use(controlErrores);
+app.use(error404);
+app.use(controlErrores);
 
 // Se conecta a la base de datos y se se inicia el servidor
 const start = async () => {
