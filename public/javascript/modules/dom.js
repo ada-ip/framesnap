@@ -1,4 +1,4 @@
-import { validarTag, autocompletarUsuarioTL } from "./listeners.js";
+import { validarTag, autocompletarUsuarioTL, borrarTimeline } from "./listeners.js";
 import { calcularFechaPost } from "./fechas.js";
 
 function crearElemAutocompletar(elementos) {
@@ -105,11 +105,23 @@ function rellenarModalConfigTl(datosTl, modalBody) {
 	for (let option of orden) {
 		if (option.value === datosTl.orden) option.selected = true;
 	}
+
+	const btnBorrar = document.createElement("input");
+	btnBorrar.type = "submit";
+	btnBorrar.value = "Borrar Timeline";
+	btnBorrar.classList.add("btn");
+	btnBorrar.classList.add("btn-primary");
+	btnBorrar.classList.add("me-2");
+	btnBorrar.addEventListener("click", borrarTimeline);
+
+	const btnGuardar = modalBody.nextElementSibling.lastElementChild;
+	btnGuardar.insertAdjacentElement("beforebegin", btnBorrar);
 }
 
 function resetearModalTl(modalBody) {
 	modalBody.previousElementSibling.firstElementChild.textContent = "Crear nuevo timeline";
 	modalBody.nextElementSibling.lastElementChild.value = "Crear";
+	modalBody.nextElementSibling.lastElementChild.previousElementSibling.remove();
 	modalBody.nextElementSibling.firstElementChild.value = "post";
 	modalBody.nextElementSibling.children[1].value = "Timeline";
 

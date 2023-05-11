@@ -34,29 +34,28 @@ const devolverIndex = async (req, res, next) => {
 				orden = tl.tls[0].config.orden;
 				if (orden !== "fecha" && orden !== "-fecha") orden += " -fecha";
 
-				if (
-					filtro.$or.length !== 0 &&
-					(tl.tls[0].config.orden === "-numSeguidores" || tl.tls[0].config.orden === "numSeguidores")
-				) {
-					posts = await Post.aggregate()
-						.match(filtro)
-						.lookup({ from: "users", localField: "autor.id", foreignField: "_id", as: "datosAutor" })
-						.unwind("$datosAutor")
-						.project({
-							_id: 1,
-							imagen: 1,
-							texto: 1,
-							autor: 1,
-							outlierFavs: 1,
-							numFavs: 1,
-							comentarios: 1,
-							fecha: 1,
-							numSeguidores: "$datosAutor.numSeguidores",
-						})
-						.sort(orden)
-						.limit(10);
-				} else {
-					posts = await Post.find(filtro).select("-favs -outlierComentarios -tags").sort(orden).limit(10);
+				if (filtro.$or.length !== 0) {
+					if (tl.tls[0].config.orden === "-numSeguidores" || tl.tls[0].config.orden === "numSeguidores") {
+						posts = await Post.aggregate()
+							.match(filtro)
+							.lookup({ from: "users", localField: "autor.id", foreignField: "_id", as: "datosAutor" })
+							.unwind("$datosAutor")
+							.project({
+								_id: 1,
+								imagen: 1,
+								texto: 1,
+								autor: 1,
+								outlierFavs: 1,
+								numFavs: 1,
+								comentarios: 1,
+								fecha: 1,
+								numSeguidores: "$datosAutor.numSeguidores",
+							})
+							.sort(orden)
+							.limit(10);
+					} else {
+						posts = await Post.find(filtro).select("-favs -outlierComentarios -tags").sort(orden).limit(10);
+					}
 				}
 			}
 

@@ -158,9 +158,9 @@ btnsConfigTls.forEach((btn) =>
 		formTimeline.firstElementChild.firstElementChild.textContent = "Modificar timeline";
 		formTimeline.lastElementChild.lastElementChild.value = "Guardar";
 		formTimeline.lastElementChild.firstElementChild.value = "patch";
-		formTimeline.lastElementChild.children[1].value = e.target.previousElementSibling.textContent;
+		formTimeline.lastElementChild.children[1].value = e.target.previousElementSibling.textContent.trim();
 
-		let url = "/api/v1/tls/" + e.target.previousElementSibling.textContent;
+		let url = "/api/v1/tls/" + e.target.previousElementSibling.textContent.trim();
 
 		fetch(url)
 			.then((response) => {

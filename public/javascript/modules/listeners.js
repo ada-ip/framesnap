@@ -108,4 +108,24 @@ function anyadirListenersElemsAutocompletar() {
 	);
 }
 
-export { validarTag, autocompletarUsuarioTL };
+function borrarTimeline(e) {
+	e.preventDefault();
+
+	let timeline = e.target.previousElementSibling.value.trim();
+
+	let url = "/api/v1/tls/" + timeline;
+	fetch(url, {
+		method: "PATCH",
+	})
+		.then((response) => {
+			if (!response.ok) {
+				throw new Error(`Error status: ${response.status}`);
+			}
+			if (response.status === 204) {
+				window.location.href = "/";
+			}
+		})
+		.catch((error) => {});
+}
+
+export { validarTag, autocompletarUsuarioTL, borrarTimeline };

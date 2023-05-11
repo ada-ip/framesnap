@@ -254,6 +254,7 @@ const construirFiltroTl = (tl) => {
 	const filtro = {
 		$or: [],
 	};
+
 	if (tl.config.filtro.autor.length > 0) {
 		filtroAutor = {
 			"autor.id": {
@@ -277,7 +278,6 @@ const construirFiltroTl = (tl) => {
 		filtro.$or.push(filtroTags);
 	}
 	if (typeof tl.config.filtro.fecha.$gte === "number") {
-		console.log(tl.config.filtro.fecha);
 		filtro.fecha = {
 			$gte: new Date(Date.now() - tl.config.filtro.fecha.$gte),
 		};
@@ -285,7 +285,6 @@ const construirFiltroTl = (tl) => {
 		filtro.fecha = {};
 		if (tl.config.filtro.fecha.$lte) filtro.fecha.$lte = new Date(tl.config.filtro.fecha.$lte);
 		if (tl.config.filtro.fecha.$gte) filtro.fecha.$gte = new Date(tl.config.filtro.fecha.$gte);
-		console.log(filtro.fecha);
 	}
 
 	return filtro;

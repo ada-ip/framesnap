@@ -107,8 +107,19 @@ const obtenerTl = async (req, res, next) => {
 	}
 };
 
+const borrarTl = async (req, res, next) => {
+	try {
+		const { nombreTl } = req.params;
+		const user = await User.findOneAndUpdate({ _id: req.session.idUsuario }, { $pull: { tls: { nombre: nombreTl } } });
+		res.status(204).end();
+	} catch (error) {
+		next(error);
+	}
+};
+
 module.exports = {
 	esTlRepetido,
 	crearTl,
 	obtenerTl,
+	borrarTl,
 };

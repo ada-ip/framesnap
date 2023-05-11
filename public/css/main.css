@@ -206,6 +206,7 @@ aside a {
 
 #timelines #conf-icon-principal {
 	margin-right: 0.6rem;
+	cursor: pointer;
 }
 
 #timelines .dropdown-menu {
@@ -281,6 +282,7 @@ aside a {
 
 img.conf-icon {
 	width: 16px;
+	cursor: pointer;
 }
 
 /******************************* Perfil *******************************/
