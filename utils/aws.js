@@ -32,6 +32,14 @@ const anyadirSignedUrlsPosts = (posts, req) =>
 		let signedUrlPost;
 		let signedUrlAutor;
 
+		/* Se eliminan de la sesión las URL públicas que ya hayan caducado o se crea la variable de sesión si todavía
+		no se ha guardado ninguna URL */
+		if (req.session.signedUrls) {
+			req.session.signedUrls = req.session.signedUrls.filter((signedUrl) => signedUrl.caducidad > Date.now());
+		} else {
+			req.session.signedUrls = [];
+		}
+
 		/* Se comprueba si la URL pública temporal de la imagen del post se encuentra en la variable de sesión signedUrls,
 		y si se encuentra en la variable se almacena directamente */
 		if (req.session.signedUrls && req.session.signedUrls.some((signedUrl) => signedUrl.imagen === post.imagen)) {
@@ -48,11 +56,13 @@ const anyadirSignedUrlsPosts = (posts, req) =>
 			signedUrlPost = s3.getSignedUrl("getObject", {
 				Bucket: process.env.AWS_BUCKET_NAME,
 				Key: claveImagen,
-				Expires: 900, // la URL pública caduca en 15 minutos
+				Expires: 1800, // la URL pública caduca en 30 minutos
 			});
 
-			// Se guarda la URL pública en la variable de sesión signedUrls y si ésta no existe se crea
-			req.session.signedUrls = (req.session.signedUrls || []).concat([{ imagen: post.imagen, signedUrl: signedUrlPost }]);
+			// Se guarda la URL pública en la variable de sesión signedUrls
+			req.session.signedUrls = req.session.signedUrls.concat([
+				{ imagen: post.imagen, signedUrl: signedUrlPost, caducidad: Date.now() + 1800 * 1000 },
+			]);
 		}
 
 		/* Se comprueba si la URL pública temporal de la imagen de perfil del autor del post se encuentra en la variable de sesión signedUrls,
@@ -70,12 +80,12 @@ const anyadirSignedUrlsPosts = (posts, req) =>
 			signedUrlAutor = s3.getSignedUrl("getObject", {
 				Bucket: process.env.AWS_BUCKET_NAME,
 				Key: claveImagen,
-				Expires: 900,
+				Expires: 1800,
 			});
 
 			// Se guarda la URL pública en la variable de sesión
-			req.session.signedUrls = (req.session.signedUrls || []).concat([
-				{ imagen: post.autor.fotoPerfil, signedUrl: signedUrlAutor },
+			req.session.signedUrls = req.session.signedUrls.concat([
+				{ imagen: post.autor.fotoPerfil, signedUrl: signedUrlAutor, caducidad: Date.now() + 1800 * 1000 },
 			]);
 		}
 
@@ -90,13 +100,19 @@ const anyadirSignedUrlsPosts = (posts, req) =>
  * 										que tienen como mínimo la siguiente propiedad:
  * 										- fotoPerfil: la URL privada de la imagen de perfil del usuario en el bucket de S3.
  * @param {Request} req					Un objeto Request de Express que representa la petición enviada por el cliente.
- * @param {Boolean} mongooseObj			Un booleano que indica si los objetos usuario pasados como parámetros son objetos
- * 										de Mongoose (true) o de Javascript (false).
  * @returns {Array.<Object>}			Un array de usuarios con la propiedad signedUrlUsuario añadida.
  */
-const anyadirSignedUrlsUsuario = (usuarios, req, mongooseObj = false) =>
+const anyadirSignedUrlsUsuario = (usuarios, req) =>
 	usuarios.map((usuario) => {
 		let signedUrlUsuario;
+
+		/* Se eliminan de la sesión las URL públicas que ya hayan caducado o se crea la variable de sesión si todavía
+		no se ha guardado ninguna URL */
+		if (req.session.signedUrls) {
+			req.session.signedUrls = req.session.signedUrls.filter((signedUrl) => signedUrl.caducidad > Date.now());
+		} else {
+			req.session.signedUrls = [];
+		}
 
 		/* Se comprueba si la URL pública temporal de la imagen se encuentra en la variable de sesión signedUrls,
 		y si se encuentra en la variable se almacena directamente */
@@ -113,21 +129,17 @@ const anyadirSignedUrlsUsuario = (usuarios, req, mongooseObj = false) =>
 			signedUrlUsuario = s3.getSignedUrl("getObject", {
 				Bucket: process.env.AWS_BUCKET_NAME,
 				Key: claveImagen,
-				Expires: 900,
+				Expires: 1800,
 			});
 
-			// Se guarda la URL pública en la variable de sesión signedUrls y si ésta no existe se crea
-			req.session.signedUrls = (req.session.signedUrls || []).concat([
-				{ imagen: usuario.fotoPerfil, signedUrl: signedUrlUsuario },
+			// Se guarda la URL pública en la variable de sesión signedUrls
+			req.session.signedUrls = req.session.signedUrls.concat([
+				{ imagen: usuario.fotoPerfil, signedUrl: signedUrlUsuario, caducidad: Date.now() + 1800 * 1000 },
 			]);
 		}
 
 		// Se devuelve el objeto con la propiedad signedUrlUsuario añadida.
-		if (mongooseObj) {
-			return { ...usuario.toObject(), signedUrlUsuario };
-		} else {
-			return { ...usuario, signedUrlUsuario };
-		}
+		return { ...(usuario.toObject ? usuario.toObject() : usuario), signedUrlUsuario };
 	});
 
 /**

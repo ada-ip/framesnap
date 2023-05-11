@@ -16,7 +16,7 @@ const devolverIndex = async (req, res, next) => {
 				return res.status(404).end();
 			}
 
-			const usuarioConSignedUrls = anyadirSignedUrlsUsuario([usuario.toObject()], req);
+			const usuarioConSignedUrls = anyadirSignedUrlsUsuario([usuario], req);
 
 			let posts = [];
 			let orden = "-fecha";
