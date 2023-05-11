@@ -40,31 +40,6 @@ const anyadirSignedUrlsPosts = (posts, req) =>
 			req.session.signedUrls = [];
 		}
 
-		/* Se comprueba si la URL pública temporal de la imagen del post se encuentra en la variable de sesión signedUrls,
-		y si se encuentra en la variable se almacena directamente */
-		if (req.session.signedUrls && req.session.signedUrls.some((signedUrl) => signedUrl.imagen === post.imagen)) {
-			const imagen = req.session.signedUrls.find((signedUrl) => signedUrl.imagen === post.imagen);
-			signedUrlPost = imagen.signedUrl;
-			// Si la URL pública no se encuentra en la variable de sesión, se pide una nueva URL pública temporal
-		} else {
-			// La clave de la imagen es el nombre del archivo en S3 y no toda la ruta
-			const claveImagen = post.imagen.replace(
-				`https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_BUCKET_REGION}.amazonaws.com/`,
-				""
-			);
-
-			signedUrlPost = s3.getSignedUrl("getObject", {
-				Bucket: process.env.AWS_BUCKET_NAME,
-				Key: claveImagen,
-				Expires: 1800, // la URL pública caduca en 30 minutos
-			});
-
-			// Se guarda la URL pública en la variable de sesión signedUrls
-			req.session.signedUrls = req.session.signedUrls.concat([
-				{ imagen: post.imagen, signedUrl: signedUrlPost, caducidad: Date.now() + 1800 * 1000 },
-			]);
-		}
-
 		/* Se comprueba si la URL pública temporal de la imagen de perfil del autor del post se encuentra en la variable de sesión signedUrls,
 		y si se encuentra en la variable se almacena directamente */
 		if (req.session.signedUrls && req.session.signedUrls.some((signedUrl) => signedUrl.imagen === post.autor.fotoPerfil)) {
@@ -80,14 +55,27 @@ const anyadirSignedUrlsPosts = (posts, req) =>
 			signedUrlAutor = s3.getSignedUrl("getObject", {
 				Bucket: process.env.AWS_BUCKET_NAME,
 				Key: claveImagen,
-				Expires: 1800,
+				Expires: 1200, // la URL pública caduca en 20 minutos
 			});
 
 			// Se guarda la URL pública en la variable de sesión
 			req.session.signedUrls = req.session.signedUrls.concat([
-				{ imagen: post.autor.fotoPerfil, signedUrl: signedUrlAutor, caducidad: Date.now() + 1800 * 1000 },
+				{ imagen: post.autor.fotoPerfil, signedUrl: signedUrlAutor, caducidad: Date.now() + 1200 * 1000 },
 			]);
 		}
+
+		/* En el caso de la imagen del post, no se guardan la URLs públicas en la variable de sesión porque van
+		a tener poca repetición en la aplicación por lo que se pide una URL pública directamente */
+		const claveImagen = post.imagen.replace(
+			`https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_BUCKET_REGION}.amazonaws.com/`,
+			""
+		);
+
+		signedUrlPost = s3.getSignedUrl("getObject", {
+			Bucket: process.env.AWS_BUCKET_NAME,
+			Key: claveImagen,
+			Expires: 1200,
+		});
 
 		// Se devuelve el objeto con las dos propiedades añadidas
 		return { ...(post.toObject ? post.toObject() : post), signedUrlPost, signedUrlAutor };
@@ -129,12 +117,12 @@ const anyadirSignedUrlsUsuario = (usuarios, req) =>
 			signedUrlUsuario = s3.getSignedUrl("getObject", {
 				Bucket: process.env.AWS_BUCKET_NAME,
 				Key: claveImagen,
-				Expires: 1800,
+				Expires: 1200,
 			});
 
 			// Se guarda la URL pública en la variable de sesión signedUrls
 			req.session.signedUrls = req.session.signedUrls.concat([
-				{ imagen: usuario.fotoPerfil, signedUrl: signedUrlUsuario, caducidad: Date.now() + 1800 * 1000 },
+				{ imagen: usuario.fotoPerfil, signedUrl: signedUrlUsuario, caducidad: Date.now() + 1200 * 1000 },
 			]);
 		}
 
