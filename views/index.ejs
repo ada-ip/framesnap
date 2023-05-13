@@ -263,8 +263,8 @@
 													<label for="fechaTl" class="col-form-label">Fecha de subida:</label>
 													<select class="form-select input-valido" id="fechaTl" name="fechaTl">
 														<option value="dia" selected>Hoy</option>
-														<option value="semana">Esta semana</option>
-														<option value="mes">Este mes</option>
+														<option value="semana">Desde hace 1 semana</option>
+														<option value="mes">Desde hace 1 mes</option>
 														<option value="smes">Desde hace 6 meses</option>
 														<option value="elegir">Elegir fecha</option>
 													</select>
@@ -315,7 +315,7 @@
 									<button id="cargarPosts" type="button" class="btn btn-primary w-100">Más posts</button>
 								</div>
 								<% } else { %>
-								<div class="col caja-blanca mx-2 p-4 rounded-3 text-center">
+								<div class="col caja-blanca mx-2 p-4 rounded-3">
 									<p class="<% if(usuario.tlElegido !== 'Timeline') { %>mb-0<% } %>">
 										Parece que todavía no hay nada por aquí.
 									</p>

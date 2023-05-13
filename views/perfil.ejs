@@ -191,7 +191,7 @@
 							<button id="cargarPostsUsuario" type="button" class="btn btn-primary w-100">Más posts</button>
 						</div>
 						<% } else { %>
-						<div class="col caja-blanca mx-2 p-4 rounded-3 text-center">
+						<div class="col caja-blanca mx-2 p-4 rounded-3">
 							<p class="mb-0">
 								Parece que <% if(usuarioLogeado._id != usuario._id) { %><%= usuario.nombre %><% } %> todavía no
 								ha<% if(usuarioLogeado._id == usuario._id) { %>s<% } %> subido nada.

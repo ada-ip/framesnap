@@ -11,6 +11,8 @@
  * - sumarNumPosts: Añade a un conjunto de objetos usuario el número de posts que ha creado cada usuario en la aplicación.
  * - eliminarDuplicados: Elimina los usuarios repetidos de un conjunto de usuarios.
  * - anyadirSeguidor: Añade un nuevo seguidor a un usuario determinado.
+ * - anyadirSeguido: Añade un nuevo usuario seguido a un usuario determinado.
+ * - quitarSeguidor: Quita a un usuario determinado de la lista de usuarios seguidos del usuario conectado a la aplicación.
  */
 
 // Se importan los módulos y los modelos de Mongoose necesarios para las funciones
@@ -68,14 +70,24 @@ const eliminarDuplicados = (usuarios) =>
  * Añade un nuevo seguidor a un usuario determinado.
  *
  * @param {Object} usuarioASeguir	El usuario (objeto resultado de una consulta a la colección users de la base de datos) al que se
- * 									se le quiere añadir un seguidor.
+ * 									se le quiere añadir un seguidor. Tiene que tener las siguientes propiedades:
+ * 									- _id: el id del usuario a seguir.
+ * 									- nombre: el nombre del usuario a seguir.
+ * 									- fotoPerfil: la url de la foto de perfil del usuario a seguir.
+ * 									- seguidores: los seguidores del usuario a seguir.
+ * 									- numSeguidores: el nº de seguidores del usuario a seguir.
+ * 									- outlierSeguidores: si el usuario tiene seguidores guardados en la colección auxiliar.
  * @param {Object} usuarioLogeado	El usuario (objeto resultado de una consulta a la colección users de la base de datos) que se va
- * 									a añadir como nuevo seguidor (el usuario con sesión abierta).
+ * 									a añadir como nuevo seguidor (el usuario con sesión abierta). Tiene que tener las siguientes
+ * 									propiedades:
+ * 									- _id: el id del usuario conectado.
+ * 									- nombre: el nombre del usuario conectado.
+ * 									- fotoPerfil: la url de la foto de perfil del usuario conectado.
  * @param {ClientSession} sesion	Una sesión de Mongoose que controle una transacción.
  */
 const anyadirSeguidor = async (usuarioASeguir, usuarioLogeado, sesion) => {
 	/* Si el usuario al que se le va añadir un seguidor no ha llegado al límite de seguidores que se pueden tener en la
-	colección principal, se le añade el nuevo seguidor directamente en dicha colección */
+	colección principal, se le añade directamente el usuario logeado como nuevo seguidor en dicha colección */
 	if (!usuarioASeguir.outlierSeguidores && usuarioASeguir.numSeguidores < LIMITE_ELEMENTOS) {
 		usuarioASeguir.seguidores.push({
 			id: usuarioLogeado._id,
@@ -92,20 +104,28 @@ const anyadirSeguidor = async (usuarioASeguir, usuarioLogeado, sesion) => {
 			.sort("-doc")
 			.limit(1);
 
+		/* Si no existe dicho documento o el documento ya tiene el límite de seguidores, se crea un nuevo documento
+		en la colección auxiliar */
 		if (usuarioOutlier.length === 0 || usuarioOutlier[0].seguidores.length === LIMITE_ELEMENTOS) {
 			const nuevoUsuarioParams = {
 				usuario: { id: usuarioASeguir._id, nombre: usuarioASeguir.nombre, fotoPerfil: usuarioASeguir.fotoPerfil },
+				// El nº de documento será el del documento encontrado + 1 si se ha encontrado un documento, o 1 si no existía documento
 				doc: (usuarioOutlier[0]?.doc ?? 0) + 1,
 				seguidores: [{ id: usuarioLogeado._id, nombre: usuarioLogeado.nombre, fotoPerfil: usuarioLogeado.fotoPerfil }],
 			};
 
+			// Se guarda el nuevo documento en la colección auxiliar
 			const nuevoUsuarioOutlier = new Follower(nuevoUsuarioParams);
 			await nuevoUsuarioOutlier.save({ session: sesion });
 
+			/* Si se ha creado el 1º documento del usuario en la colección auxiliar, se indica en el documento del usuario
+			de la colección principal que se están guardando seguidores del usuario en la colección auxiliar */
 			if (usuarioOutlier.length === 0) usuarioASeguir.outlierSeguidores = true;
 			usuarioASeguir.numSeguidores++;
 			await usuarioASeguir.save({ session: sesion });
 		} else {
+			/* Si el documento de la colección auxiliar no ha llegado al límite de elementos, simplemente se le añade el usuario logeado
+			como nuevo seguidor */
 			usuarioOutlier[0].seguidores.push({
 				id: usuarioLogeado._id,
 				nombre: usuarioLogeado.nombre,
@@ -120,34 +140,61 @@ const anyadirSeguidor = async (usuarioASeguir, usuarioLogeado, sesion) => {
 	}
 };
 
+/**
+ * Añade un nuevo usuario seguido a un usuario determinado.
+ *
+ * @param {Object} usuarioASeguir 	El usuario (objeto resultado de una consulta a la colección users de la base de datos) que se le va a
+ * 									añadir como usuario seguido al usuario conectado.
+ * 									- _id: el id del usuario que se va a añadir como usuario seguido.
+ * 									- nombre: el nombre del usuario que se va a añadir como usuario seguido.
+ * 									- fotoPerfil: la url de la foto de perfil que se va a añadir como usuario seguido.
+ * @param {Object} usuarioLogeado 	El usuario (objeto resultado de una consulta a la colección users de la base de datos) al que se le va
+ * 									a añadir un nuevo usuario seguido.
+
+
+ * @param {ClientSession} sesion 	Una sesión de Mongoose que controle una transacción.
+ */
 const anyadirSeguido = async (usuarioASeguir, usuarioLogeado, sesion) => {
+	/* Si el usuario conectado al que se le va añadir un usuario seguido no ha llegado al límite de usuarios seguidos que se pueden 
+	tener en la colección principal, se le añade directamente el usuario a seguir como nuevo seguido en dicha colección */
 	if (!usuarioLogeado.outlierSeguidos && usuarioLogeado.numSeguidos < LIMITE_ELEMENTOS) {
 		usuarioLogeado.seguidos.push({
 			id: usuarioASeguir._id,
 			nombre: usuarioASeguir.nombre,
 			fotoPerfil: usuarioASeguir.fotoPerfil,
 		});
+		// También se le añade 1 al número de seguidos para poder controlar el nº de seguidos total en la colección principal
 		usuarioLogeado.numSeguidos++;
 		await usuarioLogeado.save({ session: sesion });
 	} else {
+		/* Si el usuario ya ha llegado al límite de usuarios seguidos en la colección principal, se busca su último documento en la
+		colección auxiliar de seguidos */
 		const usuarioOutlier = await Follow.find({ nombre: usuarioLogeado.nombre }, null, { session: sesion })
 			.sort("-doc")
 			.limit(1);
 
+		/* Si no existe dicho documento o el documento ya llega al límite de seguidos, se crea un nuevo documento
+		en la colección auxiliar */
 		if (usuarioOutlier.length === 0 || usuarioOutlier[0].seguidos.length === LIMITE_ELEMENTOS) {
 			const nuevoUsuarioParams = {
 				usuario: { id: usuarioLogeado._id, nombre: usuarioLogeado.nombre, fotoPerfil: usuarioLogeado.fotoPerfil },
+				// El nº de documento será el del documento encontrado + 1 si se ha encontrado un documento, o 1 si no existía documento
 				doc: (usuarioOutlier[0]?.doc ?? 0) + 1,
 				seguidos: [{ id: usuarioASeguir._id, nombre: usuarioASeguir.nombre, fotoPerfil: usuarioASeguir.fotoPerfil }],
 			};
 
+			// Se guarda el nuevo documento en la colección auxiliar
 			const nuevoUsuarioOutlier = new Follow(nuevoUsuarioParams);
 			await nuevoUsuarioOutlier.save({ session: sesion });
 
+			/* Si se ha creado el 1º documento del usuario en la colección auxiliar, se indica en el documento del usuario
+			de la colección principal que se están guardando los usuarios seguidos en la colección auxiliar */
 			if (usuarioOutlier.length === 0) usuarioLogeador.outlierSeguidos = true;
 			usuarioLogeado.numSeguidos++;
 			await usuarioLogeado.save({ session: sesion });
 		} else {
+			/* Si el documento de la colección auxiliar no ha llegado al límite de elementos, simplemente se le añade al usuario logeado
+			el nuevo usuario seguido */
 			usuarioOutlier[0].seguidos.push({
 				id: usuarioASeguir._id,
 				nombre: usuarioASeguir.nombre,
@@ -162,6 +209,15 @@ const anyadirSeguido = async (usuarioASeguir, usuarioLogeado, sesion) => {
 	}
 };
 
+/**
+ * Quita a un usuario determinado de la lista de usuarios seguidos del usuario conectado a la aplicación.
+ *
+ * @param {Object} usuarioADejarDeSeguir   El usuario (objeto resultado de una consulta a la colección users de la base de datos) al que se
+ * 										   quiere dejar de seguir.
+ * @param {Object} usuarioLogeado		   El usuario (objeto resultado de una consulta a la colección users de la base de datos) al que se le va
+ * 										   a quitar el usuario seguido.
+ * @param {ClientSession} sesion		   Una sesión de Mongoose que controle una transacción.
+ */
 const quitarSeguidor = async (usuarioADejarDeSeguir, usuarioLogeado, sesion) => {
 	let indexUsuarioLogeado = usuarioADejarDeSeguir.seguidores.findIndex((seguidor) => seguidor.nombre === usuarioLogeado.nombre);
 	if (indexUsuarioLogeado !== -1) {

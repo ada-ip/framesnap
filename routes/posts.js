@@ -12,7 +12,7 @@ const {
 	obtenerPostsUsuario,
 } = require("../controllers/posts");
 
-router.route("/posts").get(obtenerPostsPorTag);
+router.route("/posts").get(obtenerPostsPorTag).post(obtenerPostsPorTag);
 router.route("/api/v1/posts").post(cargarImagen.single("imagenASubir"), subirImagenAS3, crearPost);
 router.route("/api/v1/posts/cargarmasposts").post(obtenerPostsTimeline);
 router.route("/api/v1/posts/:usuario/cargarmasposts").post(obtenerPostsUsuario);

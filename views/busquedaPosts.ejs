@@ -137,12 +137,44 @@
 		<%- include("./partials/header.ejs"); %>
 
 		<main class="main">
-			<div class="album py-5 bg-body-tertiary cont-timeline">
-				<div class="container px-0" style="max-width: 469px">
+			<div class="container px-0" style="max-width: 469px">
+				<form action="/posts" method="GET" role="search" autocomplete="off">
+					<select class="form-select mb-2 py-2" name="fechaPosts" aria-label="Elige la fecha de los posts a buscar">
+						<option value="dia" <% if(fechaPosts && fechaPosts === "dia"){%>selected<% } %>>Hoy</option>
+						<option value="semana" <% if(fechaPosts && fechaPosts === "semana"){%>selected<% } %>>Desde hace 1 semana</option>
+						<option value="mes" <% if(fechaPosts && fechaPosts === "mes" || !fechaPosts){%>selected<% } %>>Desde hace 1 mes</option>
+						<option value="tmes" <% if(fechaPosts && fechaPosts === "tmes"){%>selected<% } %>>Desde hace 3 meses</option>
+						<option value="smes" <% if(fechaPosts && fechaPosts === "smes"){%>selected<% } %>>Desde hace 6 meses</option>
+						<option value="anyo" <% if(fechaPosts && fechaPosts === "anyo"){%>selected<% } %>>Desde hace 1 año</option>
+					</select>
+					<div class="d-flex gap-2">
+						<input
+							id="buscarPosts"
+							type="search"
+							class="form-control"
+							placeholder="Etiqueta..."
+							aria-label="Buscar posts por tags"
+							name="q"
+							value="<%=tag%>"
+						/>
+						<input type="submit" class="btn btn-primary" value="Buscar" />
+					</div>
+				</form>
+			</div>
+			<div class="album py-4 bg-body-tertiary cont-timeline">
+				<div id="posts" class="container px-0" style="max-width: 469px">
 					<div class="row row-cols-1 g-3">
 						<% if(posts.length > 0) { %> <% for(let post of posts) { %> <%- include("./partials/post.ejs", {post:
-						post}); %> <% } %> <% } else { %>
-						<div>Parece que aquí no hay nada</div>
+						post}); %> <% } %> 
+						<div class="col">
+							<button id="cargarPostsTag" type="button" class="btn btn-primary w-100">Más posts</button>
+						</div>
+						<% } else { %>
+							<div class="col caja-blanca mx-2 p-4 rounded-3" style="max-width: 469px">
+								<p class="mb-0">
+									Parece que últimamente no ha habido ningún post con el tag <%=tag%>.
+								</p>
+							</div>
 						<% } %>
 					</div>
 				</div>

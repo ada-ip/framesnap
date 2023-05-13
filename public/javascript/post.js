@@ -96,6 +96,53 @@ if (btnCargarPostsUsuario) {
 	});
 }
 
+const btnCargarPostsTag = document.getElementById("cargarPostsTag");
+if (btnCargarPostsTag) {
+	btnCargarPostsTag.addEventListener("click", (e) => {
+		const query = window.location.search.substring(1).split("&");
+		const fechaPosts = query.length > 1 ? query[0].substring(query[0].indexOf("=") + 1) : "mes";
+		const tag =
+			query.length > 1 ? query[1].substring(query[1].indexOf("=") + 1) : query[0].substring(query[0].indexOf("=") + 1);
+
+		const ultimoPost =
+			document.getElementById("posts").firstElementChild.lastElementChild.previousElementSibling.firstElementChild;
+		const elemNumFavs = ultimoPost.lastElementChild.firstElementChild.firstElementChild;
+
+		const datosUltimoPost = {
+			fechaUltimoPost: ultimoPost.dataset.fecha,
+			numFavs: elemNumFavs.textContent.substring(0, elemNumFavs.textContent.indexOf(" ")),
+			fechaPosts: fechaPosts,
+			q: tag,
+		};
+
+		let url = "/posts";
+
+		fetch(url, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(datosUltimoPost),
+		})
+			.then((response) => {
+				if (!response.ok) {
+					throw new Error(`Error status: ${response.status}`);
+				}
+				return response.json();
+			})
+			.then((posts) => {
+				if (posts.length === 0) {
+					e.target.textContent = "Parece que no hay más posts";
+					e.target.disabled = true;
+				} else {
+					anyadirPosts(posts, e.target);
+					document.querySelectorAll(".img-fav").forEach((img) => anyadirEventoFavoritear(img));
+				}
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	});
+}
+
 function anyadirEventoFavoritear(img) {
 	img.addEventListener("click", (e) => {
 		const idPost = e.target.parentElement.parentElement.id.replace("post", "");

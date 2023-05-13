@@ -45,23 +45,68 @@ const crearPost = async (req, res, next) => {
 };
 
 const obtenerPostsPorTag = async (req, res, next) => {
-	const tag = req.query.q;
+	const fechaPosts = req.query.fechaPosts || req.body.fechaPosts;
+	const tag = req.query.q || req.body.q;
+	const { fechaUltimoPost, numFavs } = req.body;
+
+	const tiempo = {
+		dia: 1,
+		semana: 7,
+		mes: 30,
+		tmes: 3 * 30,
+		smes: 6 * 30,
+		anyo: 365,
+	};
+
+	const filtroFecha = {
+		$gte: new Date(Date.now() - 24 * 60 * 60 * 1000 * tiempo[fechaPosts || "mes"]),
+	};
+
+	const filtro = {
+		tags: tag,
+		fecha: {
+			$gte: new Date(Date.now() - 24 * 60 * 60 * 1000 * tiempo[fechaPosts || "mes"]),
+		},
+	};
+	if (numFavs) {
+		filtro.numFavs = { $eq: numFavs };
+		filtro.fecha.$lt = new Date(fechaUltimoPost);
+	}
 
 	try {
-		const posts = await Post.find({ tags: tag, fecha: { $gt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) } })
+		const posts = await Post.find(filtro)
 			.select("_id imagen texto autor numFavs comentarios fecha")
 			.sort("-numFavs -fecha")
-			.skip(0)
 			.limit(10);
+
+		if (posts.length < 10 && numFavs) {
+			filtro.numFavs = { $lt: numFavs };
+			delete filtro.fecha.$lt;
+			const otrosPosts = await Post.find(filtro)
+				.select("_id imagen texto autor numFavs comentarios fecha")
+				.sort("-numFavs -fecha")
+				.limit(10);
+
+			posts.push(...otrosPosts);
+		}
 
 		const postsConSignedUrl = anyadirSignedUrlsPosts(posts, req);
 
-		const usuarioLogeado = anyadirSignedUrlsUsuario(
-			[{ _id: req.session.idUsuario, nombre: req.session.usuario, fotoPerfil: req.session.fotoPerfil }],
-			req
-		);
+		if (!numFavs) {
+			const usuarioLogeado = anyadirSignedUrlsUsuario(
+				[{ _id: req.session.idUsuario, nombre: req.session.usuario, fotoPerfil: req.session.fotoPerfil }],
+				req
+			);
 
-		res.render("busquedaPosts", { posts: postsConSignedUrl, usuarioLogeado: usuarioLogeado[0] });
+			res.render("busquedaPosts", {
+				posts: postsConSignedUrl,
+				usuarioLogeado: usuarioLogeado[0],
+				fechaPosts: fechaPosts,
+				tag: tag,
+			});
+		} else {
+			res.status(200).json(postsConSignedUrl);
+		}
 	} catch (error) {
 		next(error);
 	}
