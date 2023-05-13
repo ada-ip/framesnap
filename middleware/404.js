@@ -1,3 +1,3 @@
-const error404 = (req, res) => res.status(404).send("La ruta no existe");
+const error404 = (req, res) => res.status(404).render("errores/404");
 
 module.exports = error404;
