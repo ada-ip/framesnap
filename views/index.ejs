@@ -98,65 +98,7 @@
 				<!-- TIMELINE -->
 				<div class="col-12 col-md-8">
 					<div class="album pb-5 contenedor-timeline d-flex flex-column">
-						<!-- BOTÓN PARA CREAR UN POST/SUBIR IMAGEN -->
-						<button
-							id="btn-subir-imagen"
-							type="button"
-							class="btn btn-primary"
-							data-bs-toggle="modal"
-							data-bs-target="#crearPostModal"
-						>
-							<img src="/images/plus-solid.png" alt="Subir imagen" width="14" />
-						</button>
-						<!-- MODAL PARA SUBIR LA IMAGEN -->
-						<div class="modal fade" id="crearPostModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
-							<div class="modal-dialog">
-								<form
-									action="/api/v1/posts"
-									method="post"
-									enctype="multipart/form-data"
-									class="modal-content"
-									id="form-subir-foto"
-								>
-									<div class="modal-header">
-										<h1 class="modal-title fs-5" id="crearPostModalLabel">Subir post</h1>
-										<button
-											type="button"
-											class="btn-close"
-											data-bs-dismiss="modal"
-											aria-label="Cerrar"
-										></button>
-									</div>
-									<div class="modal-body">
-										<div class="mb-3">
-											<label for="imagenASubir" class="col-form-label">Elige una imagen:</label>
-											<input
-												type="file"
-												id="imagenASubir"
-												name="imagenASubir"
-												class="form-control"
-												accept=".jpg, .jpeg, .png"
-											/>
-										</div>
-
-										<div class="mb-3">
-											<label for="texto" class="col-form-label">Escribe el pie de foto:</label>
-											<textarea class="form-control" id="texto" name="texto" rows="4"></textarea>
-										</div>
-									</div>
-									<div class="modal-footer">
-										<input
-											type="submit"
-											class="btn btn-primary"
-											id="btn-subir-img"
-											name="btn-subir-img"
-											value="Subir"
-										/>
-									</div>
-								</form>
-							</div>
-						</div>
-
+						<!-- BOTONES Y SELECCIÓN DE TIMELINES -->
 						<div class="contenedor-menu-timeline">
 							<!-- SELECCIÓN DE TIMELINES -->
 							<div id="timelines">
@@ -300,10 +242,77 @@
 									</div>
 								</div>
 							</div>
+
 							<!-- BOTÓN DE RECARGA DE LA PÁGINA -->
 							<button id="recargar-pagina" type="button" class="btn btn-primary">
 								<img src="/images/rotate-right-solid.png" alt="Recargar la página" width="15" />
 							</button>
+
+							<!-- BOTÓN PARA CREAR UN POST/SUBIR IMAGEN -->
+							<button
+								id="btn-subir-imagen"
+								type="button"
+								class="btn btn-primary"
+								data-bs-toggle="modal"
+								data-bs-target="#crearPostModal"
+							>
+								<img src="/images/plus-solid.png" alt="Subir imagen" width="14" />
+							</button>
+
+							<!-- MODAL PARA SUBIR LA IMAGEN -->
+							<div
+								class="modal fade"
+								id="crearPostModal"
+								tabindex="-1"
+								aria-hidden="true"
+								data-bs-backdrop="static"
+							>
+								<div class="modal-dialog">
+									<form
+										action="/api/v1/posts"
+										method="post"
+										enctype="multipart/form-data"
+										class="modal-content"
+										id="form-subir-foto"
+									>
+										<div class="modal-header">
+											<h1 class="modal-title fs-5" id="crearPostModalLabel">Subir post</h1>
+											<button
+												type="button"
+												class="btn-close"
+												data-bs-dismiss="modal"
+												aria-label="Cerrar"
+											></button>
+										</div>
+										<div class="modal-body">
+											<div class="mb-3">
+												<label for="imagenASubir" class="col-form-label">Elige una imagen:</label>
+												<input
+													type="file"
+													id="imagenASubir"
+													name="imagenASubir"
+													class="form-control"
+													accept=".jpg, .jpeg, .png"
+												/>
+											</div>
+
+											<div class="mb-3">
+												<label for="texto" class="col-form-label">Escribe el pie de foto:</label>
+												<textarea class="form-control" id="texto" name="texto" rows="4"></textarea>
+											</div>
+										</div>
+										<div class="modal-footer">
+											<input
+												type="submit"
+												class="btn btn-primary"
+												id="btn-subir-img"
+												name="btn-subir-img"
+												value="Subir"
+											/>
+										</div>
+									</form>
+								</div>
+							</div>
 						</div>
 
 						<!-- POSTS -->
