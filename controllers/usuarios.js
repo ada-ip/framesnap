@@ -72,7 +72,7 @@ const devolverPerfilUsuario = async (req, res, next) => {
 
 		let usuarioConSignedUrl = [];
 		if (datosUsuario) {
-			const usuarioConEsSeguidor = await esSeguidor([datosUsuario], req);
+			const usuarioConEsSeguidor = await esSeguidor([datosUsuario], req.session.idUsuario);
 			usuarioConSignedUrl = anyadirSignedUrlsUsuario(usuarioConEsSeguidor, req);
 		}
 		const postsUsuario = await Post.find({ "autor.nombre": usuario })
@@ -190,7 +190,7 @@ const obtenerUsuarios = async (req, res, next) => {
 		const otrosUsuarios = await buscarUsuariosPorNombre(usuario, req, skip);
 		usuarios.push(...otrosUsuarios);
 
-		const usuariosConEsSeguidor = await esSeguidor(usuarios, req);
+		const usuariosConEsSeguidor = await esSeguidor(usuarios, req.usuario.idUsuario);
 
 		if (skip === 0) {
 			const usuarioLogeado = anyadirSignedUrlsUsuario(
