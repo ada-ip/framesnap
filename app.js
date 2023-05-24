@@ -17,7 +17,9 @@ const routerIndex = require("./routes/index");
 const routerAuth = require("./routes/auth");
 const routerUsuarios = require("./routes/usuarios");
 const routerPosts = require("./routes/posts");
-const routerTls = require("./routes/tls");
+const routerUsuariosApi = require("./routes/usuarios-api");
+const routerPostsApi = require("./routes/posts-api");
+const routerTls = require("./routes/tls-api");
 
 // Se importan los middleware de control de errores
 const error404 = require("./middleware/404");
@@ -61,6 +63,8 @@ app.use("/", routerIndex);
 app.use("/", routerAuth);
 app.use("/", routerUsuarios);
 app.use("/", routerPosts);
+app.use("/api/v1/usuarios/", routerUsuariosApi);
+app.use("/api/v1/posts/", routerPostsApi);
 app.use("/api/v1/tls/", routerTls);
 
 // Se utilizan los middleware de control de errores

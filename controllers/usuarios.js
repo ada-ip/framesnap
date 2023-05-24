@@ -190,7 +190,7 @@ const obtenerUsuarios = async (req, res, next) => {
 		const otrosUsuarios = await buscarUsuariosPorNombre(usuario, req, skip);
 		usuarios.push(...otrosUsuarios);
 
-		const usuariosConEsSeguidor = await esSeguidor(usuarios, req.usuario.idUsuario);
+		const usuariosConEsSeguidor = await esSeguidor(usuarios, req.session.idUsuario);
 
 		if (skip === 0) {
 			const usuarioLogeado = anyadirSignedUrlsUsuario(
