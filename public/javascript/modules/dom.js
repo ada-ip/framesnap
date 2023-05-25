@@ -222,9 +222,22 @@ function anyadirPosts(posts, btnCargar) {
 									/>
 								</div>
 
-								<p class="card-text mb-2">${post.texto}</p>
+								<p class="card-text mb-2"></p>
 							</div>
 						</div>`;
+
+		const palabrasTexto = post.texto.split(" ");
+		for (let palabra of palabrasTexto) {
+			if (palabra.startsWith("#")) {
+				div.firstElementChild.lastElementChild.lastElementChild.innerHTML += `<a
+						href="posts?q=${palabra.substring(1)}"
+						class="hashtag-post"
+						>${palabra}</a
+					> `;
+			} else {
+				div.firstElementChild.lastElementChild.lastElementChild.innerHTML += `${palabra} `;
+			}
+		}
 
 		if (post.numSeguidores != null) div.firstElementChild.dataset.seguidores = post.numSeguidores;
 
