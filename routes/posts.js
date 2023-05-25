@@ -3,6 +3,8 @@ const router = express.Router();
 
 const { obtenerPostsPorTag } = require("../controllers/posts");
 
-router.route("/posts").get(obtenerPostsPorTag).post(obtenerPostsPorTag);
+const comprobarUsuarioConectado = require("../middleware/auth");
+
+router.route("/posts").get(comprobarUsuarioConectado, obtenerPostsPorTag).post(obtenerPostsPorTag);
 
 module.exports = router;

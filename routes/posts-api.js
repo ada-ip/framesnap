@@ -1,3 +1,16 @@
+/**
+ * Este módulo define las rutas de procesamiento y obtención de datos relacionados con los posts.
+ *
+ * '/':
+ * - POST: Guarda en la base de datos el psot creado por el usuario.
+ *
+ * '/cargarmasposts':
+ * - POST: Devuelve los posts siguientes a los posts ya cargados en el timeline del usuario.
+ *
+ * '/:usuario/cargarmasposts':
+ * - POST: Devuelve los posts siguientes a los posts ya cargados del usuario con nombre :usuario.
+ */
+
 const express = require("express");
 const router = express.Router();
 

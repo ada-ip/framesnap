@@ -19,6 +19,7 @@ const path = require("path");
 /**
  * Pide y añade a un conjunto de posts, las URLs públicas temporales de sus imágenes y de las imágenes de perfil de sus creadores.
  *
+ * @function anyadirSignedUrlsPosts
  * @param {Array.<Object>} posts	Un array de posts (resultado de una consulta a la colección posts de la base de datos) que tienen
  * 									como mínimo las siguientes propiedades:
  * 									- imagen: la URL privada de la imagen del post en el bucket de S3.
@@ -84,6 +85,7 @@ const anyadirSignedUrlsPosts = (posts, req) =>
 /**
  * Pide y añade a un conjunto de usuarios, las URLs públicas temporales de sus imágenes de perfil.
  *
+ * @function anyadirSignedUrlsUsuario
  * @param {Array.<Object>} usuarios		Un array de usuarios (resultado de una consulta a la colección users de la base de datos)
  * 										que tienen como mínimo la siguiente propiedad:
  * 										- fotoPerfil: la URL privada de la imagen de perfil del usuario en el bucket de S3.
@@ -134,9 +136,9 @@ const anyadirSignedUrlsUsuario = (usuarios, req) =>
  * Sube al bucket de S3 una imagen de perfil predeterminada asociada al usuario.
  *
  * @async
+ * @function subirImagenPredeterminada
  * @param {String} nombreUsuario	El nombre del usuario cuya foto de perfil se quiere subir a S3.
  * @returns {Promise<string>} 	 	Una promesa que envuelve a la URL privada de la imagen subida a S3.
- * @throws {Error} 					Lanza un error si ocurre algún problema al subir la imagen a S3.
  */
 const subirImagenPredeterminada = async (nombreUsuario) => {
 	const rutaImagen = path.join(__dirname, "..", "public", "images", "anonymous.jpg"); // La ruta de la imagen predeterminada a subir
