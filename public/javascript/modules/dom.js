@@ -1,4 +1,4 @@
-import { validarTag, autocompletarUsuarioTL, borrarTimeline } from "./listeners.js";
+import { validarTag, autocompletarUsuarioTL, borrarTimeline, seguirUsuario } from "./listeners.js";
 import { calcularFechaPost } from "./fechas.js";
 
 function crearElemAutocompletar(elementos) {
@@ -197,7 +197,7 @@ function anyadirPosts(posts, btnCargar) {
 								<div class="cont-text-cabecera-post d-flex flex-wrap align-items-center gap-2">
 									<a href="/usuarios/${post.autor.nombre}">${post.autor.nombre}</a>
 									<div class="vr mx-1"></div>
-									<span>
+									<span id="fecha${post._id}">
 									</span>
 								</div>
 							</div>
@@ -211,7 +211,7 @@ function anyadirPosts(posts, btnCargar) {
 							/>
 							<div class="card-body" id="post${post._id}">
 								<div class="d-flex justify-content-between align-items-center mb-4">
-									<span class="fw-semibold">${post.numFavs} favorito${post.numFavs !== 1 ? "s" : ""}</span>
+									<span class="num-favs fw-semibold">${post.numFavs} favorito${post.numFavs !== 1 ? "s" : ""}</span>
 									<img
 										src="${post.esFavorito ? "/images/fav.png" : "/images/no-fav.png"}"
 										alt="haz click para des/favoritear el post"
@@ -221,29 +221,78 @@ function anyadirPosts(posts, btnCargar) {
 									/>
 								</div>
 
-								<p class="card-text mb-2"></p>
+								<p id="textoPost${post._id}" class="card-text mb-2"></p>
 							</div>
 						</div>`;
 
+		btnCargar.parentElement.insertAdjacentElement("beforebegin", div);
+
+		const textoPost = document.getElementById(`textoPost${post._id}`);
 		const palabrasTexto = post.texto.split(" ");
 		for (let palabra of palabrasTexto) {
 			if (palabra.startsWith("#")) {
-				div.firstElementChild.lastElementChild.lastElementChild.innerHTML += `<a
+				textoPost.innerHTML += `<a
 						href="posts?q=${palabra.substring(1)}"
 						class="hashtag-post"
 						>${palabra}</a
 					> `;
 			} else {
-				div.firstElementChild.lastElementChild.lastElementChild.innerHTML += `${palabra} `;
+				textoPost.innerHTML += `${palabra} `;
 			}
 		}
 
 		if (post.numSeguidores != null) div.firstElementChild.dataset.seguidores = post.numSeguidores;
 
-		const elemFechaPost = div.firstElementChild.firstElementChild.lastElementChild.lastElementChild;
+		const elemFechaPost = document.getElementById(`fecha${post._id}`);
 		elemFechaPost.textContent = calcularFechaPost(new Date(), new Date(post.fecha));
+	});
+}
+
+function anyadirUsuarios(usuarios, btnCargar) {
+	usuarios.forEach((usuario) => {
+		const div = document.createElement("div");
+		div.classList.add("col");
+		div.innerHTML = `<div class="card shadow-sm">
+							<a href="/usuarios/${usuario.nombre}">
+								<div
+									class="card-body tarjeta-usuario d-flex flex-wrap flex-sm-nowrap justify-content-center justify-content-sm-between gap-sm-5"
+								>
+									<div class="contenedor-foto-perfil mb-3 mb-sm-0">
+										<img
+											src="${usuario.signedUrlUsuario}"
+											alt="foto de perfil de ${usuario.nombre}"
+											width="80"
+											height="80"
+											class="rounded-circle foto-perfil-nav"
+											loading="lazy"
+										/>
+										<p class="mt-2 mb-0">${usuario.nombre}</p>
+									</div>
+
+									<div class="d-flex flex-wrap justify-content-around align-items-center gap-4">
+										<p class="mb-0 d-flex flex-column align-items-center">
+											<span>${usuario.numSeguidores}</span>
+											<span>seguidores</span>
+										</p>
+										<p class="mb-0 d-flex flex-column align-items-center">
+											${usuario.numSeguidos} <span>seguidos</span>
+										</p>
+										<p class="mb-0 d-flex flex-column align-items-center">
+											${usuario.numPosts}
+											<span>post${usuario.numPosts !== 1 ? s : ""}</span>
+										</p>
+										<button id="btnSeguir${usuario._id}" type="button" class="btn btn-primary btn-seguir">
+											${usuario.esSeguidor ? "Dejar de seguir" : "Seguir"}
+										</button>
+									</div>
+								</div>
+							</a>
+						</div>`;
 
 		btnCargar.parentElement.insertAdjacentElement("beforebegin", div);
+
+		const btnSeguir = document.getElementById(`btnSeguir${usuario._id}`);
+		btnSeguir.addEventListener("click", seguirUsuario);
 	});
 }
 
@@ -255,4 +304,5 @@ export {
 	rellenarModalConfigTl,
 	resetearModalTl,
 	anyadirPosts,
+	anyadirUsuarios,
 };

@@ -14,10 +14,13 @@ favImgs.forEach((img) => anyadirEventoFavoritear(img));
 const btnCargarPosts = document.getElementById("cargarPosts");
 if (btnCargarPosts) {
 	btnCargarPosts.addEventListener("click", (e) => {
-		let timeline = document.getElementById("timelines").firstElementChild.firstElementChild.firstElementChild;
+		let timeline = document.getElementById("timelineActual");
 
-		const ultimoPost =
-			document.getElementById("posts").firstElementChild.lastElementChild.previousElementSibling.firstElementChild;
+		// const ultimoPost =
+		// 	document.getElementById("cont-posts").lastElementChild.previousElementSibling.firstElementChild;
+		const posts = document.querySelectorAll("#cont-posts .card");
+		const ultimoPost = posts[posts.length - 1];
+		console.log(ultimoPost);
 		const datosUltimoPost = {
 			fecha: ultimoPost.dataset.fecha,
 			timeline: timeline.textContent.trim(),
@@ -26,7 +29,8 @@ if (btnCargarPosts) {
 		if (datosUltimoPost.timeline !== "Timeline") {
 			datosUltimoPost.ordenTl = timeline.dataset.orden;
 			if (datosUltimoPost.ordenTl === "numFavs" || datosUltimoPost.ordenTl === "-numFavs") {
-				const elemNumFavs = ultimoPost.lastElementChild.firstElementChild.firstElementChild;
+				// const elemNumFavs = ultimoPost.lastElementChild.firstElementChild.firstElementChild;
+				const elemNumFavs = ultimoPost.querySelector(".num-favs");
 				datosUltimoPost.dato = elemNumFavs.textContent.substring(0, elemNumFavs.textContent.indexOf(" "));
 			} else if (datosUltimoPost.ordenTl === "numSeguidores" || datosUltimoPost.ordenTl === "-numSeguidores") {
 				datosUltimoPost.dato = ultimoPost.dataset.seguidores;
@@ -56,7 +60,7 @@ if (btnCargarPosts) {
 				}
 			})
 			.catch((error) => {
-				console.log(error);
+				//
 			});
 	});
 }
@@ -138,7 +142,7 @@ if (btnCargarPostsTag) {
 				}
 			})
 			.catch((error) => {
-				console.log(error);
+				//
 			});
 	});
 }

@@ -38,7 +38,6 @@ function autocompletarUsuarioTL(input) {
 				}
 				autocompletar.classList.remove("mostrar");
 				if (autocompletar.nextElementSibling) {
-					console.log("hola");
 					if (e.target.parentElement.children[1] === e.target)
 						autocompletar.nextElementSibling.classList.remove("mt-2");
 					e.target.remove();
@@ -127,4 +126,35 @@ function borrarTimeline(e) {
 		.catch((error) => {});
 }
 
-export { validarTag, autocompletarUsuarioTL, borrarTimeline };
+function seguirUsuario(e) {
+	e.preventDefault();
+	let textoBtn = e.target.textContent.trim();
+
+	let url = "/api/v1/usuarios/" + e.target.parentElement.previousElementSibling.lastElementChild.textContent;
+	url += textoBtn === "Seguir" ? "/seguir" : "/dejardeseguir";
+
+	fetch(url, {
+		method: "PATCH",
+	})
+		.then((response) => {
+			if (!response.ok) {
+				throw new Error(`Error status: ${response.status}`);
+			}
+			return response.json();
+		})
+		.then((resultado) => {
+			if (resultado.estado === "ok" && textoBtn === "Seguir") {
+				e.target.textContent = "Dejar de seguir";
+				const numSeguidores = e.target.parentElement.firstElementChild.firstElementChild;
+				numSeguidores.textContent = `${parseInt(numSeguidores.textContent) + 1}`;
+			}
+			if (resultado.estado === "ok" && textoBtn === "Dejar de seguir") {
+				e.target.textContent = "Seguir";
+				const numSeguidores = e.target.parentElement.firstElementChild.firstElementChild;
+				numSeguidores.textContent = `${parseInt(numSeguidores.textContent) - 1}`;
+			}
+		})
+		.catch((error) => {});
+}
+
+export { validarTag, autocompletarUsuarioTL, borrarTimeline, seguirUsuario };

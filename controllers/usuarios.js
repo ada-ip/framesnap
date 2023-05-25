@@ -203,7 +203,7 @@ const obtenerUsuarios = async (req, res, next) => {
 				usuarioLogeado: usuarioLogeado[0],
 			});
 		} else {
-			res.status(200).json({ usuarios: eliminarDuplicados(usuariosConEsSeguidor) });
+			res.status(200).json(eliminarDuplicados(usuariosConEsSeguidor));
 		}
 	} catch (error) {
 		next(error);
