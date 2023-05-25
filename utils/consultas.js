@@ -344,9 +344,9 @@ const comprobarFavs = async (posts, idUsuario) => {
 			esFavoritoOutlier = await Fav.findOne({ idPost: post._id, "favs.id": idUsuario });
 		}
 		if (esFavorito || esFavoritoOutlier) {
-			return { ...post, esFavorito: true };
+			return { ...(post.toObject ? post.toObject() : post), esFavorito: true };
 		} else {
-			return { ...post, esFavorito: false };
+			return { ...(post.toObject ? post.toObject() : post), esFavorito: false };
 		}
 	});
 

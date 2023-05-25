@@ -58,10 +58,6 @@ const obtenerPostsPorTag = async (req, res, next) => {
 		anyo: 365,
 	};
 
-	const filtroFecha = {
-		$gte: new Date(Date.now() - 24 * 60 * 60 * 1000 * tiempo[fechaPosts || "mes"]),
-	};
-
 	const filtro = {
 		tags: tag,
 		fecha: {
@@ -90,7 +86,8 @@ const obtenerPostsPorTag = async (req, res, next) => {
 			posts.push(...otrosPosts);
 		}
 
-		const postsConSignedUrl = anyadirSignedUrlsPosts(posts, req);
+		const postsConFavs = await comprobarFavs(posts, req.session.idUsuario);
+		const postsConSignedUrl = anyadirSignedUrlsPosts(postsConFavs, req);
 
 		if (!numFavs) {
 			const usuarioLogeado = anyadirSignedUrlsUsuario(
@@ -98,6 +95,7 @@ const obtenerPostsPorTag = async (req, res, next) => {
 				req
 			);
 
+			console.log(postsConSignedUrl);
 			res.render("busquedaPosts", {
 				posts: postsConSignedUrl,
 				usuarioLogeado: usuarioLogeado[0],
