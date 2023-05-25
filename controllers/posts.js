@@ -115,10 +115,13 @@ const obtenerPostsPorTag = async (req, res, next) => {
 const favoritearPost = async (req, res, next) => {
 	const { idPost } = req.params;
 	try {
-		const post = await Post.findById(idPost).select("_id favs numFavs outlierFavs");
 		const usuarioLogeado = { id: req.session.idUsuario, nombre: req.session.usuario, fotoPerfil: req.session.fotoPerfil };
 
-		if (!post) throw new Error("No existe ningún post con ese ID");
+		const post = await Post.findById(idPost).select("_id favs numFavs outlierFavs");
+		if (!post) return res.status(404).json({ estado: "error" });
+
+		const postConEsFav = await comprobarFavs([post], usuarioLogeado.id);
+		if (postConEsFav[0].esFavorito) return res.status(409).json({ estado: "error" });
 
 		if (!post.outlierFavs) {
 			post.favs.push(usuarioLogeado);
@@ -151,8 +154,7 @@ const desfavoritearPost = async (req, res, next) => {
 	const { idPost } = req.params;
 	try {
 		const post = await Post.findById(idPost).select("_id favs numFavs outlierFavs");
-
-		if (!post) throw new Error("No existe ningún post con ese ID");
+		if (!post) return res.status(404).json({ estado: "error" });
 
 		let indexUsuarioLogeado = post.favs.findIndex((fav) => fav.nombre === req.session.usuario);
 		if (indexUsuarioLogeado !== -1) {
@@ -169,7 +171,7 @@ const desfavoritearPost = async (req, res, next) => {
 				}
 			);
 
-			if (!postOutlier) throw new Error("El usuario no ha favoriteado el post");
+			if (!postOutlier) return res.status(409).json({ estado: "error" });
 		}
 		post.numFavs--;
 		await post.save();
