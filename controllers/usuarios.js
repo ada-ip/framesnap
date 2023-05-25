@@ -180,7 +180,7 @@ const obtenerUsuarios = async (req, res, next) => {
 					$and: [{ "autor.nombre": usuario }, { "autor.nombre": { $ne: req.session.usuario } }],
 				});
 				const usuarioConSignedUrl = anyadirSignedUrlsUsuario(
-					[{ ...usuarioEncontrado, numPosts: postsUsuarioEncontrado }],
+					[{ ...usuarioEncontrado.toObject(), numPosts: postsUsuarioEncontrado }],
 					req
 				);
 				usuarios.push(usuarioConSignedUrl[0]);

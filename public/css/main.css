@@ -80,6 +80,45 @@ a {
 	transition: none;
 }
 
+.btn-outline-primary {
+	--bs-btn-color: rgb(var(--primary-color));
+	--bs-btn-border-color: rgb(var(--primary-color));
+	--bs-btn-hover-color: #fff;
+	--bs-btn-hover-bg: transparent;
+	--bs-btn-hover-border-color: rgb(var(--primary-color));
+	--bs-btn-focus-shadow-rgb: 13, 110, 253;
+	--bs-btn-active-color: #fff;
+	--bs-btn-active-bg: rgb(var(--primary-color));
+	--bs-btn-active-border-color: rgb(var(--primary-color));
+	--bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+	--bs-btn-disabled-color: rgb(var(--secondary-color));
+	--bs-btn-disabled-bg: transparent;
+	--bs-btn-disabled-border-color: rgb(var(--secondary-color));
+	--bs-gradient: none;
+	background-color: transparent;
+	background: linear-gradient(
+		to bottom,
+		transparent 0%,
+		transparent 50%,
+		rgb(var(--primary-color)) 50%,
+		rgb(var(--primary-color)) 100%
+	);
+	background-size: 100% 200%;
+	background-repeat: no-repeat;
+	transition: all 0.4s;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus {
+	background-position: 0 100%;
+}
+
+.btn-outline-primary:active {
+	background-color: rgb(var(--primary-color));
+	background-image: none;
+	transition: none;
+}
+
 .btn-close {
 	--bs-btn-close-focus-shadow: 0 0 0 0.25rem rgba(var(--secondary-color), 0.25);
 }
@@ -224,13 +263,6 @@ aside #usuarios-recomendados > .container-fluid > div {
 	}
 }
 
-@media screen and (min-width: 767px) {
-	#btn-subir-imagen img {
-		position: relative;
-		right: 0.5px;
-	}
-}
-
 .contenedor-menu-timeline {
 	display: flex;
 	justify-content: space-between;
@@ -359,6 +391,10 @@ a.hashtag-post {
 	.cabecera-usuario {
 		padding-inline: 0.6rem !important;
 	}
+}
+
+.nombre-usuario {
+	color: rgb(var(--primary-color));
 }
 
 .contenedor-num-perfil,

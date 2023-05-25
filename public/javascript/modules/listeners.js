@@ -55,7 +55,6 @@ function autocompletarUsuarioTL(input) {
 						return response.json();
 					})
 					.then((usuarios) => {
-						console.log(usuarios);
 						const usuariosNoRepetidos = usuarios.filter((usuario) => {
 							const elems = e.target.parentElement.children;
 							for (let i = 0; i < elems.length; i++) {

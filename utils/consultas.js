@@ -502,8 +502,9 @@ const eliminarSugerenciasSeguidos = async (usuarios, usuarioLogeado) => {
 const obtenerMasPostsPorNumSeguidores = async (filtro, fechaPost, filtroSeguidores, orden, datoPost) => {
 	/* Se hace una consulta para obtener 10 posts cuyos autores tengan el mismo nº de seguidores que el autor del último
 	post mostrado en el timeline del usuario, pero que cuya fecha sea menor a la del post */
+	filtro.fecha.$lt = new Date(fechaPost);
 	const posts = await Post.aggregate()
-		.match({ ...filtro, fecha: { $lt: new Date(fechaPost) } })
+		.match(filtro)
 		.lookup({ from: "users", localField: "autor.id", foreignField: "_id", as: "datosAutor" })
 		.unwind("$datosAutor")
 		.match(filtroSeguidores)
@@ -572,10 +573,8 @@ const obtenerMasPostsPorNumSeguidores = async (filtro, fechaPost, filtroSeguidor
 const obtenerMasPostsPorNumFavs = async (filtro, fechaPost, orden, datoPost) => {
 	/* Se hace una consulta para obtener 10 posts que tengan el mismo nº de favoritos que el último
 	post mostrado en el timeline del usuario, pero que cuya fecha sea menor a la del post */
-	const posts = await Post.find({ ...filtro, fecha: { $lt: new Date(fechaPost) } })
-		.select("-favs -outlierComentarios -tags")
-		.sort(orden)
-		.limit(10);
+	filtro.fecha.$lt = new Date(fechaPost);
+	const posts = await Post.find(filtro).select("-favs -outlierComentarios -tags").sort(orden).limit(10);
 
 	/* Si no se han encontrado 10 posts que cumplan con los requisitos, se hace otra consulta para obtener posts que tengan
 	un nº diferente de favoritos al del último post mostrado en el timeline del usuario */

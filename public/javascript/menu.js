@@ -23,7 +23,6 @@ inputBusqueda.addEventListener(
 					return response.json();
 				})
 				.then((usuarios) => {
-					console.log(usuarios);
 					ulAutocompletar.innerHTML = crearElemAutocompletar(usuarios);
 					ulAutocompletar.classList.add("mostrar");
 				})

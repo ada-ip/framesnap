@@ -230,6 +230,7 @@ const obtenerPostsTimeline = async (req, res, next) => {
 						posts = await obtenerMasPostsPorNumSeguidores(filtro, fecha, filtroSeguidores, orden, dato);
 					} else if (tl.tls[0].config.orden === "numFavs" || tl.tls[0].config.orden === "-numFavs") {
 						posts = await obtenerMasPostsPorNumFavs(filtro, fecha, orden, dato);
+						console.log(posts);
 					} else {
 						posts = await Post.find(filtro).select("-favs -outlierComentarios -tags").sort(orden).limit(10);
 					}

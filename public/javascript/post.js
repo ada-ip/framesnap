@@ -91,7 +91,7 @@ if (btnCargarPostsUsuario) {
 				}
 			})
 			.catch((error) => {
-				console.log(error);
+				//
 			});
 	});
 }

@@ -27,7 +27,7 @@ if (btnCargarTarjetasUsuarios) {
 				}
 			})
 			.catch((error) => {
-				console.log(error);
+				//
 			});
 	});
 }

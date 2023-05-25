@@ -13,7 +13,6 @@ function crearElemAutocompletar(elementos) {
 	texto += "<li><input class='dropdown-item' type='submit' value='Buscar usuarios'></li>";
 	texto += "<li><input class='dropdown-item' formaction='/posts' type='submit' value='Buscar posts'></li>";
 
-	console.log(texto);
 	return texto;
 }
 
@@ -212,7 +211,7 @@ function anyadirPosts(posts, btnCargar) {
 							/>
 							<div class="card-body" id="post${post._id}">
 								<div class="d-flex justify-content-between align-items-center mb-4">
-									<span>${post.numFavs} favorito${post.numFavs !== 1 ? "s" : ""}</span>
+									<span class="fw-semibold">${post.numFavs} favorito${post.numFavs !== 1 ? "s" : ""}</span>
 									<img
 										src="${post.esFavorito ? "/images/fav.png" : "/images/no-fav.png"}"
 										alt="haz click para des/favoritear el post"
