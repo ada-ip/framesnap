@@ -86,6 +86,10 @@ formTimeline.addEventListener("click", (e) => {
 	const listasAutocompletar = formTimeline.querySelectorAll("#form-timeline .autocompletar-tl-ul");
 	esconderListasAutocompletar(e, listasAutocompletar);
 });
+formTimeline.addEventListener("touchend", (e) => {
+	const listasAutocompletar = formTimeline.querySelectorAll("#form-timeline .autocompletar-tl-ul");
+	esconderListasAutocompletar(e, listasAutocompletar);
+});
 
 inputTagsTL.forEach((input) => input.addEventListener("change", validarTag));
 
