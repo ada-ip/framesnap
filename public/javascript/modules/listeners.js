@@ -106,6 +106,19 @@ function anyadirListenersElemsAutocompletar() {
 	);
 }
 
+function esconderListasAutocompletar(e, listas) {
+	let clickEnLista = false;
+	for (let lista of listas) {
+		if (lista.contains(e.target)) {
+			clickEnLista = true;
+		}
+	}
+
+	if (!clickEnLista) {
+		listas.forEach((lista) => lista.classList.remove("mostrar"));
+	}
+}
+
 function borrarTimeline(e) {
 	e.preventDefault();
 
@@ -157,4 +170,4 @@ function seguirUsuario(e) {
 		.catch((error) => {});
 }
 
-export { validarTag, autocompletarUsuarioTL, borrarTimeline, seguirUsuario };
+export { validarTag, autocompletarUsuarioTL, borrarTimeline, seguirUsuario, esconderListasAutocompletar };

@@ -9,7 +9,7 @@ import {
 	comprobarUsuariosTl,
 } from "./modules/inputs.js";
 import { rellenarModalConfigTl, resetearModalTl } from "./modules/dom.js";
-import { validarTag, autocompletarUsuarioTL } from "./modules/listeners.js";
+import { validarTag, autocompletarUsuarioTL, esconderListasAutocompletar } from "./modules/listeners.js";
 
 const inputImagen = document.getElementById("imagenASubir");
 const inputTexto = document.getElementById("texto");
@@ -82,6 +82,10 @@ inputNombreTL.addEventListener("change", (e) => {
 });
 
 inputUsuariosTL.forEach((input) => autocompletarUsuarioTL(input));
+formTimeline.addEventListener("click", (e) => {
+	const listasAutocompletar = formTimeline.querySelectorAll("#form-timeline .autocompletar-tl-ul");
+	esconderListasAutocompletar(e, listasAutocompletar);
+});
 
 inputTagsTL.forEach((input) => input.addEventListener("change", validarTag));
 
@@ -150,7 +154,6 @@ btnCerrarModal.addEventListener("click", (e) => {
 });
 
 const btnsConfigTls = document.querySelectorAll("#timelines img.conf-icon");
-
 btnsConfigTls.forEach((btn) =>
 	btn.addEventListener("click", (e) => {
 		e.preventDefault();
