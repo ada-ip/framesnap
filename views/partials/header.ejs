@@ -86,7 +86,12 @@
 					<!-- OPCIÓN QUE SÓLO SE MUESTRA EN MÓVIL -->
 					<li class="nav-link-mobile">
 						<form action="/api/v1/usuarios/<%= usuarioLogeado._id %>/desconectar" method="post" class="dropdown-item">
-							<input type="submit" class="btn btn-outline-primary" name="desconectarse" value="Desconectarse" />
+							<input
+								type="submit"
+								class="btn btn-outline-primary btn-primary-padding"
+								name="desconectarse"
+								value="Desconectarse"
+							/>
 						</form>
 					</li>
 				</ul>

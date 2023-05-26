@@ -143,7 +143,7 @@ function seguirUsuario(e) {
 	e.preventDefault();
 	let textoBtn = e.target.textContent.trim();
 
-	let url = "/api/v1/usuarios/" + e.target.parentElement.previousElementSibling.lastElementChild.textContent;
+	let url = "/api/v1/usuarios/" + e.target.dataset.usuario;
 	url += textoBtn === "Seguir" ? "/seguir" : "/dejardeseguir";
 
 	fetch(url, {
@@ -158,12 +158,12 @@ function seguirUsuario(e) {
 		.then((resultado) => {
 			if (resultado.estado === "ok" && textoBtn === "Seguir") {
 				e.target.textContent = "Dejar de seguir";
-				const numSeguidores = e.target.parentElement.firstElementChild.firstElementChild;
+				const numSeguidores = e.target.parentElement.querySelector(".num-seguidores");
 				numSeguidores.textContent = `${parseInt(numSeguidores.textContent) + 1}`;
 			}
 			if (resultado.estado === "ok" && textoBtn === "Dejar de seguir") {
 				e.target.textContent = "Seguir";
-				const numSeguidores = e.target.parentElement.firstElementChild.firstElementChild;
+				const numSeguidores = e.target.parentElement.querySelector(".num-seguidores");
 				numSeguidores.textContent = `${parseInt(numSeguidores.textContent) - 1}`;
 			}
 		})

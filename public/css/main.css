@@ -123,6 +123,11 @@ a {
 	--bs-btn-close-focus-shadow: 0 0 0 0.25rem rgba(var(--secondary-color), 0.25);
 }
 
+.btn-primary-padding {
+	padding-block: 0.6rem;
+	padding-inline: 0.9rem;
+}
+
 /********************************************** Lay-out **********************************************/
 
 /********************************************** Navbar **********************************************/
@@ -176,7 +181,7 @@ input[type="search"] {
 
 	.nav-link-mobile,
 	.nav-busqueda {
-		width: 60%;
+		width: 80%;
 	}
 
 	.navbar-collapse > ul.nav > li:not(.nav-busqueda) {
@@ -405,6 +410,10 @@ a.hashtag-post {
 	place-items: center;
 }
 
+.contenedor-num-perfil {
+	color: #000;
+}
+
 .contenedor-foto-perfil {
 	position: relative;
 }
@@ -426,6 +435,16 @@ img.foto-perfil-icon {
 
 .tarjeta-usuario {
 	padding-inline: 2.5rem;
+}
+
+.cont-tarjeta-usuario {
+	position: relative;
+	top: 0;
+	transition: all 0.2s;
+}
+
+.cont-tarjeta-usuario:hover {
+	top: -5px;
 }
 
 /********************************************** Modales **********************************************/

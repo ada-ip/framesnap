@@ -74,7 +74,7 @@
 						<% if(usuarios.length > 0) { %> <% for(let usuario of usuarios) { %>
 
 						<div class="col">
-							<div class="card shadow-sm">
+							<div class="card shadow-sm cont-tarjeta-usuario">
 								<a href="/usuarios/<%= usuario.nombre %>">
 									<div
 										class="card-body tarjeta-usuario d-flex flex-wrap flex-sm-nowrap justify-content-center justify-content-sm-between gap-sm-5"
@@ -91,22 +91,31 @@
 											/>
 											<p class="mt-2 mb-0"><%= usuario.nombre %></p>
 										</div>
-
-										<!-- DATOS SOBRE EL USUARIO -->
-										<div class="d-flex flex-wrap justify-content-around align-items-center gap-4">
-											<p class="mb-0 d-flex flex-column align-items-center">
-												<span><%= usuario.numSeguidores %></span>
-												<span>seguidores</span>
-											</p>
-											<p class="mb-0 d-flex flex-column align-items-center">
-												<%= usuario.numSeguidos %> <span>seguidos</span>
-											</p>
-											<p class="mb-0 d-flex flex-column align-items-center">
-												<%= usuario.numPosts %>
-												<span>post<% if(usuario.numPosts !== 1) { %>s<% } %></span>
-											</p>
+										<div
+											class="d-flex flex-column justify-content-around flex-grow-1 gap-4 gap-sm-2 pt-2 pt-sm-0"
+										>
+											<!-- DATOS SOBRE EL USUARIO -->
+											<div
+												class="contenedor-num-perfil d-flex flex-wrap justify-content-around align-items-center gap-4"
+											>
+												<p class="mb-0 d-flex flex-column align-items-center">
+													<span class="num-seguidores"><%= usuario.numSeguidores %></span>
+													<span>seguidores</span>
+												</p>
+												<p class="mb-0 d-flex flex-column align-items-center">
+													<%= usuario.numSeguidos %> <span>seguidos</span>
+												</p>
+												<p class="mb-0 d-flex flex-column align-items-center">
+													<%= usuario.numPosts %>
+													<span>post<% if(usuario.numPosts !== 1) { %>s<% } %></span>
+												</p>
+											</div>
 											<!-- BOTÓN PARA SEGUIR/DEJAR DE SEGUIR AL USUARIO -->
-											<button type="button" class="btn btn-primary btn-seguir">
+											<button
+												type="button"
+												class="btn btn-primary btn-primary-padding btn-seguir align-self-center"
+												data-usuario="<%= usuario.nombre %>"
+											>
 												<% if(usuario.esSeguidor) { %>Dejar de seguir<% } else { %>Seguir<% } %>
 											</button>
 										</div>
@@ -116,7 +125,9 @@
 						</div>
 						<% } %>
 						<div class="col">
-							<button id="cargarTarjetasUsuarios" type="button" class="btn btn-primary w-100">Más usuarios</button>
+							<button id="cargarTarjetasUsuarios" type="button" class="btn btn-primary btn-primary-padding w-100">
+								Más usuarios
+							</button>
 						</div>
 						<% } else { %>
 						<div class="col caja-blanca mx-2 p-4 rounded-3 text-center">

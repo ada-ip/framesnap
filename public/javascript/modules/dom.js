@@ -268,20 +268,29 @@ function anyadirUsuarios(usuarios, btnCargar) {
 										/>
 										<p class="mt-2 mb-0">${usuario.nombre}</p>
 									</div>
-
-									<div class="d-flex flex-wrap justify-content-around align-items-center gap-4">
-										<p class="mb-0 d-flex flex-column align-items-center">
-											<span>${usuario.numSeguidores}</span>
-											<span>seguidores</span>
-										</p>
-										<p class="mb-0 d-flex flex-column align-items-center">
-											${usuario.numSeguidos} <span>seguidos</span>
-										</p>
-										<p class="mb-0 d-flex flex-column align-items-center">
-											${usuario.numPosts}
-											<span>post${usuario.numPosts !== 1 ? s : ""}</span>
-										</p>
-										<button id="btnSeguir${usuario._id}" type="button" class="btn btn-primary btn-seguir">
+									<div
+										class="d-flex flex-column justify-content-around flex-grow-1 gap-4 gap-sm-2 pt-2 pt-sm-0"
+									>
+										<div
+											class="contenedor-num-perfil d-flex flex-wrap justify-content-around align-items-center gap-4"
+										>
+											<p class="mb-0 d-flex flex-column align-items-center">
+												<span class="num-seguidores">${usuario.numSeguidores}</span>
+												<span>seguidores</span>
+											</p>
+											<p class="mb-0 d-flex flex-column align-items-center">
+												${usuario.numSeguidos} <span>seguidos</span>
+											</p>
+											<p class="mb-0 d-flex flex-column align-items-center">
+												${usuario.numPosts}
+												<span>post${usuario.numPosts !== 1 ? "s" : ""}</span>
+											</p>
+										</div>
+										<button
+											type="button"
+											class="btn btn-primary btn-seguir align-self-center"
+											data-usuario="${usuario.nombre}"
+										>
 											${usuario.esSeguidor ? "Dejar de seguir" : "Seguir"}
 										</button>
 									</div>

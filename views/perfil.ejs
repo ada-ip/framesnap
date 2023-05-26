@@ -70,7 +70,7 @@
 			<!-- CABECERA DEL USUARIO -->
 			<div class="container mt-5 px-0 fw-semibold cabecera-usuario" style="max-width: 500px">
 				<div
-					class="caja-blanca shadow-sm p-5 text-center rounded-3 d-flex flex-column flex-wrap flex-sm-nowrap justify-content-around gap-sm-4"
+					class="caja-blanca shadow-sm p-4 text-center rounded-3 d-flex flex-column flex-wrap flex-sm-nowrap justify-content-around gap-sm-4"
 				>
 					<div class="contenedor-foto-perfil mb-3 mb-sm-0">
 						<!-- FOTO DE PERFIL -->
@@ -169,7 +169,7 @@
 
 						<!-- BOTÓN PARA SEGUIR/DEJAR DE SEGUIR AL USUARIO -->
 						<% if(usuarioLogeado._id != usuario._id) { %>
-						<button type="button" id="btn-seguir" class="btn btn-primary mt-3">
+						<button type="button" id="btn-seguir" class="btn btn-primary btn-primary-padding mt-3">
 							<% if(usuario.esSeguidor) { %>Dejar de seguir<% } else { %>Seguir<% } %>
 						</button>
 						<% } %>
@@ -189,7 +189,9 @@
 						include("./partials/post.ejs", {post: post}); %> <% } %>
 						<!-- BOTÓN PARA CARGAR MÁS POSTS -->
 						<div class="col">
-							<button id="cargarPostsUsuario" type="button" class="btn btn-primary w-100">Más posts</button>
+							<button id="cargarPostsUsuario" type="button" class="btn btn-primary btn-primary-padding w-100">
+								Más posts
+							</button>
 						</div>
 						<% } else { %>
 						<div class="col caja-blanca mx-2 p-4 rounded-3">
