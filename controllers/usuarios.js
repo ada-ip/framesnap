@@ -64,7 +64,6 @@ const comprobarUsuarioExiste = async (req, res, next) => {
 
 const devolverPerfilUsuario = async (req, res, next) => {
 	const { usuario } = req.params;
-	console.log("hola");
 
 	try {
 		const datosUsuario = await User.findOne({ nombre: usuario }).select(

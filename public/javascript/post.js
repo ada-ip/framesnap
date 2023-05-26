@@ -16,11 +16,9 @@ if (btnCargarPosts) {
 	btnCargarPosts.addEventListener("click", (e) => {
 		let timeline = document.getElementById("timelineActual");
 
-		// const ultimoPost =
-		// 	document.getElementById("cont-posts").lastElementChild.previousElementSibling.firstElementChild;
 		const posts = document.querySelectorAll("#cont-posts .card");
 		const ultimoPost = posts[posts.length - 1];
-		console.log(ultimoPost);
+
 		const datosUltimoPost = {
 			fecha: ultimoPost.dataset.fecha,
 			timeline: timeline.textContent.trim(),
@@ -29,7 +27,6 @@ if (btnCargarPosts) {
 		if (datosUltimoPost.timeline !== "Timeline") {
 			datosUltimoPost.ordenTl = timeline.dataset.orden;
 			if (datosUltimoPost.ordenTl === "numFavs" || datosUltimoPost.ordenTl === "-numFavs") {
-				// const elemNumFavs = ultimoPost.lastElementChild.firstElementChild.firstElementChild;
 				const elemNumFavs = ultimoPost.querySelector(".num-favs");
 				datosUltimoPost.dato = elemNumFavs.textContent.substring(0, elemNumFavs.textContent.indexOf(" "));
 			} else if (datosUltimoPost.ordenTl === "numSeguidores" || datosUltimoPost.ordenTl === "-numSeguidores") {
@@ -73,12 +70,8 @@ if (btnCargarPostsUsuario) {
 		const datosUltimoPost = {
 			fechaPost: ultimoPost.dataset.fecha,
 		};
-		// const datosUltimoPost = {
-		// 	fechaPost: e.target.parentElement.previousElementSibling.firstElementChild.dataset.fecha,
-		// };
 
 		let url = "/api/v1/posts/" + document.getElementById("cont-posts").dataset.usuario + "/cargarmasposts";
-		// let url = "/api/v1/posts/" + e.target.parentElement.parentElement.dataset.usuario + "/cargarmasposts";
 
 		fetch(url, {
 			method: "POST",
@@ -114,9 +107,10 @@ if (btnCargarPostsTag) {
 		const tag =
 			query.length > 1 ? query[1].substring(query[1].indexOf("=") + 1) : query[0].substring(query[0].indexOf("=") + 1);
 
-		const ultimoPost =
-			document.getElementById("posts").firstElementChild.lastElementChild.previousElementSibling.firstElementChild;
-		const elemNumFavs = ultimoPost.lastElementChild.firstElementChild.firstElementChild;
+		const posts = document.querySelectorAll("#cont-posts .card");
+		const ultimoPost = posts[posts.length - 1];
+
+		const elemNumFavs = ultimoPost.querySelector(".num-favs");
 
 		const datosUltimoPost = {
 			fechaUltimoPost: ultimoPost.dataset.fecha,
