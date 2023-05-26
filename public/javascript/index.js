@@ -162,10 +162,10 @@ btnsConfigTls.forEach((btn) =>
 	btn.addEventListener("click", (e) => {
 		e.preventDefault();
 
-		formTimeline.firstElementChild.firstElementChild.textContent = "Modificar timeline";
-		formTimeline.lastElementChild.lastElementChild.value = "Guardar";
-		formTimeline.lastElementChild.firstElementChild.value = "patch";
-		formTimeline.lastElementChild.children[1].value = e.target.previousElementSibling.textContent.trim();
+		formTimeline.querySelector("#crearTLModalLabel").textContent = "Modificar timeline";
+		formTimeline.querySelector("#crearTLModalBtn").value = "Guardar";
+		formTimeline.querySelector("input[name=metodo]").value = "patch";
+		formTimeline.querySelector("input[name=anteriorNombre]").value = e.target.previousElementSibling.textContent.trim();
 
 		let url = "/api/v1/tls/" + e.target.previousElementSibling.textContent.trim();
 

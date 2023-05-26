@@ -55,32 +55,32 @@ function crearNuevoInputTags(ultimoTag) {
 }
 
 function rellenarModalConfigTl(datosTl, modalBody) {
-	const nombre = modalBody.firstElementChild.lastElementChild;
+	const nombre = modalBody.querySelector("#nombreTl");
 	nombre.value = datosTl.nombre;
 	nombre.classList.add("input-valido");
 	nombre.setAttribute("data-value", datosTl.nombre);
 
-	const usuarios = modalBody.children[1].firstElementChild;
+	const usuarios = modalBody.querySelector("#contUsuariosTl");
 	datosTl.autor.forEach((autor) => {
 		usuarios.lastElementChild.previousElementSibling.value = autor;
 		usuarios.lastElementChild.previousElementSibling.classList.add("input-valido");
 		crearNuevoInputUsuario(usuarios.lastElementChild);
 	});
 
-	const tags = modalBody.children[1].lastElementChild;
+	const tags = modalBody.querySelector("#contTagsTl");
 	datosTl.tags.forEach((tag) => {
 		tags.lastElementChild.value = tag;
 		tags.lastElementChild.classList.add("input-valido");
 		crearNuevoInputTags(tags.lastElementChild);
 	});
 
-	const fecha = modalBody.children[2].lastElementChild;
+	const fecha = modalBody.querySelector("#fechaTl");
 	for (let option of fecha) {
 		if (option.value === datosTl.fechaFormateada.opcion) option.selected = true;
 	}
 
 	if (datosTl.fechaFormateada.opcion === "elegir") {
-		const contenedorFechas = modalBody.children[3];
+		const contenedorFechas = modalBody.querySelector("#rango-fechas-tl");
 		contenedorFechas.classList.remove("ocultar");
 
 		const fechaDesde = new Date(datosTl.fechaFormateada.$gte);
@@ -100,7 +100,7 @@ function rellenarModalConfigTl(datosTl, modalBody) {
 		}
 	}
 
-	const orden = modalBody.lastElementChild.lastElementChild;
+	const orden = modalBody.querySelector("#ordenTl");
 	for (let option of orden) {
 		if (option.value === datosTl.orden) option.selected = true;
 	}
@@ -108,32 +108,34 @@ function rellenarModalConfigTl(datosTl, modalBody) {
 	const btnBorrar = document.createElement("input");
 	btnBorrar.type = "submit";
 	btnBorrar.value = "Borrar Timeline";
+	btnBorrar.id = "borrarTLModalBtn";
 	btnBorrar.classList.add("btn");
 	btnBorrar.classList.add("btn-primary");
 	btnBorrar.classList.add("me-2");
 	btnBorrar.addEventListener("click", borrarTimeline);
 
-	const btnGuardar = modalBody.nextElementSibling.lastElementChild;
+	const btnGuardar = modalBody.parentElement.querySelector("#crearTLModalBtn");
 	btnGuardar.insertAdjacentElement("beforebegin", btnBorrar);
 }
 
 function resetearModalTl(modalBody) {
-	modalBody.previousElementSibling.firstElementChild.textContent = "Crear nuevo timeline";
-	modalBody.nextElementSibling.lastElementChild.value = "Crear";
-	modalBody.nextElementSibling.lastElementChild.previousElementSibling.remove();
-	modalBody.nextElementSibling.firstElementChild.value = "post";
-	modalBody.nextElementSibling.children[1].value = "Timeline";
+	modalBody.parentElement.querySelector("#crearTLModalLabel").value = "Crear nuevo timeline";
+	modalBody.parentElement.querySelector("#crearTLModalBtn").value = "Crear";
+	const btnBorrarTl = modalBody.parentElement.querySelector("#borrarTLModalBtn");
+	if (btnBorrarTl) btnBorrarTl.remove();
+	modalBody.parentElement.querySelector("input[name=metodo]").value = "post";
+	modalBody.parentElement.querySelector("input[name=anteriorNombre]").value = "Timeline";
 
 	const errores = document.querySelectorAll(".error-input");
 	errores.forEach((error) => error.remove());
 
-	const nombre = modalBody.firstElementChild.lastElementChild;
+	const nombre = modalBody.querySelector("#nombreTl");
 	nombre.value = "";
 	nombre.classList.remove("input-valido");
 	nombre.classList.remove("input-no-valido");
 	nombre.setAttribute("data-value", "");
 
-	const usuarios = modalBody.children[1].firstElementChild;
+	const usuarios = modalBody.querySelector("#contUsuariosTl");
 	usuarios.children[1].value = "";
 	usuarios.children[1].classList.remove("input-valido");
 	usuarios.children[1].classList.remove("input-no-valido");
@@ -141,7 +143,7 @@ function resetearModalTl(modalBody) {
 		usuarios.children[i].remove();
 	}
 
-	const tags = modalBody.children[1].lastElementChild;
+	const tags = modalBody.querySelector("#contTagsTl");
 	tags.children[1].value = "";
 	tags.children[1].classList.remove("input-valido");
 	tags.children[1].classList.remove("input-no-valido");
@@ -149,12 +151,12 @@ function resetearModalTl(modalBody) {
 		tags.children[i].remove();
 	}
 
-	const fecha = modalBody.children[2].lastElementChild;
+	const fecha = modalBody.querySelector("#fechaTl");
 	for (let option of fecha) {
 		if (option.value === "dia") option.selected = true;
 	}
 
-	const contenedorFechas = modalBody.children[3];
+	const contenedorFechas = modalBody.querySelector("#rango-fechas-tl");
 	contenedorFechas.classList.add("ocultar");
 	contenedorFechas.firstElementChild.lastElementChild.value = "";
 	contenedorFechas.firstElementChild.lastElementChild.classList.remove("input-valido");
@@ -163,7 +165,7 @@ function resetearModalTl(modalBody) {
 	contenedorFechas.lastElementChild.lastElementChild.classList.remove("input-valido");
 	contenedorFechas.lastElementChild.lastElementChild.classList.remove("input-no-valido");
 
-	const orden = modalBody.lastElementChild.lastElementChild;
+	const orden = modalBody.querySelector("#ordenTl");
 	for (let option of orden) {
 		if (option.value === "-fecha") option.selected = true;
 	}

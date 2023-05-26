@@ -72,7 +72,7 @@
 					<!-- USUARIOS RECOMENDADOS -->
 					<div id="usuarios-recomendados" class="caja-blanca py-4 px-3 mb-3 rounded-3">
 						<div class="container-fluid">
-							<h2>A quién seguir</h2>
+							<h2 class="text-center text-md-start">A quién seguir</h2>
 							<div class="d-flex flex-wrap justify-content-center justify-content-md-start gap-3 mt-4">
 								<% if(usuariosRecomendados.length === 0) { %> Vaya, parece que hay poco movimiento. <% } else {
 								for(let usuario of usuariosRecomendados) { %>
@@ -107,7 +107,7 @@
 										<!-- TIMELINE ACTUAL -->
 										<button
 											id="timelineActual"
-											class="btn dropdown-toggle me-1 <% if(usuario.tlElegido === 'Timeline'){ %>w-100<% } %>"
+											class="btn dropdown-toggle me-1 fs-7 <% if(usuario.tlElegido === 'Timeline'){ %>w-100<% } %>"
 											type="button"
 											data-bs-toggle="dropdown"
 											aria-expanded="false"
@@ -124,7 +124,7 @@
 										/>
 										<% } %>
 										<!-- RESTO DE TIMELINES -->
-										<ul class="dropdown-menu">
+										<ul class="dropdown-menu fs-7">
 											<% for(let tl of usuario.tls) { %> <% if(tl.nombre !== usuario.tlElegido) { %>
 											<li>
 												<a
@@ -197,7 +197,7 @@
 														/>
 														<ul class="dropdown-menu text-small autocompletar-tl-ul"></ul>
 													</div>
-													<div class="column col-6">
+													<div id="contTagsTl" class="column col-6">
 														<label for="tagsTl" class="col-form-label">Añadir tags:</label>
 														<input type="text" class="form-control" id="tagsTl" name="tagsTl[]" />
 													</div>
@@ -237,7 +237,7 @@
 											<div class="modal-footer">
 												<input type="hidden" name="metodo" value="post" />
 												<input type="hidden" name="anteriorNombre" value="Timeline" />
-												<input type="submit" class="btn btn-primary" value="Crear" />
+												<input type="submit" id="crearTLModalBtn" class="btn btn-primary" value="Crear" />
 											</div>
 										</form>
 									</div>
