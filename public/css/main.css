@@ -273,7 +273,7 @@ aside #usuarios-recomendados > .container-fluid > div {
 	background-color: #fff;
 	border: 1px solid rgba(0, 0, 0, 0.175);
 	border-radius: 0.375rem;
-	width: 90%;
+	width: 100%;
 }
 
 #timelines button.dropdown-toggle {
@@ -316,14 +316,16 @@ aside #usuarios-recomendados > .container-fluid > div {
 	background-color: inherit;
 }
 
-#recargar-pagina {
-	display: grid;
-	place-items: center;
-}
+@media screen and (min-width: 576px) {
+	#recargar-pagina {
+		display: grid !important;
+		place-items: center;
+	}
 
-#recargar-pagina img {
-	position: relative;
-	top: 0.05rem;
+	#recargar-pagina img {
+		position: relative;
+		top: 0.05rem;
+	}
 }
 
 #form-timeline .autocompletar-tl-ul {
