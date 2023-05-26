@@ -68,11 +68,17 @@ if (btnCargarPosts) {
 const btnCargarPostsUsuario = document.getElementById("cargarPostsUsuario");
 if (btnCargarPostsUsuario) {
 	btnCargarPostsUsuario.addEventListener("click", (e) => {
+		const posts = document.querySelectorAll("#cont-posts .card");
+		const ultimoPost = posts[posts.length - 1];
 		const datosUltimoPost = {
-			fechaPost: e.target.parentElement.previousElementSibling.firstElementChild.dataset.fecha,
+			fechaPost: ultimoPost.dataset.fecha,
 		};
+		// const datosUltimoPost = {
+		// 	fechaPost: e.target.parentElement.previousElementSibling.firstElementChild.dataset.fecha,
+		// };
 
-		let url = "/api/v1/posts/" + e.target.parentElement.parentElement.dataset.usuario + "/cargarmasposts";
+		let url = "/api/v1/posts/" + document.getElementById("cont-posts").dataset.usuario + "/cargarmasposts";
+		// let url = "/api/v1/posts/" + e.target.parentElement.parentElement.dataset.usuario + "/cargarmasposts";
 
 		fetch(url, {
 			method: "POST",

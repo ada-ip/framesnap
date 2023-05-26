@@ -48,7 +48,7 @@
 			<% const palabrasTexto = post.texto.split(" "); %>
 			<p class="card-text mb-2">
 				<% for(let palabra of palabrasTexto) { if(palabra.startsWith("#")) { %><a
-					href="posts?q=<%= palabra.substring(1) %>"
+					href="/posts?q=<%= palabra.substring(1) %>"
 					class="hashtag-post"
 					><%= palabra %></a
 				>

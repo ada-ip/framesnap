@@ -232,7 +232,7 @@ function anyadirPosts(posts, btnCargar) {
 		for (let palabra of palabrasTexto) {
 			if (palabra.startsWith("#")) {
 				textoPost.innerHTML += `<a
-						href="posts?q=${palabra.substring(1)}"
+						href="/posts?q=${palabra.substring(1)}"
 						class="hashtag-post"
 						>${palabra}</a
 					> `;
