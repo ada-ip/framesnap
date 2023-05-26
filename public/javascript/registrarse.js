@@ -5,7 +5,7 @@ import {
 	correoValido,
 	contrasenyaValida,
 	comprobarInputs,
-	crearMensajeError
+	crearMensajeError,
 } from "./modules/inputs.js";
 
 const inputNombre = document.getElementById("nombre");
@@ -20,9 +20,12 @@ inputNombre.addEventListener("change", (e) => {
 });
 
 inputNombre.addEventListener("change", (e) => {
+	console.log(e.target);
 	if (e.target.classList.contains("input-valido")) {
+		console.log("hola");
 		const url = "/api/v1/usuarios/" + e.target.value.trim().toLowerCase() + "/validez";
 
+		console.log(url);
 		fetch(url)
 			.then((response) => {
 				if (!response.ok) {
