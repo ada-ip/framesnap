@@ -119,7 +119,7 @@ function rellenarModalConfigTl(datosTl, modalBody) {
 }
 
 function resetearModalTl(modalBody) {
-	modalBody.parentElement.querySelector("#crearTLModalLabel").value = "Crear nuevo timeline";
+	modalBody.parentElement.querySelector("#crearTLModalLabel").textContent = "Crear nuevo timeline";
 	modalBody.parentElement.querySelector("#crearTLModalBtn").value = "Crear";
 	const btnBorrarTl = modalBody.parentElement.querySelector("#borrarTLModalBtn");
 	if (btnBorrarTl) btnBorrarTl.remove();

@@ -417,6 +417,7 @@ a.hashtag-post {
 
 .contenedor-num-perfil {
 	color: #000;
+	font-weight: 500;
 }
 
 .contenedor-foto-perfil {
@@ -461,9 +462,25 @@ img.foto-perfil-icon {
 	padding-right: 0 !important;
 }
 
+.modal-content {
+	background-color: #f8f9fa;
+	color: #343a40;
+}
+
+.modal-header,
+.modal-body {
+	font-size: 1.1rem;
+}
+
+.modal-header {
+	background-color: #4544ab;
+	color: #fff;
+}
+
 /********************************************** Formularios **********************************************/
 
-.form-control:focus {
+.form-control:focus,
+.form-select:focus {
 	border-color: rgb(var(--secondary-color));
 	box-shadow: 0 0 0 0.25rem rgba(var(--secondary-color), 0.25);
 }
