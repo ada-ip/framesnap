@@ -4,7 +4,7 @@
 		<div class="d-flex flex-wrap align-items-center justify-content-between w-100">
 			<!-- LOGO DE LA MARCA -->
 			<a href="/" class="d-flex align-items-center my-0 me-auto text-decoration-none">
-				<img src="/images/logo-gradiant-transparent.png" alt="Logo de Framesnap" width="60" />
+				<img src="/images/logo-gradiant-transparent.png" alt="Logo de FrameSnap" width="60" />
 			</a>
 			<!-- BOTÓN MENÚ HAMBURGUESA -->
 			<button
@@ -21,11 +21,11 @@
 			<!-- OPCIONES DE NAVEGACIÓN -->
 			<div class="collapse navbar-collapse" id="menuColaps">
 				<ul class="nav my-2 d-flex flex-column flex-sm-row justify-content-end align-items-center my-0 text-small gap-3">
-					<!-- OPCIÓN QUE SÓLO SE MUESTRA EN MÓVIL -->
+					<!-- OPCIÓN DE MENÚ QUE SÓLO SE MUESTRA EN MÓVIL -->
 					<li class="nav-link-mobile">
 						<a class="nav-link" href="/usuarios/<%= usuarioLogeado.nombre %>">Perfil</a>
 					</li>
-					<!-- OPCIÓN QUE SÓLO SE MUESTRA EN MÓVIL -->
+					<!-- OPCIÓN DE MENÚ QUE SÓLO SE MUESTRA EN MÓVIL -->
 					<li class="nav-link-mobile">
 						<a class="nav-link" href="#">Notificaciones</a>
 					</li>
@@ -45,7 +45,7 @@
 						</form>
 					</li>
 
-					<!-- OPCIÓN QUE SÓLO SE MUESTRA EN TABLET/ORDENADOR -->
+					<!-- MENÚ QUE SÓLO SE MUESTRA EN TABLET/ORDENADOR -->
 					<li class="dropdown text-end nav-link-desktop">
 						<a
 							href="#"
@@ -83,7 +83,7 @@
 							</li>
 						</ul>
 					</li>
-					<!-- OPCIÓN QUE SÓLO SE MUESTRA EN MÓVIL -->
+					<!-- OPCIÓN DE MENÚ QUE SÓLO SE MUESTRA EN MÓVIL -->
 					<li class="nav-link-mobile">
 						<form action="/api/v1/usuarios/<%= usuarioLogeado._id %>/desconectar" method="post" class="dropdown-item">
 							<input
