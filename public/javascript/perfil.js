@@ -19,19 +19,22 @@ if (document.getElementById("btn-seguir")) {
 				return response.json();
 			})
 			.then((resultado) => {
+				const numSeguidores = document.getElementById("num-seguidores");
+				const numTimelines = document.getElementById("num-timelines");
 				if (resultado.estado === "ok" && textoBtn === "Seguir") {
 					e.target.textContent = "Dejar de seguir";
-					const numSeguidores = document.getElementById("num-seguidores");
 					numSeguidores.textContent = `${parseInt(numSeguidores.textContent) + 1}`;
-					const numTimelines = document.getElementById("num-timelines");
 					numTimelines.textContent = `${parseInt(numTimelines.textContent) + 1}`;
 				}
 				if (resultado.estado === "ok" && textoBtn === "Dejar de seguir") {
 					e.target.textContent = "Seguir";
-					const numSeguidores = document.getElementById("num-seguidores");
 					numSeguidores.textContent = `${parseInt(numSeguidores.textContent) - 1}`;
-					const numTimelines = document.getElementById("num-timelines");
 					numTimelines.textContent = `${parseInt(numTimelines.textContent) - 1}`;
+				}
+				if (numTimelines.textContent !== "1") {
+					numTimelines.parentElement.nextElementSibling.textContent = "timelines";
+				} else {
+					numTimelines.parentElement.nextElementSibling.textContent = "timeline";
 				}
 			})
 			.catch((error) => {});
