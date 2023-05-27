@@ -147,7 +147,7 @@ formTimeline.addEventListener("submit", (e) => {
 			comprobarValidez(inputFechaHasta, (valor) => valor != "", mensajeError);
 		}
 		if (inputNombreTL.value.trim() === "") {
-			let mensajeError = "Tienes que escribir el nombre del timeline";
+			let mensajeError = "El nombre tiene que tener entre 1 y 20 caracteres alfanuméricos o guiones";
 			comprobarValidez(inputNombreTL, (valor) => valor != "", mensajeError);
 		}
 	}
