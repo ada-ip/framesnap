@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title>Framesnap - Login</title>
+		<title>FrameSnap - Inicia Sesión</title>
 		<link rel="icon" href="/images/favicon.png" type="image/png" />
 		<link href="/css/normalize.css" rel="stylesheet" type="text/css" crossorigin="anonymous" />
 		<link
@@ -16,29 +16,29 @@
 		<link href="/css/login-signup.css" rel="stylesheet" type="text/css" crossorigin="anonymous" />
 	</head>
 	<body>
+		<!-- Contenido principal -->
 		<main class="background-radial-gradient overflow-hidden main-login">
 			<div class="container px-4 py-5 px-md-5 text-center text-lg-start my-5">
 				<div class="row gx-lg-5 align-items-center mb-5">
-					<div class="col-lg-6 mb-5 mb-lg-0" style="z-index: 10">
-						<h1 class="my-5 display-5 fw-bold ls-tight" style="color: hsl(218, 81%, 95%)">
-							Lorem ipsum <br />
-							<span style="color: hsl(218, 81%, 75%)">lorem ipsum</span>
+					<!-- Texto lateral -->
+					<div class="col-lg-6 mb-3 mb-lg-0">
+						<img class="logo" src="/images/logo-gradiant-transparent.png" width="100" />
+						<h1 class="my-4 mt-2 display-5 fw-bold ls-tight text-center">
+							FrameSnap <br />
+							<span class="fs-3">Cronología personalizada. Historias únicas.</span>
 						</h1>
-						<p class="mb-4 opacity-70" style="color: hsl(218, 81%, 85%)">
-							Lorem ipsum dolor, sit amet consectetur adipisicing elit. Temporibus, expedita iusto veniam atque,
-							magni tempora mollitia dolorum consequatur nulla, neque debitis eos reprehenderit quasi ab ipsum nisi
-							dolorem modi. Quos?
+						<p class="mb-4 opacity-70">
+							Tu mundo, tus historias, tus momentos. <br />Todo en un lugar, en tus timelines de FrameSnap.
+							<br />Inicia sesión y continúa creando recuerdos.
 						</p>
 					</div>
 
+					<!-- Formulario de inicio de sesión -->
 					<div class="col-lg-6 mb-5 mb-lg-0 position-relative">
-						<div id="radius-shape-1" class="position-absolute rounded-circle shadow-5-strong"></div>
-						<div id="radius-shape-2" class="position-absolute shadow-5-strong"></div>
-
 						<div class="card bg-glass">
 							<div class="card-body px-4 py-5 px-md-5">
+								<h2 class="text-center fs-4 mb-4">Inicia Sesión</h2>
 								<form action="/iniciar-sesion" method="post" id="form-login">
-									<!-- Email input -->
 									<div class="form-outline mb-4">
 										<label class="form-label" for="nombre">Nombre de usuario</label>
 										<input
@@ -53,7 +53,6 @@
 										<% } %>
 									</div>
 
-									<!-- Password input -->
 									<div class="form-outline mb-4">
 										<label class="form-label" for="passw">Contraseña</label>
 										<input
@@ -76,8 +75,8 @@
 										value="Iniciar Sesión"
 									/>
 								</form>
-								<div class="d-flex align-items-center justify-content-center pb-4">
-									<p class="mb-0 me-2">¿No tienes una cuenta?</p>
+								<div class="d-flex flex-wrap align-items-center justify-content-center pb-4">
+									<p class="mb-1 mb-sm-0 me-2 fs-7">¿No tienes una cuenta?</p>
 									<a href="/registrarse" class="btn btn-outline-primary btn-primary-padding">Regístrate</a>
 								</div>
 							</div>

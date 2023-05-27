@@ -14,7 +14,7 @@
 
 @font-face {
 	font-family: "Quicksand";
-	src: url("../fonts/Quicksand-VariableFont_wght.ttf") format("truetype");
+	src: url("../fonts/Quicksand/Quicksand-VariableFont_wght.ttf") format("truetype");
 	font-style: normal;
 }
 
@@ -480,7 +480,8 @@ img.foto-perfil-icon {
 /********************************************** Formularios **********************************************/
 
 .form-control:focus,
-.form-select:focus {
+.form-select:focus,
+.form-check-input:focus {
 	border-color: rgb(var(--secondary-color));
 	box-shadow: 0 0 0 0.25rem rgba(var(--secondary-color), 0.25);
 }
@@ -502,6 +503,16 @@ img.foto-perfil-icon {
 
 .error-input {
 	color: red;
+}
+
+.form-check-input {
+	position: relative;
+	top: 0.7px;
+}
+
+.form-check-input:checked {
+	background-color: rgb(var(--primary-color));
+	border-color: rgb(var(--primary-color));
 }
 
 .ocultar {

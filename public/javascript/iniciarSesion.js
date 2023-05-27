@@ -43,7 +43,7 @@ form.addEventListener("submit", (e) => {
 		e.target.submit();
 	} else {
 		if (!inputNombre.classList.contains("input-no-valido")) {
-			let mensajeError = "Tiene que escribir el nombre de usuario";
+			let mensajeError = "Tienes que escribir el nombre de usuario";
 			comprobarValidez(inputNombre, nombreValido, mensajeError);
 		}
 

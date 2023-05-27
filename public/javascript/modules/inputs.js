@@ -71,6 +71,14 @@ function imagenValida(imagen) {
 	}
 }
 
+function textoValido(texto) {
+	if (texto.length > 0 && texto.length <= 1000) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 function fechaValida(fechas) {
 	if (fechas[0].value != "" && fechas[1].value != "") {
 		const fecha1 = new Date(fechas[0].value);
@@ -136,6 +144,7 @@ export {
 	crearMensajeError,
 	borrarMensajeError,
 	imagenValida,
+	textoValido,
 	nombreTLValido,
 	fechaValida,
 	comprobarValidezFechas,

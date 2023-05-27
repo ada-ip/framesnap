@@ -1,5 +1,6 @@
 import {
 	imagenValida,
+	textoValido,
 	comprobarValidez,
 	comprobarInputs,
 	nombreTLValido,
@@ -17,12 +18,12 @@ const formImagen = document.getElementById("form-subir-foto");
 
 inputImagen.addEventListener("change", (e) => {
 	let mensajeError = "La imagen no puede superar los 10MB y tiene que tener uno de los siguientes formatos: jpg, jpeg, png";
-	comprobarValidez(inputImagen, imagenValida, mensajeError, true);
+	comprobarValidez(e.target, imagenValida, mensajeError, true);
 });
 
 inputTexto.addEventListener("change", (e) => {
-	let mensajeError = "Tienes que escribir un pie de foto";
-	comprobarValidez(e.target, () => e.target.value.trim() != "", mensajeError);
+	let mensajeError = "El pie de foto tiene que tener entre 1 y 1000 caracteres";
+	comprobarValidez(e.target, textoValido, mensajeError);
 });
 
 formImagen.addEventListener("submit", (e) => {
@@ -37,8 +38,8 @@ formImagen.addEventListener("submit", (e) => {
 		}
 
 		if (!inputTexto.classList.contains("input-no-valido")) {
-			let mensajeError = "Tienes que escribir un pie de foto";
-			comprobarValidez(inputTexto, () => inputTexto.value.trim() != "", mensajeError);
+			let mensajeError = "El pie de foto tiene que tener entre 1 y 1000 caracteres";
+			comprobarValidez(inputTexto, textoValido, mensajeError);
 		}
 	}
 });

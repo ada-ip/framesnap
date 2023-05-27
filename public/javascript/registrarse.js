@@ -1,3 +1,4 @@
+import { borrarMensajeError } from "./modules/inputs.js";
 import {
 	comprobarValidez,
 	comprobarContrasenyas,
@@ -12,6 +13,7 @@ const inputNombre = document.getElementById("nombre");
 const inputCorreo = document.getElementById("correo");
 const inputPassw1 = document.getElementById("passw1");
 const inputPassw2 = document.getElementById("passw2");
+const inputPolitica = document.getElementById("politicaCheck");
 const form = document.getElementById("signup-form");
 
 inputNombre.addEventListener("change", (e) => {
@@ -85,10 +87,19 @@ inputPassw2.addEventListener("change", (e) => {
 	comprobarContrasenyas(inputPassw1, inputPassw2);
 });
 
+inputPolitica.addEventListener("change", (e) => {
+	if (e.target.checked) {
+		borrarMensajeError(e.target.nextElementSibling);
+	} else {
+		let mensajeError = "Tienes que aceptar la política de privacidad";
+		crearMensajeError(inputPolitica.nextElementSibling, mensajeError);
+	}
+});
+
 form.addEventListener("submit", (e) => {
 	e.preventDefault();
 
-	if (comprobarInputs([inputNombre, inputCorreo, inputPassw1, inputPassw2])) {
+	if (comprobarInputs([inputNombre, inputCorreo, inputPassw1, inputPassw2]) && inputPolitica.checked) {
 		e.target.submit();
 	} else {
 		if (!inputNombre.classList.contains("input-no-valido")) {
@@ -104,6 +115,10 @@ form.addEventListener("submit", (e) => {
 			let mensajeError =
 				"La contraseña tiene que tener como mínimo 6 caracteres y sólo puede contener letras, números y caracteres especiales";
 			comprobarValidez(inputPassw1, contrasenyaValida, mensajeError);
+		}
+		if (!inputPolitica.checked) {
+			let mensajeError = "Tienes que aceptar la política de privacidad";
+			crearMensajeError(inputPolitica.nextElementSibling, mensajeError);
 		}
 	}
 });
