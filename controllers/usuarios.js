@@ -1,12 +1,41 @@
+/**
+ * Este módulo proporciona controladores para gestionar las cuentas de usuario de los usuarios de la aplicación, y permitir
+ * a los usuarios realizar acciones como crearse una cuenta en la aplicación, acceder al perfil de otro usuario, o
+ * seguir a un usuario determinado.
+ *
+ * Los modelos Post, User y Follow son necesarios para manipular los datos correspondientes de la base de datos.
+ *
+ * Controladores:
+ * - registrarUsuario: Crea un nuevo usuario de la aplicación.
+ * - comprobarUsuarioExiste: Comprueba si ya existe un usuario registrado con un nombre o un correo determinado.
+ * - devolverPerfilUsuario: Renderiza el perfil personal de un usuario determinado.
+ * - desconectarUsuario: Finaliza la sesión del usuario conectado.
+ * - obtenerNombresUsuarios: Devuelve los nombres de los usuarios cuyo nombre coincide con o comienza por un conjunto de
+ * 							 caracteres determinado.
+ * - obtenerUsuarios: Devuelve un conjunto de usuarios cuyo nombre coincide con o comienza por un conjunto de caracteres determinado.
+ * 					  En el caso de que se haya accedido al controlador con una petición GET, renderiza la página de búsqueda de usuarios
+ * 					  con los usuarios encontrados. En el caso de que se haya accedido al controlador con una petición POST, devuelve los
+ * 					  usuarios siguientes a los usuarios ya mostrados en la páginade búsqueda de usuarios como objetos JSON.
+ * - seguirUsuario: Añade a un usuario determinado a la lista de usuarios seguidos del usuario conectado, y al usuario conectado a la lista
+ * 					de seguidores del usuario determinado.
+ * - dejarSeguirUsuario: Elimina a un usuario determinado de la lista de usuarios seguidos del usuario conectado, y al usuario conectado de
+ * 					     la lista de seguidores del usuario determinado.
+ * - confirmarFotoPerfil: Redirige a la página de perfil del usuario conectado si se ha podido subir en el middleware la nueva imagen de
+ * 						  perfil sin ningún problema.
+ */
+
+// Se importa mongoose para poder hacer uso de las transacciones
 const mongoose = require("mongoose");
+
+// Se importan los modelos necesarios
 const User = require("../models/User");
 const Post = require("../models/Post");
-const Follower = require("../models/Follower");
 const Follow = require("../models/Follow");
+
+// Se importan todas las funciones necesarias para procesar los datos
 const { anyadirSignedUrlsPosts, anyadirSignedUrlsUsuario, subirImagenPredeterminada } = require("../utils/aws");
 const { comprobarFavs } = require("../utils/consultas");
 const {
-	sumarNumPosts,
 	eliminarDuplicados,
 	anyadirSeguidor,
 	anyadirSeguido,
@@ -56,7 +85,7 @@ const comprobarUsuarioExiste = async (req, res, next) => {
 	}
 	try {
 		const usuarioRegistrado = await User.findOne(query).select("nombre correo -_id");
-		res.json(usuarioRegistrado);
+		res.status(200).json(usuarioRegistrado);
 	} catch (error) {
 		next(error);
 	}
@@ -70,11 +99,11 @@ const devolverPerfilUsuario = async (req, res, next) => {
 			"_id nombre fotoPerfil tls numSeguidos numSeguidores"
 		);
 
-		let usuarioConSignedUrl = [];
-		if (datosUsuario) {
-			const usuarioConEsSeguidor = await esSeguidor([datosUsuario], req.session.idUsuario);
-			usuarioConSignedUrl = anyadirSignedUrlsUsuario(usuarioConEsSeguidor, req);
-		}
+		if (!datosUsuario) return res.status(404).render("errores/404");
+
+		const usuarioConEsSeguidor = await esSeguidor([datosUsuario], req.session.idUsuario);
+		const usuarioConSignedUrl = anyadirSignedUrlsUsuario(usuarioConEsSeguidor, req);
+
 		const postsUsuario = await Post.find({ "autor.nombre": usuario })
 			.select("_id imagen texto numFavs autor comentarios fecha")
 			.sort("-fecha")
@@ -112,6 +141,8 @@ const desconectarUsuario = (req, res, next) => {
 				}
 				res.redirect("/iniciar-sesion");
 			});
+		} else {
+			throw new Error("No se puede cerrar la sesión de otro usuario");
 		}
 	} catch (error) {
 		next(error);
@@ -274,22 +305,7 @@ const dejarSeguirUsuario = async (req, res, next) => {
 	}
 };
 
-const obtenerNombresTls = async (req, res, next) => {
-	const { nombreTL } = req.params;
-	try {
-		const tl = await User.findOne({ _id: req.session.idUsuario, "tls.nombre": nombreTL }).select("_id");
-
-		if (tl) {
-			res.status(200).json({ esRepetido: true });
-		} else {
-			res.status(200).json({ esRepetido: false });
-		}
-	} catch (error) {
-		next(error);
-	}
-};
-
-const confirmarFotoPerfil = async (req, res, next) => {
+const confirmarFotoPerfil = (req, res, next) => {
 	try {
 		res.redirect(`/usuarios/${req.session.usuario}`);
 	} catch (error) {
@@ -306,6 +322,5 @@ module.exports = {
 	obtenerUsuarios,
 	seguirUsuario,
 	dejarSeguirUsuario,
-	obtenerNombresTls,
 	confirmarFotoPerfil,
 };

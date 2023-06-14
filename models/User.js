@@ -1,3 +1,8 @@
+/**
+ * Modelo Mongoose que representa la estructura de datos de un usuario en la base de datos MongoDB.
+ */
+
+// Se importan todos los modelos y módulos necesarios para crear el modelo y sus métodos asociados
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const TlSchema = require("./aux-models/Tl");
@@ -5,6 +10,7 @@ const Post = require("../models/Post");
 const Follow = require("../models/Follow");
 const DenormUserSchema = require("./aux-models/DenormUser");
 
+// Modelo de usuario
 const UserSchema = new mongoose.Schema({
 	nombre: {
 		type: String,
@@ -62,22 +68,26 @@ const UserSchema = new mongoose.Schema({
 	},
 });
 
+/**
+ * Middleware que encripta la contraseña de un usuario cuando se crea el usuario y cuando el usuario cambia su contraseña.
+ */
 UserSchema.pre("save", async function (next) {
 	if (!this.isModified("contrasenya")) {
 		return next();
 	}
-
 	try {
 		const salt = await bcrypt.genSalt(10);
-
 		this.contrasenya = await bcrypt.hash(this.contrasenya, salt);
-
 		next();
 	} catch (err) {
 		next(err);
 	}
 });
 
+/**
+ * Middleware que se ejecuta antes de guardar un usuario en la base de datos por primera vez y que añade al propio usuario
+ * a la lista de usuarios del timeline estándar.
+ */
 UserSchema.pre("save", function (next) {
 	if (this.isNew) {
 		this.tls[0].config.filtro.autor = [this._id];
@@ -85,10 +95,25 @@ UserSchema.pre("save", function (next) {
 	next();
 });
 
+/**
+ * Método que compara una contraseña introducida por el usuario con la contraseña encriptada guardada en la base de datos.
+ * @async
+ * @function compararPassw
+ * @param {string} inputPassw 	La contraseña introducida por el usuario.
+ * @returns {Boolean} 			Devuelve true si las contraseñas coinciden y false si no coinciden.
+ */
 UserSchema.methods.compararPassw = async function (inputPassw) {
 	return await bcrypt.compare(inputPassw, this.contrasenya);
 };
 
+/**
+ * Método que devuelve los posts del timeline estándar del usuario.
+ * @async
+ * @function obtenerPostsTimeline
+ * @param {Date} [datoPost=new Date()] 	La fecha desde la cual obtener los posts.
+ * @returns {Array<Object>} 			Devuelve los posts más recientes del timeline estándar o los posts siguientes
+ * 										a los ya mostrados en el navegador del usuario.
+ */
 UserSchema.methods.obtenerPostsTimeline = async function (datoPost = new Date()) {
 	const usuariosSeguidos = [this._id];
 	this.seguidos.forEach((us) => usuariosSeguidos.push(us.id));

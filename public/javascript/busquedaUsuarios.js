@@ -1,4 +1,10 @@
-import { seguirUsuario } from "./modules/listeners.js";
+/**
+ * Este módulo controla la interacción del usuario con la página de búsqueda de usuarios.
+ * Esta página le permite a los usuarios interactuar con los botones de Seguir usuario y Cargar más usuarios de la página.
+ * Los usuarios se cargan de manera paginada en bloques de 15 cada vez que se hace click en el botón Cargar más usuarios.
+ */
+
+import { seguirUsuario, anyadirUsuarios } from "./modules/listeners.js";
 
 let clicksCargarMasUsuarios = 0;
 

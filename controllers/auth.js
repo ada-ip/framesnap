@@ -1,10 +1,11 @@
 /**
- * Funciones para gestionar las operaciones de autenticación de los usuarios.
  *
- * Este módulo contiene funciones para manejar las solicitudes de inicio de sesión y autenticación de usuarios
+ * Este módulo contiene controladores para manejar las solicitudes de inicio de sesión y autenticación de usuarios
  * en la aplicación web.
  *
- * Funciones:
+ * El modelo User es necesario para manipular los datos correspondientes de la base de datos.
+ *
+ * Controladores:
  * - devolverIniciarSesion: Devuelve la página de inicio de sesión.
  * - devolverRegistrarse: Devuelve la página de registro de usuario.
  * - conectarse: Crea una sesión de usuario en caso de que el usuario haya introducido el nombre y contraseñas correctos.

@@ -1,3 +1,7 @@
+/**
+ * Modelo Mongoose auxiliar que representa la estructura de datos de un timeline de un usuario de la aplicación.
+ */
+
 const mongoose = require("mongoose");
 
 const FiltroSchema = new mongoose.Schema(
@@ -5,32 +9,31 @@ const FiltroSchema = new mongoose.Schema(
 		autor: [
 			{
 				type: mongoose.Schema.Types.ObjectId,
-				ref: "User"
-			}
+				ref: "User",
+			},
 		],
 		tags: [String],
 		fecha: {
-			type: mongoose.Schema.Types.Mixed
-		}
+			type: mongoose.Schema.Types.Mixed,
+		},
 	},
 	{
-		_id: false
+		_id: false,
 	}
 );
 
 const ConfigSchema = new mongoose.Schema(
 	{
 		filtro: {
-			type: FiltroSchema
+			type: FiltroSchema,
 		},
-		orden: 
-			{
-				type: String,
-				required: true
-			}
+		orden: {
+			type: String,
+			required: true,
+		},
 	},
 	{
-		_id: false
+		_id: false,
 	}
 );
 
@@ -41,15 +44,15 @@ const TlSchema = new mongoose.Schema(
 			trim: true,
 			required: true,
 			maxLength: [20, "El nombre no puede tener más de 20 caracteres"],
-			match: [/^[a-z0-9\-_]+$/i, "El nombre sólo puede contener letras, números y - o _"]
+			match: [/^[a-z0-9\-_]+$/i, "El nombre sólo puede contener letras, números y - o _"],
 		},
 		config: {
 			type: ConfigSchema,
-			required: true
-		}
+			required: true,
+		},
 	},
 	{
-		_id: false
+		_id: false,
 	}
 );
 

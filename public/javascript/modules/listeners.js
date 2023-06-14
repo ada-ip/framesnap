@@ -1,3 +1,19 @@
+/**
+ * Este módulo proporciona funciones para permitir que el usuario pueda interactuar con la interfaz de la aplicación.
+ *
+ * Funciones:
+ *
+ * - validarTag: listener que verifica la validez de un tag instroducido por el usuario y crea o elimina inputs de tags en
+ *               base a dicha validez.
+ * - autocompletarUsuarioTL: crea una lista de usuarios autocompletados al intentar añadir un nuevo usuario en un
+ *                           timeline personalizado.
+ * - anyadirListenersElemsAutocompletar: agrega un listener a los elementos de la lista de autocompletado de usuarios que sustituye
+ * 										 el input del usuario por el usuario al que se ha clickado y también vacia la lista de autocompletado.
+ * - esconderListasAutocompletar: oculta las listas de autocompletado si se hace click fuera de ellas.
+ * - borrarTimeline: envía una petición para borrar el timeline objeto del evento.
+ * - seguirUsuario: envía una petición para seguir o dejar de seguir al usuario objeto del evento.
+ */
+
 import { comprobarValidez } from "./inputs.js";
 import { crearNuevoInputTags, crearAutocompletarUsuariosTL, crearNuevoInputUsuario } from "./dom.js";
 import { tagValido } from "./inputs.js";
@@ -126,7 +142,7 @@ function borrarTimeline(e) {
 
 	let url = "/api/v1/tls/" + timeline;
 	fetch(url, {
-		method: "PATCH",
+		method: "DELETE",
 	})
 		.then((response) => {
 			if (!response.ok) {

@@ -1,7 +1,9 @@
 /**
- * Este módulo contiene una función que renderiza la página principal de un usuario de la aplicación.
+ * Este módulo contiene un controlador que renderiza la página principal de un usuario de la aplicación.
  *
- * Funciones:
+ * Los modelos User y Post son necesarios para poder manipular los datos correspondientes de la base de datos.
+ *
+ * Controladores:
  * - devolverIndex: Construye y devuelve la página principal del usuario con todos sus datos.
  */
 

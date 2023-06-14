@@ -1,7 +1,19 @@
+/**
+ * Este módulo define un conjunto de middlewares para manejar la subida de imágenes a AWS S3.
+ * También, se define un tamaño mediano, grande y muy grande para categorizar las imágenes y procesarlas adecuadamente.
+ *
+ * Middlewares:
+ * - subirImagenAS3: Comprime una imagen proporcionada por el usuario y la sube al bucket privado de AWS S3.
+ * - subirFotoPerfilAS3: Comprime una imagen proporcionada por el usuario como nueva foto de perfil y la sube al bucket privado
+ * 						 de AWS S3.
+ */
+
+// Se importan los módulos necesarios para el procesamiento de las imágenes
 const multer = require("multer");
 const { s3 } = require("../config/aws");
 const sharp = require("sharp");
 
+// Categorías de imágenes
 const TAMANYO_MEDIANO = 200 * 1024;
 const TAMANYO_GRANDE = 1000 * 1024;
 const TAMANYO_MUY_GRANDE = 1700 * 1024;
@@ -11,7 +23,7 @@ const customStorage = multer.memoryStorage();
 
 const cargarImagen = multer({
 	storage: customStorage,
-	limits: { fileSize: 8000000 },
+	limits: { fileSize: 10000000 },
 });
 
 const subirImagenAS3 = async (req, res, next) => {

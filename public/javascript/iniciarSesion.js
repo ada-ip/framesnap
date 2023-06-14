@@ -1,3 +1,8 @@
+/**
+ * Este módulo gestiona la interacción del usuario con la página de inicio de sesión.
+ * En este fichero se verifica la validez de los inputs del usuario y muestra mensajes de error si dichos inputs son erróneos.
+ */
+
 import { comprobarValidez, nombreValido, comprobarInputs, crearMensajeError } from "./modules/inputs.js";
 
 const inputNombre = document.getElementById("nombre");

@@ -1,3 +1,9 @@
+/**
+ * Este módulo gestiona la funcionalidad de autocompletado de la barra de búsqueda del menú de navegación.
+ * Cuando el usuario escribe algo en la barra de búsqueda, se realiza una solicitud HTTP para obtener
+ * una lista de sugerencias de usuarios en función de lo que esté escribiendo el usuario.
+ */
+
 import { debounce } from "./modules/debounce.js";
 import { crearElemAutocompletar } from "./modules/dom.js";
 

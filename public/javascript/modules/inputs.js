@@ -1,3 +1,27 @@
+/**
+ * Este módulo proporciona funciones para validar diferentes tipos de entradas de usuario, tales como nombres,
+ * correos electrónicos, contraseñas, fechas e imágenes.
+ * También incluye funciones para mostrar mensajes de error al usuario.
+ *
+ * Funciones:
+ *
+ * - comprobarValidez: verifica la validez de un input cualquiera del usuario.
+ * - comprobarValidezFechas: verifica la validez de dos fechas introducidas por el usuario.
+ * - comprobarContrasenyas: verifica si dos contraseñas introducidas por el usuario son iguales.
+ * - nombreValido: verifica si el nombre de usuario introducido por el usuario es válido.
+ * - nombreTLValido: verifica si el nombre de timeline introducido por el usuario es válido.
+ * - correoValido: verifica si el correo introducido por el usuario es válido.
+ * - contrasenyaValida: verifica si la contraseña introducida por el usuario es válida.
+ * - imagenValida: verifica si la imagen compartida por el usuario es válida.
+ * - textoValido: verifica si el texto de un post introducido por el usuario es válido.
+ * - fechaValida: verifica si la fecha introducida por el usuario es válida.
+ * - tagValido: verifica si el tag introducido por el usuario es válido.
+ * - comprobarInputs: verifica la validez de un conjunto de inputs.
+ * - crearMensajeError: crea un mensaje de error asociado a un input.
+ * - borrarMensajeError: elimina un mensaje de error asociado a un input.
+ * - comprobarUsuariosTl: verifica la validez de un conjunto de usuarios introducidos por el usuario.
+ */
+
 function comprobarValidez(input, validador, error, imagen = false) {
 	let valor = !imagen ? input.value.trim() : input.files[0];
 

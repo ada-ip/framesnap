@@ -14,7 +14,7 @@
 const express = require("express");
 const router = express.Router();
 
-const { cargarImagen, subirImagenAS3 } = require("../middleware/multer");
+const { cargarImagen, subirImagenAS3 } = require("../../middleware/multer");
 
 const {
 	crearPost,
@@ -22,7 +22,7 @@ const {
 	desfavoritearPost,
 	obtenerPostsTimeline,
 	obtenerPostsUsuario,
-} = require("../controllers/posts");
+} = require("../../controllers/posts");
 
 router.route("/").post(cargarImagen.single("imagenASubir"), subirImagenAS3, crearPost);
 router.route("/cargarmasposts").post(obtenerPostsTimeline);

@@ -1,3 +1,25 @@
+/**
+ * Este módulo proporciona funciones para manipular elementos del árbol del DOM, como, por ejemplo, funciones para crear
+ * elementos de autocompletar o para rellenar o resetear un modal.
+ *
+ * Funciones:
+ * - crearElemAutocompletar: Devuelve el HTML necesario en forma de string de una lista de de usuarios sugeridos por autocompletado
+ * 							 con anchors para navegar a los perfiles de dichos usuarios.
+ * - crearAutocompletarUsuariosTL: Devuelve el HTML necesario en forma de string de una lista de usuarios sugeridos por autocompletado
+ * 								   para añadirlo al modal de creación de timelines.
+ * - crearNuevoInputUsuario: Crea un nuevo input para introducir otro usuario en el apartado de usuarios del formulario de creación
+ * 							 de timelines personalizados.
+ * - crearNuevoInputTags: Crea un nuevo input para introducir otro tag en el apartado de tags del formulario de creación de timelines
+ *  					  personalizados.
+ * - rellenarModalConfigTl: Rellena todos los campos del formulario de creación/configuración de timelines personalizados con la información
+ * 							recogida de la configuración de un timeline determinado creado por el usuario.
+ * - resetearModalTl: Borra toda la información mostrada o introducida por el usuario en el formulario de creación/configuración de
+ * 					  timelines personalizados para dejar el formulario preparado para la creación de un nuevo timeline.
+ * - anyadirPosts: Añade un conjunto de posts al album de posts mostrado en el timeline/perfil/página de búsqueda de posts.
+ * - anyadirUsuarios: Añade las tarjetas de usuario de un conjunto de usuarios a las tarjetas ya mostradas en la página de búsqueda
+ * 					  de usuarios.
+ */
+
 import { validarTag, autocompletarUsuarioTL, borrarTimeline, seguirUsuario } from "./listeners.js";
 import { calcularFechaPost } from "./fechas.js";
 

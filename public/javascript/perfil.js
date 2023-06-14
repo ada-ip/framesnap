@@ -1,3 +1,9 @@
+/**
+ * Este modulo gestiona la interacción del usuario con la página de perfil de usuario.
+ * La página permite a los usuarios elegir una foto de perfil desde la página de perfil, y también les permite
+ * seguir y dejar de seguir a otro usuario.
+ */
+
 import { imagenValida, comprobarValidez, comprobarInputs } from "./modules/inputs.js";
 
 if (document.getElementById("btn-seguir")) {

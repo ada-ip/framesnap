@@ -1,4 +1,21 @@
+/**
+ * Este módulo proporciona controladores para gestionar los timelines personalizados creados por los usuarios de la aplicación.
+ *
+ * El modelo User es neceario para manipular los datos correspondientes de la base de datos.
+ *
+ * Controladores:
+ * - esTlRepetido: Comprueba si el usuario conectado ya había utilizado un nombre determinado para llamar a un timeline
+ * 				   personalizado y devuelve el resultado.
+ * - crearTl: Crea un nuevo timeline personalizado del usuario conectado con un nombre, un conjunto de usuarios, un conjunto
+ * 			  de tags, un límite de antigüedad y un orden.
+ * - obtenerTl: Devuelve la configuración de un timeline personalizado determinado.
+ * - borrarTl: Elimina un timeline personalizado determinado de la lista de timelines del usuario conectado.
+ *
+ */
+
+// Se importan los modelos de Mongoose necesarios
 const User = require("../models/User");
+// Se importan las funciones necesarias para procesar los datos
 const { formatearFechaTl } = require("../utils/consultas");
 
 const esTlRepetido = async (req, res, next) => {
@@ -110,7 +127,7 @@ const obtenerTl = async (req, res, next) => {
 const borrarTl = async (req, res, next) => {
 	try {
 		const { nombreTl } = req.params;
-		const user = await User.findOneAndUpdate({ _id: req.session.idUsuario }, { $pull: { tls: { nombre: nombreTl } } });
+		await User.updateOne({ _id: req.session.idUsuario }, { $pull: { tls: { nombre: nombreTl } } });
 		res.status(204).end();
 	} catch (error) {
 		next(error);

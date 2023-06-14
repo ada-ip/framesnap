@@ -9,10 +9,10 @@ const {
 	seguirUsuario,
 	dejarSeguirUsuario,
 	confirmarFotoPerfil,
-} = require("../controllers/usuarios");
+} = require("../../controllers/usuarios");
 
-const { cargarImagen, subirFotoPerfilAS3 } = require("../middleware/multer");
-const comprobarUsuarioConectado = require("../middleware/auth");
+const { cargarImagen, subirFotoPerfilAS3 } = require("../../middleware/multer");
+const comprobarUsuarioConectado = require("../../middleware/auth");
 
 router.route("/").post(registrarUsuario);
 router.route("/:usuario").get(comprobarUsuarioConectado, obtenerNombresUsuarios);

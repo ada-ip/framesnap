@@ -1,3 +1,10 @@
+/**
+ * Este módulo gestiona la interacción del usuario con los posts de la aplicación.
+ * El módulo define listeners para cargar más posts en diferentes contextos. Los usuarios pueden cargar más posts en un
+ * timeline, en la página de perfil de un usuario, y en la página de búsqueda de posts.
+ * También, se define un listener para permitir al usuario marcar o desmarcar como favorito un post.
+ */
+
 import { anyadirPosts } from "./modules/dom.js";
 import { calcularFechaPost } from "./modules/fechas.js";
 

@@ -1,6 +1,12 @@
+/**
+ * Modelo Mongoose que representa la estructura de datos de un post de un usuario en la base de datos MongoDB.
+ */
+
+// Se importan todos los modelos y módulos necesarios para crear el modelo y sus métodos asociados
 const mongoose = require("mongoose");
 const DenormUserSchema = require("./aux-models/DenormUser");
 
+// Modelo de post
 const PostSchema = new mongoose.Schema({
 	imagen: {
 		type: String,

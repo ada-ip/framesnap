@@ -1,6 +1,29 @@
+/**
+ * Este módulo proporciona controladores para procesar y gestionar los posts de la aplicación para que el usuario pueda crear un post
+ * o marcar como favorito el post de otro usuario.
+ *
+ * Los modelos Post, User y Fav son necesarios para manipular los datos correspondientes de la base de datos.
+ *
+ * Controladores:
+ * - crearPost: Crea un nuevo post del usuario conectado en la base de datos y redirige al usuario al index.
+ * - obtenerPostsPorTag: Devuelve un conjunto de posts que contengan un tag o etiqueta determinada. En el caso de que se haya
+ * 						 accedido al controlador con una petición GET, renderiza la página de posts. En el caso de que se haya
+ * 					     accedido al controlador con una petición POST, devuelve los posts siguientes a los posts con esa etiqueta
+ * 						 ya mostrados en el navegador del usuario como objetos JSON.
+ * - favoritearPost: Marca como favorito del usuario conectado un post determinado.
+ * - desfavoritearPost: Desmarca como favorito del usuario conectado un post determinado.
+ * - obtenerPostsTimeline: Devuelve en formato JSON los posts siguientes a los posts ya mostrados en el navegador del usuario
+ * 						   de un timeline en concreto.
+ * - obtenerPostsUsuario: Devuelve en formato JSON los posts siguientes a los posts ya mostrados en el navegador del usuario
+ * 						  de un usuario en concreto.
+ */
+
+// Se importan los modelos de Mongoose necesarios
 const Post = require("../models/Post");
 const User = require("../models/User");
 const Fav = require("../models/Fav");
+
+// Se importan las funciones necesarias para procesar los datos
 const { anyadirSignedUrlsPosts, anyadirSignedUrlsUsuario } = require("../utils/aws");
 const {
 	construirFiltroTl,
@@ -8,39 +31,38 @@ const {
 	obtenerMasPostsPorNumFavs,
 	comprobarFavs,
 } = require("../utils/consultas");
+
+// Límite de elementos de los campos tipo array
 const LIMITE_ELEMENTOS = 1000;
 
 const crearPost = async (req, res, next) => {
-	if (!req.session.idUsuario) {
-		res.redirect("/iniciar-sesion");
-	} else {
-		const tags = req.body.texto.split(" ").reduce((tags, palabra) => {
-			if (palabra.startsWith("#")) {
-				tags.push(palabra.substring(1));
-			}
-			return tags;
-		}, []);
-
-		const post = {
-			imagen: req.s3url,
-			texto: req.body.texto,
-			autor: {
-				id: req.session.idUsuario,
-				nombre: req.session.usuario,
-				fotoPerfil: req.session.fotoPerfil,
-			},
-			favs: [],
-			comentarios: [],
-			tags: tags,
-		};
-
-		try {
-			const nuevoPost = new Post(post);
-			await nuevoPost.save();
-			res.redirect("/");
-		} catch (error) {
-			next(error);
+	// Antes de crear el post, se sustraen las etiquetas que ha puesto el usuario en el pie de foto
+	const tags = req.body.texto.split(" ").reduce((tags, palabra) => {
+		if (palabra.startsWith("#")) {
+			tags.push(palabra.substring(1));
 		}
+		return tags;
+	}, []);
+
+	const post = {
+		imagen: req.s3url,
+		texto: req.body.texto,
+		autor: {
+			id: req.session.idUsuario,
+			nombre: req.session.usuario,
+			fotoPerfil: req.session.fotoPerfil,
+		},
+		favs: [],
+		comentarios: [],
+		tags: tags,
+	};
+
+	try {
+		const nuevoPost = new Post(post);
+		await nuevoPost.save();
+		res.redirect("/");
+	} catch (error) {
+		next(error);
 	}
 };
 
@@ -115,10 +137,10 @@ const favoritearPost = async (req, res, next) => {
 		const usuarioLogeado = { id: req.session.idUsuario, nombre: req.session.usuario, fotoPerfil: req.session.fotoPerfil };
 
 		const post = await Post.findById(idPost).select("_id favs numFavs outlierFavs");
-		if (!post) return res.status(404).json({ estado: "error" });
+		if (!post) return res.status(404).render("errores/404");
 
 		const postConEsFav = await comprobarFavs([post], usuarioLogeado.id);
-		if (postConEsFav[0].esFavorito) return res.status(409).json({ estado: "error" });
+		if (postConEsFav[0].esFavorito) return res.status(204).end();
 
 		if (!post.outlierFavs) {
 			post.favs.push(usuarioLogeado);
@@ -151,7 +173,7 @@ const desfavoritearPost = async (req, res, next) => {
 	const { idPost } = req.params;
 	try {
 		const post = await Post.findById(idPost).select("_id favs numFavs outlierFavs");
-		if (!post) return res.status(404).json({ estado: "error" });
+		if (!post) return res.status(404).render("errores/404");
 
 		let indexUsuarioLogeado = post.favs.findIndex((fav) => fav.nombre === req.session.usuario);
 		if (indexUsuarioLogeado !== -1) {
@@ -180,69 +202,64 @@ const desfavoritearPost = async (req, res, next) => {
 };
 
 const obtenerPostsTimeline = async (req, res, next) => {
-	if (!req.session.idUsuario) {
-		res.redirect("/iniciar-sesion");
-	} else {
-		try {
-			const usuario = await User.findById(req.session.idUsuario).select("_id seguidos outlierSeguidos tls");
+	try {
+		const usuario = await User.findById(req.session.idUsuario).select("_id seguidos outlierSeguidos tls");
 
-			if (!usuario) {
-				return res.status(404).end();
-			}
-
-			let posts = [];
-			const { fecha, dato, ordenTl, timeline } = req.body;
-
-			if (timeline === "Timeline") {
-				posts = await usuario.obtenerPostsTimeline(fecha);
-			} else {
-				const tl = await User.findById(req.session.idUsuario).select({
-					_id: 0,
-					tls: { $elemMatch: { nombre: timeline } },
-				});
-
-				const filtro = construirFiltroTl(tl.tls[0]);
-
-				const filtroSeguidores = {};
-
-				switch (ordenTl) {
-					case "-fecha":
-						filtro.fecha.$lt = new Date(fecha);
-						break;
-					case "fecha":
-						filtro.fecha.$gt = new Date(fecha);
-						break;
-					case "-numFavs":
-					case "numFavs":
-						filtro.numFavs = parseInt(dato);
-						break;
-					case "-numSeguidores":
-					case "numSeguidores":
-						filtroSeguidores["datosAutor.numSeguidores"] = parseInt(dato);
-				}
-
-				let orden = tl.tls[0].config.orden;
-				if (orden !== "fecha" && orden !== "-fecha") orden += " -fecha";
-
-				if (filtro.$or.length !== 0) {
-					if (tl.tls[0].config.orden === "numSeguidores" || tl.tls[0].config.orden === "-numSeguidores") {
-						posts = await obtenerMasPostsPorNumSeguidores(filtro, fecha, filtroSeguidores, orden, dato);
-					} else if (tl.tls[0].config.orden === "numFavs" || tl.tls[0].config.orden === "-numFavs") {
-						posts = await obtenerMasPostsPorNumFavs(filtro, fecha, orden, dato);
-					} else {
-						posts = await Post.find(filtro).select("-favs -outlierComentarios -tags").sort(orden).limit(10);
-					}
-				}
-			}
-
-			const postsConSignedUrls = anyadirSignedUrlsPosts(posts.slice(0, 10), req);
-
-			const postsConFavsYUrls = await comprobarFavs(postsConSignedUrls, req.session.idUsuario);
-
-			res.status(200).json(postsConFavsYUrls);
-		} catch (error) {
-			next(error);
+		if (!usuario) {
+			throw new Error("El usuario de la sesión no existe");
 		}
+
+		let posts = [];
+		const { fecha, dato, ordenTl, timeline } = req.body;
+
+		if (timeline === "Timeline") {
+			posts = await usuario.obtenerPostsTimeline(fecha);
+		} else {
+			const tl = await User.findById(req.session.idUsuario).select({
+				_id: 0,
+				tls: { $elemMatch: { nombre: timeline } },
+			});
+
+			const filtro = construirFiltroTl(tl.tls[0]);
+
+			const filtroSeguidores = {};
+
+			switch (ordenTl) {
+				case "-fecha":
+					filtro.fecha.$lt = new Date(fecha);
+					break;
+				case "fecha":
+					filtro.fecha.$gt = new Date(fecha);
+					break;
+				case "-numFavs":
+				case "numFavs":
+					filtro.numFavs = parseInt(dato);
+					break;
+				case "-numSeguidores":
+				case "numSeguidores":
+					filtroSeguidores["datosAutor.numSeguidores"] = parseInt(dato);
+			}
+
+			let orden = tl.tls[0].config.orden;
+			if (orden !== "fecha" && orden !== "-fecha") orden += " -fecha";
+
+			if (filtro.$or.length !== 0) {
+				if (tl.tls[0].config.orden === "numSeguidores" || tl.tls[0].config.orden === "-numSeguidores") {
+					posts = await obtenerMasPostsPorNumSeguidores(filtro, fecha, filtroSeguidores, orden, dato);
+				} else if (tl.tls[0].config.orden === "numFavs" || tl.tls[0].config.orden === "-numFavs") {
+					posts = await obtenerMasPostsPorNumFavs(filtro, fecha, orden, dato);
+				} else {
+					posts = await Post.find(filtro).select("-favs -outlierComentarios -tags").sort(orden).limit(10);
+				}
+			}
+		}
+
+		const postsConSignedUrls = anyadirSignedUrlsPosts(posts.slice(0, 10), req);
+		const postsConFavsYUrls = await comprobarFavs(postsConSignedUrls, req.session.idUsuario);
+
+		res.status(200).json(postsConFavsYUrls);
+	} catch (error) {
+		next(error);
 	}
 };
 

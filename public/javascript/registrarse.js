@@ -1,3 +1,9 @@
+/**
+ * Este módulo gestiona la validación del formulario de registro de la aplicación.
+ * El módulo implementa la validación del lado del cliente, pero también realiza llamadas a la API del servidor
+ * para comprobar que el nombre de usuario y el correo no estén ya registrados en la base de datos.
+ */
+
 import { borrarMensajeError } from "./modules/inputs.js";
 import {
 	comprobarValidez,

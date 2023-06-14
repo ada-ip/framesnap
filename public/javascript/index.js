@@ -1,3 +1,12 @@
+/**
+ * Este módulo gestiona la interacción del usuario con la página de index permitiéndole interactuar con el formulario
+ * de creación y modificación de timelines personalizados y con el formulario de crear post de la página index.
+ *
+ * Se verifica la validez de los inputs introducidos por el usuario, muestra mensajes de error si dichos inputs son erróneos, y
+ * también controla la recarga de la página mediante el botón de recargar página en ordenador, y mediante el scroll hacia arriba
+ * en móvil/tablet.
+ */
+
 import {
 	imagenValida,
 	textoValido,
