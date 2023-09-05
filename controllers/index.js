@@ -74,11 +74,11 @@ const devolverIndex = async (req, res, next) => {
 		const postsConSignedUrls = anyadirSignedUrlsPosts(posts, req);
 		const postsConFavsYUrls = await comprobarFavs(postsConSignedUrls, req.session.idUsuario);
 
-		// Se obtiene una lista con los usuarios que han obtenido más favoritos a lo largo del mes
+		// Se obtiene una lista con los usuarios que han obtenido más favoritos a lo largo del último medio año
 		const usuariosRecomendados = await Post.aggregate()
 			.match({
 				"autor.nombre": { $ne: req.session.usuario },
-				fecha: { $gte: new Date(Date.now() - 1000 * 60 * 60 * 24 * 30) },
+				fecha: { $gte: new Date(Date.now() - 1000 * 60 * 60 * 24 * 30 * 6) },
 			})
 			.group({ _id: "$autor.nombre", totalNumFavs: { $sum: "$numFavs" }, fotoPerfil: { $first: "$autor.fotoPerfil" } })
 			.project({ _id: 0, nombre: "$_id", totalNumFavs: 1, fotoPerfil: 1 })
